@@ -7,22 +7,22 @@ export const footerDetails: {
     telephone: string;
     socials: ISocials;
 } = {
-    subheading: "Empowering businesses with cutting-edge financial technology solutions.",
+    subheading: "AI-powered chart review, trade scoring, and risk notes for active traders.",
     quickLinks: [
         {
             text: "Features",
             url: "#features"
         },
         {
+            text: "How it works",
+            url: "#workflow"
+        },
+        {
             text: "Pricing",
             url: "#pricing"
         },
-        {
-            text: "Testimonials",
-            url: "#testimonials"
-        }
     ],
-    email: 'address@yoursite.com',
+    email: 'support@gptchartview.com',
     telephone: '+1 (123) 456-7890',
     socials: {
         // github: 'https://github.com',

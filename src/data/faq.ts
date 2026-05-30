@@ -3,23 +3,23 @@ import { siteDetails } from "./siteDetails";
 
 export const faqs: IFAQ[] = [
     {
-        question: `Is ${siteDetails.siteName} secure?`,
-        answer: 'Absolutely. We use bank-level encryption to protect your data and never store your login information. Plus, our biometric authentication adds an extra layer of security.',
+        question: `What does ${siteDetails.siteName} analyze?`,
+        answer: 'Users can upload chart screenshots from stocks, forex, crypto, indices, or commodities. The AI reviews visible price action, indicators, patterns, and key levels from the image.',
     },
     {
-        question: `Can I use ${siteDetails.siteName} on multiple devices?`,
-        answer: 'Absolutely! Your Finwise account syncs seamlessly across all your devices - smartphone, tablet, and computer.',
+        question: 'Does the AI tell users exactly when to trade?',
+        answer: 'The product is designed to provide educational analysis, trade-quality scoring, and risk context. It should not be positioned as guaranteed financial advice or a promise of profit.',
     },
     {
-        question: 'Can I connect all my bank accounts?',
-        answer: `Yes! ${siteDetails.siteName} supports connections with over 10,000 financial institutions worldwide. Simply log in through our secure portal to link your accounts.`
+        question: 'How does subscription access work?',
+        answer: 'Each plan can include a monthly chart upload limit, saved analysis history, and advanced outputs such as targets, invalidation zones, and multi-timeframe checklists.'
     },
     {
-        question: 'Do I need any financial expertise to use the investing features?',
-        answer: 'Not at all! Our expert-curated portfolios and educational resources make investing accessible to everyone, regardless of experience level.',
+        question: 'Can users upload charts from TradingView or brokers?',
+        answer: 'Yes. The landing page is written for screenshot uploads, so users can export or capture charts from common trading platforms and submit the image for review.',
     },
     {
-        question: 'What if I need help using the app?',
-        answer: 'Our dedicated support team is available 24/7 via chat or email. Plus, we offer extensive in-app tutorials and a comprehensive knowledge base to help you make the most of Finwise.'
+        question: 'What should the trade score mean?',
+        answer: 'The score should summarize setup quality based on visible trend, momentum, level clarity, reward-to-risk structure, and conflicting signals. It is a decision-support signal, not a guarantee.'
     }
 ];

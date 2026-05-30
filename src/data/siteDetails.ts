@@ -1,12 +1,12 @@
 export const siteDetails = {
-    siteName: 'Finwise',
-    siteUrl: 'https://finwise-omega.vercel.app/',
+    siteName: 'GPT Chart View',
+    siteUrl: 'https://gptchartview.com/',
     metadata: {
-        title: 'Finwise - Next.js and Tailwind CSS Landing Page Template',
-        description: 'Finwise empowers businesses with cutting-edge technology solutions to drive success and efficiency.',
+        title: 'GPT Chart View - AI Trading Chart Analysis',
+        description: 'Upload a trading chart and get AI-powered technical analysis, trade scoring, risk notes, and subscription access for serious chart review.',
     },
     language: 'en-us',
     locale: 'en-US',
-    siteLogo: `${process.env.BASE_PATH || ''}/images/logo.png`, // or use a string for the logo e.g. "TechStartup"
+    siteLogo: `${process.env.BASE_PATH || ''}/images/logo.png`,
     googleAnalyticsId: '', // e.g. G-XXXXXXX,
 }

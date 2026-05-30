@@ -1,8 +1,5 @@
 import { ctaDetails } from "@/data/cta"
 
-import AppStoreButton from "./AppStoreButton"
-import PlayStoreButton from "./PlayStoreButton"
-
 const CTA: React.FC = () => {
     return (
         <section id="cta" className="mt-10 mb-5 lg:my-20">
@@ -17,9 +14,13 @@ const CTA: React.FC = () => {
 
                         <p className="mx-auto max-w-xl md:px-5">{ctaDetails.subheading}</p>
 
-                        <div className="mt-4 flex flex-col sm:flex-row items-center sm:gap-4">
-                        <AppStoreButton />
-                        <PlayStoreButton />
+                        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+                            <a href="#pricing" className="rounded-full bg-primary px-8 py-3 font-semibold text-black transition-colors hover:bg-primary-accent">
+                                Pick a plan
+                            </a>
+                            <a href="mailto:support@gptchartview.com" className="rounded-full border border-white/30 px-8 py-3 font-semibold text-white transition-colors hover:bg-white hover:text-black">
+                                Contact sales
+                            </a>
                         </div>
                     </div>
                 </div>

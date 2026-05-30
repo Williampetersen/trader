@@ -1,72 +1,72 @@
-import { FiBarChart2, FiBriefcase, FiDollarSign, FiLock, FiPieChart, FiShield, FiTarget, FiTrendingUp, FiUser } from "react-icons/fi";
+import { FiActivity, FiBarChart2, FiCheckSquare, FiClock, FiImage, FiLayers, FiShield, FiTarget, FiTrendingUp } from "react-icons/fi";
 
 import { IBenefit } from "@/types"
 
 export const benefits: IBenefit[] = [
     {
-        title: "Smart Budgeting",
-        description: "Take the guesswork out of managing your money. Our AI-powered budgeting tool adapts to your lifestyle and helps you stay on track.",
+        title: "Upload a chart and get a structured read",
+        description: "Turn messy chart screenshots into a clear technical-analysis report with the levels and signals traders look for first.",
         bullets: [
             {
-                title: "Intelligent Categorization",
-                description: "Automatically sorts your transactions for crystal-clear insights.",
-                icon: <FiBarChart2 size={26} />
+                title: "Screenshot-first workflow",
+                description: "Users can submit chart images from trading platforms, broker apps, or mobile screenshots.",
+                icon: <FiImage size={26} />
             },
             {
-                title: "Customizable Goals",
-                description: "Set and track financial objectives that matter to you.",
-                icon: <FiTarget size={26} />
+                title: "Key levels extracted",
+                description: "The output highlights likely support, resistance, breakout, and invalidation areas.",
+                icon: <FiLayers size={26} />
             },
             {
-                title: "Predictive Analysis",
-                description: "Get ahead of your finances with spending forecasts and alerts.",
+                title: "Trend and momentum view",
+                description: "Get a concise read on market direction, momentum, and conflicting chart evidence.",
                 icon: <FiTrendingUp size={26} />
             }
         ],
+        imageSrc: "/images/hero-chart.webp"
+    },
+    {
+        title: "Trade score built for fast decisions",
+        description: "Give every analysis a simple score that helps users decide whether a setup deserves attention, caution, or a pass.",
+        bullets: [
+            {
+                title: "Setup quality score",
+                description: "Score potential trades using trend, level clarity, momentum, and reward-to-risk structure.",
+                icon: <FiTarget size={26} />
+            },
+            {
+                title: "Long and short scenarios",
+                description: "Show bullish and bearish cases so users can compare confirmation against invalidation.",
+                icon: <FiActivity size={26} />
+            },
+            {
+                title: "Clear action labels",
+                description: "Summaries can mark a chart as Watch, Wait, Avoid, or High Conviction for easier scanning.",
+                icon: <FiCheckSquare size={26} />
+            }
+        ],
         imageSrc: "/images/mockup-1.webp"
     },
     {
-        title: "Seamless Investing",
-        description: "Start building wealth today, no financial degree required. Finwise makes investing accessible and straightforward.",
+        title: "Subscription access made simple",
+        description: "Sell access with monthly upload limits, saved reports, priority queues, and plan-based analysis depth.",
         bullets: [
             {
-                title: "Micro-Investing",
-                description: "Begin with as little as $1 and watch your money grow.",
-                icon: <FiDollarSign size={26} />
+                title: "Plan-based usage",
+                description: "Limit uploads by subscription tier and reserve advanced analysis for higher plans.",
+                icon: <FiBarChart2 size={26} />
             },
             {
-                title: "Expert Portfolios",
-                description: "Choose from investment strategies tailored to your risk tolerance.",
-                icon: <FiBriefcase size={26} />
+                title: "Saved report library",
+                description: "Users can revisit prior analysis, compare setups, and build a cleaner decision process.",
+                icon: <FiClock size={26} />
             },
             {
-                title: "Real-Time Performance",
-                description: "Track your investments with easy-to-understand metrics and visuals.",
-                icon: <FiPieChart size={26} />
-            }
-        ],
-        imageSrc: "/images/mockup-2.webp"
-    },
-    {
-        title: "Bank-Grade Security",
-        description: "Your financial data deserves the best protection. Rest easy knowing Finwise employs cutting-edge security measures.",
-        bullets: [
-            {
-                title: "Military-Grade Encryption",
-                description: "Your information is safeguarded with the highest level of encryption.",
-                icon: <FiLock size={26} />
-            },
-            {
-                title: "Biometric Authentication",
-                description: "Access your account securely with fingerprint or facial recognition.",
-                icon: <FiUser size={26} />
-            },
-            {
-                title: "Real-Time Fraud Detection",
-                description: "Our system constantly monitors for suspicious activity to keep your money safe.",
+                title: "Responsible risk framing",
+                description: "Every report can include risk notes and reminders that analysis is educational, not guaranteed profit.",
                 icon: <FiShield size={26} />
             }
         ],
-        imageSrc: "/images/mockup-1.webp"
+        imageSrc: "/images/mockup-2.webp"
     },
 ]

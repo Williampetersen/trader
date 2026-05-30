@@ -1,5 +1,5 @@
 export const heroDetails = {
-    heading: 'Smart, Secure, Simple Financial Management',
-    subheading: 'From effortless budgeting to real-time investment insights, Finwise puts you in control of your money like never before',
-    centerImageSrc: '/images/hero-mockup.webp',
+    heading: 'AI chart analysis for faster trading decisions',
+    subheading: 'Upload any chart screenshot and GPT Chart View returns a structured market read: trend, support and resistance, setup quality, risk notes, and a trade confidence score.',
+    centerImageSrc: '/images/hero-chart.webp',
 }
