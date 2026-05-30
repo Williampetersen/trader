@@ -1,5 +1,6 @@
+import Link from "next/link";
 import clsx from "clsx";
-import { BsFillCheckCircleFill } from "react-icons/bs";
+import { BsArrowRight, BsCheckCircle, BsStarFill } from "react-icons/bs";
 
 import { IPricing } from "@/types";
 
@@ -9,36 +10,47 @@ interface Props {
 }
 
 const PricingColumn: React.FC<Props> = ({ tier, highlight }: Props) => {
-    const { name, price, features } = tier;
+    const { name, price, duration, description, features } = tier;
 
     return (
-        <div className={clsx("w-full max-w-sm mx-auto bg-white rounded-xl border border-gray-200 lg:max-w-full", { "shadow-lg": highlight })}>
-            <div className="p-6 border-b border-gray-200 rounded-t-xl">
-                <h3 className="text-2xl font-semibold mb-4">{name}</h3>
-                <p className="text-3xl md:text-5xl font-bold mb-6">
-                    <span className={clsx({ "text-secondary": highlight })}>
-                        {typeof price === 'number' ? `$${price}` : price}
-                    </span>
-                    {typeof price === 'number' && <span className="text-lg font-normal text-gray-600">/mo</span>}
-                </p>
-                <button className={clsx("w-full py-3 px-4 rounded-full font-semibold transition-colors", { "bg-primary hover:bg-primary-accent": highlight, "bg-hero-background hover:bg-gray-200": !highlight })}>
-                    Choose plan
-                </button>
-            </div>
-            <div className="p-6 mt-1">
-                <p className="font-bold mb-0">INCLUDED</p>
-                <p className="text-foreground-accent mb-5">Subscription access for chart review.</p>
-                <ul className="space-y-4 mb-8">
-                    {features.map((feature, index) => (
-                        <li key={index} className="flex items-center">
-                            <BsFillCheckCircleFill className="h-5 w-5 text-secondary mr-2" />
-                            <span className="text-foreground-accent">{feature}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    )
-}
+        <div className={clsx(
+            "relative flex min-h-[390px] flex-col rounded-2xl border bg-white p-6 shadow-sm transition-transform hover:-translate-y-1",
+            highlight ? "border-secondary shadow-xl" : "border-gray-200"
+        )}>
+            {highlight && (
+                <div className="absolute right-5 top-5 flex items-center gap-2 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-black">
+                    <BsStarFill />
+                    Best start
+                </div>
+            )}
 
-export default PricingColumn
+            <div className="pb-6">
+                <h3 className="text-2xl font-extrabold">{name}</h3>
+                <p className="mt-2 min-h-10 text-base text-foreground-accent">{description}</p>
+                <p className="mt-8 flex items-end gap-3">
+                    <span className="text-5xl font-extrabold">${price}</span>
+                    <span className="pb-2 text-base text-foreground-accent">{duration}</span>
+                </p>
+            </div>
+
+            <ul className="space-y-4 border-t border-gray-200 pt-6">
+                {features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3">
+                        <BsCheckCircle className="mt-1 h-5 w-5 shrink-0 text-[#079455]" />
+                        <span className="text-base text-foreground-accent">{feature}</span>
+                    </li>
+                ))}
+            </ul>
+
+            <Link href="/signup" className={clsx(
+                "mt-auto flex w-full items-center justify-center gap-3 rounded-xl px-4 py-3 text-sm font-extrabold transition-colors",
+                highlight ? "bg-secondary text-white hover:bg-[#243cc7]" : "bg-[#101828] text-white hover:bg-[#263346]"
+            )}>
+                Create account
+                <BsArrowRight />
+            </Link>
+        </div>
+    );
+};
+
+export default PricingColumn;

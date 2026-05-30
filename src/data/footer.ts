@@ -10,11 +10,11 @@ export const footerDetails: {
     subheading: "AI-powered chart review, trade scoring, and risk notes for active traders.",
     quickLinks: [
         {
-            text: "Features",
-            url: "#features"
+            text: "Product",
+            url: "#product"
         },
         {
-            text: "How it works",
+            text: "Workflow",
             url: "#workflow"
         },
         {

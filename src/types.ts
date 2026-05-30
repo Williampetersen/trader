@@ -19,6 +19,8 @@ export interface IBenefitBullet {
 export interface IPricing {
     name: string;
     price: number | string;
+    duration?: string;
+    description?: string;
     features: string[];
 }
 

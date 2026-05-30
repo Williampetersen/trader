@@ -18,9 +18,9 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="bg-transparent fixed top-0 left-0 right-0 md:absolute z-50 mx-auto w-full">
+        <header className="fixed top-0 left-0 right-0 z-50 mx-auto w-full border-b border-gray-200 bg-white/90 backdrop-blur">
             <Container className="!px-0">
-                <nav className="shadow-md md:shadow-none bg-white md:bg-transparent mx-auto flex justify-between items-center py-2 px-5 md:py-10">
+                <nav className="mx-auto flex justify-between items-center py-3 px-5">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
                         <FiBarChart2 className="text-secondary min-w-fit w-7 h-7" />
@@ -30,7 +30,7 @@ const Header: React.FC = () => {
                     </Link>
 
                     {/* Desktop Menu */}
-                    <ul className="hidden md:flex space-x-6">
+                    <ul className="hidden md:flex items-center space-x-6">
                         {menuItems.map(item => (
                             <li key={item.text}>
                                 <Link href={item.url} className="text-foreground hover:text-foreground-accent transition-colors">
@@ -39,8 +39,13 @@ const Header: React.FC = () => {
                             </li>
                         ))}
                         <li>
-                            <Link href="#pricing" className="text-black bg-primary hover:bg-primary-accent px-8 py-3 rounded-full transition-colors">
-                                Subscribe
+                            <Link href="/login" className="text-foreground hover:text-secondary transition-colors">
+                                Login
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/signup" className="text-white bg-secondary hover:bg-[#243cc7] px-6 py-3 rounded-full transition-colors">
+                                Join free
                             </Link>
                         </li>
                     </ul>
@@ -85,8 +90,13 @@ const Header: React.FC = () => {
                             </li>
                         ))}
                         <li>
-                            <Link href="#pricing" className="text-black bg-primary hover:bg-primary-accent px-5 py-2 rounded-full block w-fit" onClick={toggleMenu}>
-                                Subscribe
+                            <Link href="/login" className="text-foreground hover:text-primary block" onClick={toggleMenu}>
+                                Login
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/signup" className="text-white bg-secondary hover:bg-[#243cc7] px-5 py-2 rounded-full block w-fit" onClick={toggleMenu}>
+                                Join free
                             </Link>
                         </li>
                     </ul>
