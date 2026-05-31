@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSessionResponse } from "@/lib/server/auth";
-import { createPlan, hashPassword, newId, readDb, writeDb } from "@/lib/server/store";
+import { createPlan, hashPassword, newId, readDb, verifyPassword, writeDb } from "@/lib/server/store";
 
 export async function POST(request: NextRequest) {
     try {
@@ -14,8 +14,16 @@ export async function POST(request: NextRequest) {
         }
 
         const db = await readDb();
-        if (db.users.some((user) => user.email === email)) {
-            return NextResponse.json({ error: "An account already exists for this email." }, { status: 409 });
+        const existingUser = db.users.find((user) => user.email === email);
+        if (existingUser) {
+            if (verifyPassword(password, existingUser.passwordSalt, existingUser.passwordHash)) {
+                return createSessionResponse(existingUser.id);
+            }
+
+            return NextResponse.json(
+                { error: "An account already exists for this email. Log in with the original password or use another email.", code: "ACCOUNT_EXISTS" },
+                { status: 409 },
+            );
         }
 
         const { salt, hash } = hashPassword(password);

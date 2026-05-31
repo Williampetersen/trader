@@ -9,7 +9,7 @@ import { getPlanConfig } from "@/data/plans";
 
 const trialPlan = getPlanConfig("Trial");
 
-type ApiResponse = { error?: string };
+type ApiResponse = { error?: string; code?: string };
 
 const readApiResponse = async (response: Response): Promise<ApiResponse> => {
     const text = await response.text();
@@ -60,11 +60,12 @@ const SignupPage = () => {
 
     return (
         <main className="relative min-h-screen overflow-hidden bg-[#05070f] px-5 py-6 text-white">
-            <video className="absolute inset-0 h-full w-full object-cover opacity-42" autoPlay muted loop playsInline preload="metadata" aria-label="AI market background">
+            <video className="absolute inset-0 h-full w-full object-cover opacity-[0.16] saturate-[0.85]" autoPlay muted loop playsInline preload="metadata" aria-label="AI market background">
                 <source src="/video/gptchartview2.webm" type="video/webm" />
             </video>
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,15,0.35),#05070f_78%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(22,199,255,0.18),transparent_35%)]" />
+            <div className="absolute inset-0 bg-[#05070f]/70" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,15,0.82),rgba(5,7,15,0.94)_70%,#05070f)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(22,199,255,0.08),transparent_34%)]" />
 
             <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] max-w-6xl flex-col">
                 <header className="flex items-center justify-between py-4">
@@ -77,7 +78,7 @@ const SignupPage = () => {
                 </header>
 
                 <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[0.92fr_1.08fr]">
-                    <section className="rounded-lg border border-white/10 bg-[#090d18]/88 p-6 shadow-[0_0_70px_rgba(217,76,255,0.12)] backdrop-blur md:p-8">
+                    <section className="rounded-lg border border-white/10 bg-[#05070f]/94 p-6 shadow-[0_0_70px_rgba(217,76,255,0.12)] backdrop-blur md:p-8">
                         <p className="text-sm font-extrabold uppercase text-[#16c7ff]">Start member access</p>
                         <h1 className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl">Create your AI trading workspace.</h1>
                         <p className="mt-4 leading-8 text-white/62">
@@ -87,17 +88,17 @@ const SignupPage = () => {
                         <form onSubmit={submit} className="mt-8 space-y-5">
                             <label className="block">
                                 <span className="font-bold text-white/86">Name</span>
-                                <input name="name" required className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
+                                <input name="name" required className="auth-input mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
                             </label>
                             <label className="block">
                                 <span className="font-bold text-white/86">Email</span>
-                                <input name="email" type="email" required className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
+                                <input name="email" type="email" required className="auth-input mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
                             </label>
                             <label className="block">
                                 <span className="font-bold text-white/86">Password</span>
-                                <input name="password" type="password" minLength={8} required className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
+                                <input name="password" type="password" minLength={8} required className="auth-input mt-2 w-full rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#16c7ff] focus:bg-white/[0.09]" />
                             </label>
-                            {error && <p className="rounded-lg border border-[#ff5c5c]/25 bg-[#ff5c5c]/12 p-3 text-sm font-bold text-[#ffb4b4]">{error}</p>}
+                            {error && <p role="alert" className="rounded-lg border border-[#ff5c5c]/40 bg-[#ff5c5c]/16 p-4 text-sm font-bold text-[#ffd0d0]">{error}</p>}
                             <button disabled={loading} className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#16c7ff] px-5 py-4 font-extrabold text-[#03111a] transition-colors hover:bg-white disabled:opacity-60">
                                 {loading ? "Creating account..." : "Create account and enter"}
                                 {!loading && <FiArrowRight />}

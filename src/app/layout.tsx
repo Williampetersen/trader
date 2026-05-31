@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { GoogleAnalytics } from '@next/third-parties/google';
 import { Source_Sans_3, Manrope } from "next/font/google";
 
 import { siteDetails } from '@/data/siteDetails';
@@ -12,6 +11,7 @@ const sourceSans = Source_Sans_3({ subsets: ['latin'] });
 const siteUrl = siteDetails.siteUrl;
 const favicon = '/favicon.png';
 const ogImage = '/images/hero-chart.webp';
+const googleAnalyticsId = siteDetails.googleAnalyticsId;
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -75,10 +75,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {googleAnalyticsId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${googleAnalyticsId}');
+`,
+              }}
+            />
+          </>
+        )}
+      </head>
       <body
         className={`${manrope.className} ${sourceSans.className} antialiased`}
       >
-        {siteDetails.googleAnalyticsId && <GoogleAnalytics gaId={siteDetails.googleAnalyticsId} />}
         <Analytics />
         {[organizationSchema, websiteSchema].map((schema, index) => (
           <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
