@@ -50,11 +50,27 @@ const OwnerLoginPage = () => {
                         <form onSubmit={submit} className="mt-8 space-y-5">
                             <label className="block">
                                 <span className="font-bold">Owner email</span>
-                                <input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" placeholder="owner@gptchartview.local" />
+                                <input
+                                    name="email"
+                                    type="email"
+                                    required
+                                    autoComplete="off"
+                                    autoCapitalize="none"
+                                    spellCheck={false}
+                                    className="auth-input mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]"
+                                    placeholder="Enter owner email"
+                                />
                             </label>
                             <label className="block">
                                 <span className="font-bold">Password</span>
-                                <input name="password" type="password" required className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" placeholder="Owner password" />
+                                <input
+                                    name="password"
+                                    type="password"
+                                    required
+                                    autoComplete="new-password"
+                                    className="auth-input mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]"
+                                    placeholder="Enter owner password"
+                                />
                             </label>
                             {error && <p className="rounded-2xl border border-[#f87171]/20 bg-[#dc2626]/15 p-3 text-sm font-bold text-[#fca5a5]">{error}</p>}
                             <button disabled={loading} className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#3457ff] px-5 py-4 font-extrabold text-white shadow-[0_18px_35px_rgba(52,87,255,0.28)] transition-colors hover:bg-[#263fd2] disabled:opacity-60">

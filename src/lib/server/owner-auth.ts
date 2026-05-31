@@ -7,8 +7,8 @@ export const OWNER_SESSION_COOKIE = "gcv_owner_session";
 
 export function ownerCredentials() {
     return {
-        email: process.env.OWNER_EMAIL || "owner@gptchartview.local",
-        password: process.env.OWNER_PASSWORD || (process.env.NODE_ENV === "production" ? "" : "owner12345"),
+        email: process.env.OWNER_EMAIL || "",
+        password: process.env.OWNER_PASSWORD || "",
     };
 }
 

@@ -7,8 +7,8 @@ export async function POST(request: NextRequest) {
     const password = String(body.password || "");
     const credentials = ownerCredentials();
 
-    if (!credentials.password) {
-        return NextResponse.json({ error: "Owner password is not configured." }, { status: 500 });
+    if (!credentials.email || !credentials.password) {
+        return NextResponse.json({ error: "Owner login is not configured." }, { status: 500 });
     }
 
     if (email !== credentials.email.toLowerCase() || password !== credentials.password) {
