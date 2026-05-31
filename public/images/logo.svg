@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GPT Chart View logo">
+  <rect width="512" height="512" rx="112" fill="#304fff"/>
+  <path d="M112 336h288" stroke="#ffffff" stroke-width="32" stroke-linecap="round"/>
+  <path d="M144 304l76-78 66 52 92-126" fill="none" stroke="#fed835" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M354 152h56v56" fill="none" stroke="#fed835" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

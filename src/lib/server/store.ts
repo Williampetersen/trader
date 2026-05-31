@@ -98,6 +98,14 @@ export interface SupportTicketRecord {
     createdAt: string;
 }
 
+export interface NewsletterLeadRecord {
+    id: string;
+    email: string;
+    name: string;
+    source: string;
+    createdAt: string;
+}
+
 interface AppDb {
     users: UserRecord[];
     sessions: SessionRecord[];
@@ -106,6 +114,7 @@ interface AppDb {
     chats: ChatMessageRecord[];
     payments: PaymentRecord[];
     supportTickets?: SupportTicketRecord[];
+    newsletterLeads?: NewsletterLeadRecord[];
 }
 
 const dbPath = path.join(process.cwd(), ".local", "gpt-chart-view", "db.json");
@@ -118,6 +127,7 @@ const emptyDb = (): AppDb => ({
     chats: [],
     payments: [],
     supportTickets: [],
+    newsletterLeads: [],
 });
 
 export const newId = () => randomBytes(16).toString("hex");
@@ -172,6 +182,16 @@ export function applyPlanRules(user: UserRecord, now = new Date()) {
         changed = true;
     }
 
+    if (typeof user.plan.creditsLeft !== "number" || Number.isNaN(user.plan.creditsLeft)) {
+        user.plan.creditsLeft = config.dailyLimit;
+        changed = true;
+    }
+
+    if (typeof user.plan.autoRenewal !== "boolean") {
+        user.plan.autoRenewal = false;
+        changed = true;
+    }
+
     if (!user.plan.expiresAt) {
         user.plan.expiresAt = new Date(now.getTime() + config.durationDays * 24 * 60 * 60 * 1000).toISOString();
         changed = true;
@@ -181,6 +201,28 @@ export function applyPlanRules(user: UserRecord, now = new Date()) {
         if (user.plan.creditsLeft !== 0) {
             user.plan.creditsLeft = 0;
             changed = true;
+        }
+        return changed;
+    }
+
+    if (config.creditReset === "none") {
+        if (!user.plan.lastCreditResetAt) {
+            user.plan.lastCreditResetAt = now.toISOString();
+            changed = true;
+        }
+        if (user.plan.creditsLeft > user.plan.dailyLimit) {
+            user.plan.creditsLeft = user.plan.dailyLimit;
+            changed = true;
+        }
+        if (user.plan.creditsLeft <= 0) {
+            if (user.plan.creditsLeft !== 0) {
+                user.plan.creditsLeft = 0;
+                changed = true;
+            }
+            if (new Date(user.plan.expiresAt).getTime() > now.getTime()) {
+                user.plan.expiresAt = now.toISOString();
+                changed = true;
+            }
         }
         return changed;
     }
@@ -221,6 +263,7 @@ export async function readDb(): Promise<AppDb> {
 export async function writeDb(db: AppDb) {
     db.supportTickets ||= [];
     db.ownerSessions ||= [];
+    db.newsletterLeads ||= [];
     await mkdir(path.dirname(dbPath), { recursive: true });
     await writeFile(dbPath, JSON.stringify(db, null, 2), "utf8");
 }

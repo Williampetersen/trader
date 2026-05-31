@@ -48,6 +48,7 @@ interface DashboardUser {
     name: string;
     email: string;
     plan: {
+        name?: string;
         creditsLeft: number;
         dailyLimit: number;
     };
@@ -72,9 +73,10 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
     };
 
     return (
-        <div className="min-h-screen bg-[#f4f7fb] text-[#111827]">
-            <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[276px] border-r border-[#20242d] bg-[#111318] text-white lg:flex lg:flex-col">
-                <Link href="/dashboard" className="flex h-[82px] items-center gap-3 border-b border-white/10 px-5">
+        <div className="min-h-screen bg-[#070b12] text-white">
+            <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(135deg,rgba(52,87,255,0.16),transparent_34%),linear-gradient(180deg,rgba(244,196,48,0.07),transparent_30%),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:auto,auto,44px_44px,44px_44px]" />
+            <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[292px] border-r border-white/10 bg-[#0b1018]/95 p-5 text-white backdrop-blur-xl lg:flex lg:flex-col">
+                <Link href="/dashboard" className="flex items-center gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3457ff] text-white shadow-[0_12px_28px_rgba(52,87,255,0.35)]">
                         <FiBarChart2 className="h-6 w-6" />
                     </span>
@@ -84,7 +86,7 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
                     </span>
                 </Link>
 
-                <nav className="flex-1 space-y-1.5 p-4">
+                <nav className="mt-7 flex-1 space-y-2">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const active = pathname === item.href || (pathname === "/dashboard/results" && item.href === "/dashboard/history");
@@ -93,58 +95,58 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
                                 key={item.href}
                                 href={item.href}
                                 className={clsx(
-                                    "group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-colors",
+                                    "group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-extrabold transition-colors",
                                     active
-                                        ? "bg-white text-[#111318] shadow-[0_12px_28px_rgba(0,0,0,0.22)] before:absolute before:-left-4 before:h-8 before:w-1 before:rounded-r-full before:bg-[#f4c430]"
-                                        : "text-[#d6deea] hover:bg-white/10 hover:text-white"
+                                        ? "bg-[#3457ff] text-white shadow-[0_14px_35px_rgba(52,87,255,0.28)]"
+                                        : "text-[#cbd5e1] hover:bg-white/[0.08] hover:text-white"
                                 )}
                             >
-                                <Icon size={20} className={active ? "text-[#3457ff]" : "text-[#8794a8] group-hover:text-[#f4c430]"} />
+                                <Icon size={20} className={active ? "text-white" : "text-[#8794a8] group-hover:text-[#f4c430]"} />
                                 {item.label}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <button onClick={handleLogout} className="m-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left text-sm font-bold text-[#d6deea] transition-colors hover:border-[#f4c430]/50 hover:bg-[#f4c430]/10 hover:text-white">
+                <button onClick={handleLogout} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-extrabold text-[#cbd5e1] transition-colors hover:bg-white/[0.08] hover:text-white">
                     <FiLogOut size={20} />
                     Logout
                 </button>
             </aside>
 
-            <div className="lg:pl-[276px]">
-                <header className="sticky top-0 z-30 border-b border-[#dbe3ef] bg-white/85 px-5 shadow-[0_10px_35px_rgba(15,23,42,0.04)] backdrop-blur-xl lg:px-8">
-                    <div className="mx-auto flex h-[82px] w-full max-w-[1680px] items-center justify-between gap-4">
+            <div className="relative z-10 lg:pl-[292px]">
+                <header className="sticky top-0 z-30 border-b border-white/10 bg-[#070b12]/82 px-5 backdrop-blur-xl lg:px-8">
+                    <div className="mx-auto flex h-[84px] w-full max-w-[1720px] items-center justify-between gap-4">
                         <div className="min-w-0">
-                            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#64748b]">Member app</p>
+                            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#f4c430]">Member app</p>
                             <h1 className="truncate text-2xl font-extrabold tracking-normal">{title}</h1>
                         </div>
 
-                        <form onSubmit={searchHistory} className="hidden max-w-md flex-1 items-center rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] px-4 py-3 shadow-inner xl:flex">
+                        <form onSubmit={searchHistory} className="hidden max-w-md flex-1 items-center rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 shadow-inner xl:flex">
                             <FiSearch className="text-[#94a3b8]" />
-                            <input name="q" className="ml-3 w-full bg-transparent text-sm outline-none placeholder:text-[#64748b]" placeholder="Search history, symbols, or notes" />
+                            <input name="q" className="ml-3 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#64748b]" placeholder="Search history, symbols, or notes" />
                         </form>
 
                         <div className="flex items-center gap-3">
-                            <Link href="/dashboard/upload" className="hidden rounded-xl bg-[#3457ff] px-4 py-2.5 text-sm font-extrabold text-white shadow-[0_12px_24px_rgba(52,87,255,0.22)] transition-colors hover:bg-[#263fd2] md:inline-flex">
+                            <Link href="/dashboard/upload" className="hidden rounded-2xl bg-[#3457ff] px-4 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_35px_rgba(52,87,255,0.28)] transition-colors hover:bg-[#263fd2] md:inline-flex">
                                 New upload
                             </Link>
-                            <span className="rounded-xl border border-[#dbe3ef] bg-white px-3 py-2 text-sm font-extrabold text-[#334155] shadow-sm">
-                                <span className="hidden sm:inline">Credits today: </span><span className="text-[#3457ff]">{user.plan.creditsLeft} / {user.plan.dailyLimit}</span>
+                            <span className="rounded-2xl border border-white/10 bg-white/[0.05] px-3 py-2 text-sm font-extrabold text-[#cbd5e1] shadow-sm">
+                                <span className="hidden sm:inline">{user.plan.name === "Trial" ? "Trial credits: " : "Credits today: "}</span><span className="text-[#f4c430]">{user.plan.creditsLeft} / {user.plan.dailyLimit}</span>
                             </span>
                             <Image
                                 src="/images/hero-chart.webp"
                                 alt="User avatar"
                                 width={34}
                                 height={34}
-                                className="h-10 w-10 rounded-xl border border-[#dbe3ef] object-cover"
+                                className="h-10 w-10 rounded-2xl border border-white/10 object-cover"
                                 unoptimized
                             />
                             <span className="hidden text-sm font-bold sm:inline">{user.name}</span>
-                            <FiChevronDown size={16} className="hidden text-[#64748b] sm:block" />
+                            <FiChevronDown size={16} className="hidden text-[#94a3b8] sm:block" />
                         </div>
                     </div>
-                    <nav className="-mx-5 flex gap-2 overflow-x-auto border-t border-[#e6edf6] px-5 py-3 lg:hidden">
+                    <nav className="-mx-5 flex gap-2 overflow-x-auto border-t border-white/10 px-5 py-3 lg:hidden">
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const active = pathname === item.href || (pathname === "/dashboard/results" && item.href === "/dashboard/history");
@@ -153,8 +155,8 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
                                     key={item.href}
                                     href={item.href}
                                     className={clsx(
-                                        "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold",
-                                        active ? "bg-[#111318] text-white" : "bg-[#eef2f7] text-[#334155]"
+                                        "flex shrink-0 items-center gap-2 rounded-2xl px-4 py-2 text-sm font-bold",
+                                        active ? "bg-[#3457ff] text-white" : "bg-white/[0.08] text-[#cbd5e1]"
                                     )}
                                 >
                                     <Icon size={16} />
@@ -165,7 +167,7 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
                     </nav>
                 </header>
 
-                <main className="mx-auto w-full max-w-[1680px] px-5 py-8 lg:px-8">
+                <main className="mx-auto w-full max-w-[1720px] px-5 py-8 lg:px-8">
                     {children}
                 </main>
             </div>

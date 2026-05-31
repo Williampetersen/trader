@@ -18,17 +18,17 @@ const BillingPage = async () => {
             <Panel>
                 <h2 className="text-xl font-extrabold">Current Plan</h2>
                 <MutedText className="mt-1">Your active subscription details</MutedText>
-                <div className="mt-7 rounded-2xl border border-[#c8d5ff] bg-[#eef3ff] p-4 text-[#3457ff]">
+                <div className="mt-7 rounded-3xl border border-[#3457ff]/30 bg-[#3457ff]/15 p-4 text-[#bfdbfe]">
                     <strong>{expired ? "This plan has expired" : user.plan.autoRenewal ? "This plan renews automatically" : "This is a prepaid plan with no auto-renewal"}</strong>
-                    <p className="mt-2 text-sm text-[#334155]">
+                    <p className="mt-2 text-sm text-[#cbd5e1]">
                         {expired ? "Upgrade to restore chart uploads." : `Your access is valid until ${new Date(user.plan.expiresAt).toLocaleDateString()}.`}
                     </p>
                 </div>
 
-                <div className="mt-6 flex items-start justify-between border-b border-[#dbe3ef] pb-6">
+                <div className="mt-6 flex items-start justify-between border-b border-white/10 pb-6">
                     <div>
                         <h3 className="text-2xl font-extrabold">{user.plan.name}</h3>
-                        <MutedText>{planConfig.durationLabel} access · {user.plan.dailyLimit} uploads per day</MutedText>
+                        <MutedText>{planConfig.durationLabel} access | {planConfig.allowanceLabel}</MutedText>
                     </div>
                     <strong className="text-2xl">${planConfig.price.toFixed(2)}</strong>
                 </div>
@@ -36,12 +36,12 @@ const BillingPage = async () => {
                 <h3 className="mt-6 font-extrabold">Plan Features:</h3>
                 <ul className="mt-4 space-y-3 text-lg">
                     {planConfig.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-3"><FiCheckCircle className="text-[#0f9f6e]" />{feature}</li>
+                        <li key={feature} className="flex items-center gap-3"><FiCheckCircle className="text-[#22c55e]" />{feature}</li>
                     ))}
-                    <li className="flex items-center gap-3"><FiCheckCircle className="text-[#0f9f6e]" />Private user history</li>
+                    <li className="flex items-center gap-3"><FiCheckCircle className="text-[#22c55e]" />Private user history</li>
                 </ul>
 
-                <div className="mt-6 rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-4">
+                <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-[#cbd5e1]">
                     <strong>Stripe Checkout:</strong> Paid upgrades open Stripe&apos;s secure subscription checkout. Access is activated after Stripe confirms payment.
                 </div>
 
@@ -52,10 +52,10 @@ const BillingPage = async () => {
             <Panel>
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><FiClock /> Payment History</h2>
                 <MutedText className="mt-1">Your recent subscription payments</MutedText>
-                <div className="mt-7 overflow-x-auto rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-5">
+                <div className="mt-7 overflow-x-auto rounded-3xl border border-white/10 bg-white/[0.04] p-5">
                     <table className="w-full min-w-[780px] text-left">
-                        <thead className="bg-white">
-                            <tr className="border-b border-[#dbe3ef]">
+                        <thead className="bg-white/[0.04] text-[#cbd5e1]">
+                            <tr className="border-b border-white/10">
                                 <th className="p-4">Date</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
@@ -66,7 +66,7 @@ const BillingPage = async () => {
                         </thead>
                         <tbody>
                             {payments.map((payment) => (
-                                <tr key={payment.id} className="border-b border-[#e6edf6]">
+                                <tr key={payment.id} className="border-b border-white/10">
                                     <td className="p-4">{new Date(payment.date).toLocaleDateString()}</td>
                                     <td>{payment.plan}</td>
                                     <td>${payment.amount.toFixed(2)}</td>
@@ -75,6 +75,11 @@ const BillingPage = async () => {
                                     <td>{payment.id.slice(0, 10)}</td>
                                 </tr>
                             ))}
+                            {payments.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="p-4 text-center text-[#94a3b8]">No payments yet.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

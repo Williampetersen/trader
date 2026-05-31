@@ -1,9 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
+import { paidPlans } from "@/data/plans";
 import { requireApiUser } from "@/lib/server/responses";
-import { applyPlanRules, buildAnalysis, isPlanExpired, newId, readDb, writeDb } from "@/lib/server/store";
+import { applyPlanRules, buildAnalysis, isPlanExpired, newId, readDb, type UserRecord, writeDb } from "@/lib/server/store";
 import { enrichAnalysisWithAi } from "@/lib/server/ai";
+
+const upgradePlans = paidPlans.map((plan) => ({
+    name: plan.name,
+    price: plan.price,
+    durationLabel: plan.durationLabel,
+    allowanceLabel: plan.allowanceLabel,
+    dailyLimit: plan.dailyLimit,
+    description: plan.description,
+    features: plan.features,
+}));
+
+function upgradeRequired(user: UserRecord, reason: "trial_finished" | "plan_expired" | "limit_reached") {
+    const isTrial = user.plan.name === "Trial";
+    const message = isTrial
+        ? "Your free trial is finished. Choose a plan to keep analyzing charts."
+        : reason === "plan_expired"
+            ? "Your plan access has expired. Choose a plan to continue."
+            : "You have reached your upload limit for this plan. Upgrade to continue now.";
+
+    return NextResponse.json(
+        {
+            error: message,
+            reason: isTrial ? "trial_finished" : reason,
+            plans: upgradePlans,
+        },
+        { status: 402 }
+    );
+}
 
 export async function GET() {
     const { user, response } = await requireApiUser();
@@ -22,11 +51,11 @@ export async function POST(request: NextRequest) {
     const planChanged = applyPlanRules(dbUser);
     if (isPlanExpired(dbUser)) {
         if (planChanged) await writeDb(db);
-        return NextResponse.json({ error: "Your plan access has expired. Upgrade your plan to continue." }, { status: 402 });
+        return upgradeRequired(dbUser, "plan_expired");
     }
     if (dbUser.plan.creditsLeft <= 0) {
         if (planChanged) await writeDb(db);
-        return NextResponse.json({ error: "No credits left today. Upgrade your plan to continue." }, { status: 402 });
+        return upgradeRequired(dbUser, "limit_reached");
     }
 
     const form = await request.formData();
@@ -50,8 +79,12 @@ export async function POST(request: NextRequest) {
     };
     const analysis = await enrichAnalysisWithAi(baseAnalysis, file);
     db.analyses.push(analysis);
-    dbUser.plan.creditsLeft -= 1;
-    dbUser.plan.lastCreditResetAt ||= new Date().toISOString();
+    const now = new Date();
+    dbUser.plan.creditsLeft = Math.max(0, dbUser.plan.creditsLeft - 1);
+    dbUser.plan.lastCreditResetAt ||= now.toISOString();
+    if (dbUser.plan.name === "Trial" && dbUser.plan.creditsLeft <= 0) {
+        dbUser.plan.expiresAt = now.toISOString();
+    }
     await writeDb(db);
 
     return NextResponse.json({ analysis });

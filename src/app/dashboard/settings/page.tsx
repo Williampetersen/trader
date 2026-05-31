@@ -71,9 +71,9 @@ const SettingsPage = () => {
                         <Password name="confirmPassword" label="Confirm New Password" placeholder="Confirm new password" />
                         <PrimaryButton>Update Password</PrimaryButton>
                     </form>
-                    {message && <p className="mt-5 rounded-xl bg-[#eef3ff] p-3 text-sm font-bold text-[#3457ff]">{message}</p>}
+                    {message && <p className="mt-5 rounded-2xl border border-[#3457ff]/25 bg-[#3457ff]/15 p-3 text-sm font-bold text-[#bfdbfe]">{message}</p>}
 
-                    <div className="mt-8 border-t border-[#dbe3ef] pt-6">
+                    <div className="mt-8 border-t border-white/10 pt-6">
                         <Toggle
                             title="Two-Factor Preference"
                             subtitle="Saved on your account for future 2FA provider integration"
@@ -92,8 +92,8 @@ const SettingsPage = () => {
                 <div className="space-y-7">
                     <Panel>
                         <h3 className="flex items-center gap-3 text-lg font-extrabold"><FiCreditCard /> Current Plan</h3>
-                        <div className="mt-7 text-center"><span className="rounded-full bg-[#eef3ff] px-5 py-3 text-xl font-extrabold text-[#3457ff]">{me?.plan.name || "Loading"}</span></div>
-                        <p className="mt-5 text-center text-sm text-[#64748b]">{me ? `${me.plan.creditsLeft} / ${me.plan.dailyLimit} credits left` : ""}</p>
+                        <div className="mt-7 text-center"><span className="rounded-full bg-[#3457ff]/20 px-5 py-3 text-xl font-extrabold text-[#bfdbfe] ring-1 ring-[#60a5fa]/20">{me?.plan.name || "Loading"}</span></div>
+                        <p className="mt-5 text-center text-sm text-[#94a3b8]">{me ? `${me.plan.creditsLeft} / ${me.plan.dailyLimit} credits left` : ""}</p>
                         <Link href="/dashboard/billing" className="mt-5 block"><LightButton className="w-full">Manage Plan</LightButton></Link>
                     </Panel>
                     <Panel>
@@ -112,9 +112,9 @@ const SettingsPage = () => {
 
 const Password = ({ label, placeholder, name }: { label: string; placeholder: string; name: string }) => (
     <label className="block">
-        <span className="font-bold text-[#334155]">{label}</span>
-        <div className="mt-3 flex items-center rounded-xl border border-[#dbe3ef] bg-[#f8fafc] px-4 transition-colors focus-within:border-[#3457ff] focus-within:bg-white">
-            <input name={name} className="w-full bg-transparent py-3 outline-none placeholder:text-[#94a3b8]" placeholder={placeholder} type="password" minLength={8} required />
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
+        <div className="mt-3 flex items-center rounded-2xl border border-white/10 bg-[#101827] px-4 transition-colors focus-within:border-[#3457ff]">
+            <input name={name} className="w-full bg-transparent py-3 text-white outline-none placeholder:text-[#64748b]" placeholder={placeholder} type="password" minLength={8} required />
             <FiEye className="text-[#94a3b8]" />
         </div>
     </label>
@@ -123,14 +123,14 @@ const Password = ({ label, placeholder, name }: { label: string; placeholder: st
 const Toggle = ({ title, subtitle, active, onClick }: { title: string; subtitle: string; active?: boolean; onClick: () => void }) => (
     <button type="button" onClick={onClick} className="flex w-full items-center justify-between py-3 text-left">
         <div><strong>{title}</strong><MutedText>{subtitle}</MutedText></div>
-        <span className={`h-6 w-11 rounded-full p-1 transition-colors ${active ? "bg-[#3457ff]" : "bg-[#cbd5e1]"}`}><span className={`block h-4 w-4 rounded-full bg-white transition-all ${active ? "ml-5" : ""}`} /></span>
+        <span className={`h-6 w-11 rounded-full p-1 transition-colors ${active ? "bg-[#3457ff]" : "bg-white/20"}`}><span className={`block h-4 w-4 rounded-full bg-white transition-all ${active ? "ml-5" : ""}`} /></span>
     </button>
 );
 
 const Row = ({ label, value, green, red }: { label: string; value: string; green?: boolean; red?: boolean }) => (
     <div className="flex justify-between gap-4">
         <span>{label}</span>
-        <strong className={green || red ? `rounded-full px-3 py-1 text-sm ${green ? "bg-[#eafaf3] text-[#0f9f6e]" : "bg-[#fff1ef] text-[#d92d20]"}` : ""}>{value}</strong>
+        <strong className={green || red ? `rounded-full px-3 py-1 text-sm ${green ? "bg-[#16a34a]/20 text-[#86efac] ring-1 ring-[#4ade80]/20" : "bg-[#dc2626]/20 text-[#fca5a5] ring-1 ring-[#f87171]/20"}` : ""}>{value}</strong>
     </div>
 );
 

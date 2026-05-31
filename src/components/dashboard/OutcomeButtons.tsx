@@ -23,7 +23,7 @@ const OutcomeButtons: React.FC<{ analysisId: string }> = ({ analysisId }) => {
         <div className="flex gap-3">
             <LightButton className="text-[#0f9f6e]" onClick={() => setOutcome("Won")}>{saving === "Won" ? "Saving..." : "Won"}</LightButton>
             <LightButton className="text-[#d92d20]" onClick={() => setOutcome("Lost")}>{saving === "Lost" ? "Saving..." : "Lost"}</LightButton>
-            <LightButton className="text-[#64748b]" onClick={() => setOutcome("Not Taken")}>{saving === "Not Taken" ? "Saving..." : "Not Taken"}</LightButton>
+            <LightButton className="text-[#94a3b8]" onClick={() => setOutcome("Not Taken")}>{saving === "Not Taken" ? "Saving..." : "Not Taken"}</LightButton>
         </div>
     );
 };

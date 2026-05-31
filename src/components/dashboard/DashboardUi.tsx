@@ -1,13 +1,13 @@
 import clsx from "clsx";
 
 export const Panel: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
-    <section className={clsx("rounded-2xl border border-[#dbe3ef] bg-white/95 p-6 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur", className)}>
+    <section className={clsx("rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur", className)}>
         {children}
     </section>
 );
 
 export const MutedText: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
-    <p className={clsx("text-[#64748b]", className)}>{children}</p>
+    <p className={clsx("text-[#94a3b8]", className)}>{children}</p>
 );
 
 export const StatCard: React.FC<{
@@ -18,18 +18,18 @@ export const StatCard: React.FC<{
     description?: string;
 }> = ({ label, value, icon, tone = "blue", description }) => {
     const tones = {
-        blue: "text-[#3457ff] bg-[#eef3ff] ring-[#c8d5ff]",
-        green: "text-[#0f9f6e] bg-[#eafaf3] ring-[#bdebd7]",
-        purple: "text-[#8b5cf6] bg-[#f3efff] ring-[#ddd2ff]",
-        yellow: "text-[#ad6b00] bg-[#fff7df] ring-[#f6dd96]",
-        red: "text-[#d92d20] bg-[#fff1ef] ring-[#ffd0cb]",
+        blue: "text-[#93c5fd] bg-[#3457ff]/15 ring-[#60a5fa]/20",
+        green: "text-[#86efac] bg-[#16a34a]/15 ring-[#4ade80]/20",
+        purple: "text-[#c4b5fd] bg-[#7c3aed]/18 ring-[#a78bfa]/20",
+        yellow: "text-[#fcd34d] bg-[#d97706]/16 ring-[#fbbf24]/20",
+        red: "text-[#fca5a5] bg-[#dc2626]/16 ring-[#f87171]/20",
     };
 
     return (
         <Panel className="flex min-h-[120px] items-center justify-between overflow-hidden">
             <div>
                 <MutedText className="text-sm font-bold uppercase tracking-[0.08em]">{label}</MutedText>
-                <p className={clsx("mt-2 text-3xl font-extrabold tracking-normal", tone === "red" && "text-[#d92d20]")}>{value}</p>
+                <p className={clsx("mt-2 text-3xl font-extrabold tracking-normal", tone === "red" && "text-[#fca5a5]")}>{value}</p>
                 {description && <MutedText className="mt-1 text-sm">{description}</MutedText>}
             </div>
             <div className={clsx("flex h-12 w-12 items-center justify-center rounded-xl text-2xl ring-1", tones[tone])}>{icon}</div>
@@ -38,19 +38,19 @@ export const StatCard: React.FC<{
 };
 
 export const Disclaimer: React.FC = () => (
-    <div className="rounded-2xl border border-[#f5d889] bg-[#fffaf0] p-4 text-sm leading-relaxed text-[#7a4a09] shadow-[0_10px_30px_rgba(122,74,9,0.06)]">
+    <div className="rounded-3xl border border-[#f4c430]/25 bg-[#f4c430]/10 p-4 text-sm leading-relaxed text-[#fde68a] shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
         <strong>Disclaimer:</strong> GPT Chart View provides AI-powered chart analysis for educational purposes only. It does not offer financial advice or guarantee trading results. Trading involves risk, and users should conduct their own research or consult a licensed financial advisor before making investment decisions.
     </div>
 );
 
 export const PrimaryButton: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
-    <button className={clsx("rounded-xl bg-[#3457ff] px-5 py-3 text-sm font-extrabold text-white shadow-[0_12px_25px_rgba(52,87,255,0.22)] transition-colors hover:bg-[#263fd2] disabled:opacity-60", className)}>
+    <button className={clsx("rounded-2xl bg-[#3457ff] px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_35px_rgba(52,87,255,0.28)] transition-colors hover:bg-[#263fd2] disabled:opacity-60", className)}>
         {children}
     </button>
 );
 
 export const LightButton: React.FC<React.PropsWithChildren<{ className?: string; onClick?: () => void }>> = ({ children, className, onClick }) => (
-    <button onClick={onClick} className={clsx("rounded-xl border border-[#dbe3ef] bg-white px-5 py-3 text-sm font-extrabold text-[#111827] shadow-sm transition-colors hover:border-[#3457ff] hover:text-[#3457ff]", className)}>
+    <button onClick={onClick} className={clsx("rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition-colors hover:border-[#3457ff]/60 hover:bg-white/[0.08]", className)}>
         {children}
     </button>
 );

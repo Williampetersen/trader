@@ -27,14 +27,14 @@ const BillingSuccessPage = async ({ searchParams }: { searchParams: { session_id
 
     return (
         <Panel className="mx-auto max-w-2xl text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#f8fafc]">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-white/[0.06]">
                 {icon}
             </div>
             <h2 className="mt-6 text-3xl font-extrabold">{title}</h2>
             <MutedText className="mx-auto mt-3 max-w-lg">{description}</MutedText>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link href="/dashboard/billing"><PrimaryButton>Back to Billing</PrimaryButton></Link>
-                <Link href="/dashboard/upload" className="rounded-xl border border-[#dbe3ef] bg-white px-5 py-3 text-sm font-extrabold text-[#111827] shadow-sm transition-colors hover:border-[#3457ff] hover:text-[#3457ff]">
+                <Link href="/dashboard/upload" className="rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition-colors hover:border-[#3457ff]/60 hover:bg-white/[0.08]">
                     Upload Chart
                 </Link>
             </div>

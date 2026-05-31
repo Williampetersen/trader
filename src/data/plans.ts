@@ -6,6 +6,8 @@ export interface PlanConfig {
     durationDays: number;
     durationLabel: string;
     dailyLimit: number;
+    creditReset: "none" | "daily";
+    allowanceLabel: string;
     billingInterval?: "week" | "month";
     stripePriceEnv?: string;
     description: string;
@@ -18,13 +20,15 @@ export const planCatalog: Record<PlanName, PlanConfig> = {
         name: "Trial",
         price: 0,
         durationDays: 1,
-        durationLabel: "1 Day",
+        durationLabel: "1 day",
         dailyLimit: 3,
+        creditReset: "none",
+        allowanceLabel: "3 total trial analyses",
         description: "Free access for first-time members",
         features: [
             "AI analysis (full output)",
-            "Up to 3 uploads per day",
-            "1-day access",
+            "3 total trial chart uploads",
+            "Upgrade required after trial credits finish",
         ],
         prioritySupport: false,
     },
@@ -34,6 +38,8 @@ export const planCatalog: Record<PlanName, PlanConfig> = {
         durationDays: 7,
         durationLabel: "Per week",
         dailyLimit: 10,
+        creditReset: "daily",
+        allowanceLabel: "10 uploads per day",
         billingInterval: "week",
         stripePriceEnv: "STRIPE_PRICE_BASIC_ACCESS",
         description: "Weekly access for focused chart reviews",
@@ -50,6 +56,8 @@ export const planCatalog: Record<PlanName, PlanConfig> = {
         durationDays: 30,
         durationLabel: "Per month",
         dailyLimit: 20,
+        creditReset: "daily",
+        allowanceLabel: "20 uploads per day",
         billingInterval: "month",
         stripePriceEnv: "STRIPE_PRICE_PRO_TRADER",
         description: "Best for consistent daily usage",
@@ -66,6 +74,8 @@ export const planCatalog: Record<PlanName, PlanConfig> = {
         durationDays: 30,
         durationLabel: "Per month",
         dailyLimit: 60,
+        creditReset: "daily",
+        allowanceLabel: "60 uploads per day",
         billingInterval: "month",
         stripePriceEnv: "STRIPE_PRICE_ADVANCED_TRADERS",
         description: "Built for power users",

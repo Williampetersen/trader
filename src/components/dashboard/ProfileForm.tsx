@@ -83,15 +83,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#dbe3ef] bg-white px-5 py-3 text-sm font-extrabold text-[#111827] shadow-sm transition-colors hover:border-[#3457ff] hover:text-[#3457ff] disabled:opacity-60"
+                            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition-colors hover:border-[#3457ff]/60 hover:bg-white/[0.08] disabled:opacity-60"
                         >
                             <FiEdit />
                             {saving ? "Saving..." : "Save Profile"}
                         </button>
                     </div>
 
-                    <div className="mt-7 flex items-center gap-5 border-b border-[#dbe3ef] pb-7">
-                        <Image src="/images/hero-chart.webp" alt={currentUser.name} width={86} height={86} className="h-[86px] w-[86px] rounded-2xl border border-[#dbe3ef] object-cover" unoptimized />
+                    <div className="mt-7 flex items-center gap-5 border-b border-white/10 pb-7">
+                        <Image src="/images/hero-chart.webp" alt={currentUser.name} width={86} height={86} className="h-[86px] w-[86px] rounded-2xl border border-white/10 object-cover" unoptimized />
                         <div>
                             <strong className="text-2xl">{currentUser.name}</strong>
                             <MutedText className="text-sm">{currentUser.plan.name} member</MutedText>
@@ -107,8 +107,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                         <SelectField label="Age group" value={form.ageGroup} onChange={(value) => updateField("ageGroup", value)} options={ageGroupOptions} placeholder="Select age group" />
                     </div>
 
-                    {message && <p className="mt-5 rounded-xl bg-[#eafaf3] p-3 text-sm font-bold text-[#0f9f6e]">{message}</p>}
-                    {error && <p className="mt-5 rounded-xl bg-[#fff1ef] p-3 text-sm font-bold text-[#d92d20]">{error}</p>}
+                    {message && <p className="mt-5 rounded-2xl border border-[#4ade80]/20 bg-[#16a34a]/20 p-3 text-sm font-bold text-[#86efac]">{message}</p>}
+                    {error && <p className="mt-5 rounded-2xl border border-[#fb7185]/30 bg-[#7f1d1d]/25 p-3 text-sm font-bold text-[#fecaca]">{error}</p>}
                 </form>
             </Panel>
 
@@ -124,25 +124,25 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     );
 };
 
-const fieldClass = "mt-3 w-full rounded-xl border border-[#dbe3ef] bg-[#f8fafc] px-4 py-3 text-[#334155] outline-none transition-colors focus:border-[#3457ff] focus:bg-white";
+const fieldClass = "mt-3 w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]";
 
 const TextField = ({ label, value, onChange, placeholder, required }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; required?: boolean }) => (
     <label className="block">
-        <span className="font-bold text-[#334155]">{label}</span>
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
         <input className={fieldClass} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} required={required} />
     </label>
 );
 
 const ReadOnlyField = ({ label, value }: { label: string; value: string }) => (
     <label className="block">
-        <span className="font-bold text-[#334155]">{label}</span>
-        <input className={`${fieldClass} text-[#64748b]`} value={value} readOnly />
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
+        <input className={`${fieldClass} text-[#94a3b8]`} value={value} readOnly />
     </label>
 );
 
 const SelectField = ({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (value: string) => void; options: string[]; placeholder: string }) => (
     <label className="block">
-        <span className="font-bold text-[#334155]">{label}</span>
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
         <select className={fieldClass} value={value} onChange={(event) => onChange(event.target.value)}>
             <option value="">{placeholder}</option>
             {options.map((option) => (
@@ -156,8 +156,8 @@ const SelectField = ({ label, value, onChange, options, placeholder }: { label: 
 
 const Detail = ({ icon, label, value, badge, badgeGreen }: { icon: React.ReactNode; label: string; value: string; badge?: boolean; badgeGreen?: boolean }) => (
     <div className="flex items-center justify-between gap-4">
-        <span className="flex items-center gap-3 text-[#334155]">{icon}{label}</span>
-        <strong className={badge || badgeGreen ? `rounded-full px-3 py-1 text-sm ${badgeGreen ? "bg-[#eafaf3] text-[#0f9f6e]" : "bg-[#eef3ff] text-[#3457ff]"}` : ""}>{value}</strong>
+        <span className="flex items-center gap-3 text-[#cbd5e1]">{icon}{label}</span>
+        <strong className={badge || badgeGreen ? `rounded-full px-3 py-1 text-sm ${badgeGreen ? "bg-[#16a34a]/20 text-[#86efac] ring-1 ring-[#4ade80]/20" : "bg-[#3457ff]/20 text-[#bfdbfe] ring-1 ring-[#60a5fa]/20"}` : ""}>{value}</strong>
     </div>
 );
 

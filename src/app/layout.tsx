@@ -8,18 +8,45 @@ import "./globals.css";
 
 const manrope = Manrope({ subsets: ['latin'] });
 const sourceSans = Source_Sans_3({ subsets: ['latin'] });
+const siteUrl = siteDetails.siteUrl;
+const ogImage = '/images/hero-chart.webp';
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteDetails.siteName,
+  url: siteUrl,
+  logo: new URL(siteDetails.siteLogo, siteUrl).toString(),
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "support@gptchartview.com",
+    contactType: "customer support",
+  },
+};
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteDetails.siteName,
+  url: siteUrl,
+  description: siteDetails.metadata.description,
+};
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: siteDetails.metadata.title,
   description: siteDetails.metadata.description,
+  alternates: { canonical: siteUrl },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
+  },
   openGraph: {
     title: siteDetails.metadata.title,
     description: siteDetails.metadata.description,
-    url: siteDetails.siteUrl,
+    url: siteUrl,
     type: 'website',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: ogImage,
         width: 1200,
         height: 675,
         alt: siteDetails.siteName,
@@ -30,7 +57,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteDetails.metadata.title,
     description: siteDetails.metadata.description,
-    images: ['/images/twitter-image.jpg'],
+    images: [ogImage],
   },
 };
 
@@ -45,6 +72,9 @@ export default function RootLayout({
         className={`${manrope.className} ${sourceSans.className} antialiased`}
       >
         {siteDetails.googleAnalyticsId && <GoogleAnalytics gaId={siteDetails.googleAnalyticsId} />}
+        {[organizationSchema, websiteSchema].map((schema, index) => (
+          <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        ))}
         {children}
       </body>
     </html>

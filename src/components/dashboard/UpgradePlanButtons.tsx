@@ -67,12 +67,12 @@ const UpgradePlanButtons = () => {
 
     return (
         <div className="mt-7">
-            <div className="mb-5 flex flex-col justify-between gap-3 rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-4 sm:flex-row sm:items-center">
+            <div className="mb-5 flex flex-col justify-between gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-center">
                 <div>
                     <h3 className="text-lg font-extrabold">Upgrade access</h3>
-                    <p className="mt-1 text-sm font-semibold text-[#64748b]">Secure Stripe checkout. Plan activates after payment confirmation.</p>
+                    <p className="mt-1 text-sm font-semibold text-[#94a3b8]">Secure Stripe checkout. Plan activates after payment confirmation.</p>
                 </div>
-                <span className="w-fit rounded-full bg-[#eafaf3] px-3 py-1 text-xs font-extrabold text-[#0f9f6e]">Live subscription billing</span>
+                <span className="w-fit rounded-full bg-[#16a34a]/20 px-3 py-1 text-xs font-extrabold text-[#86efac] ring-1 ring-[#4ade80]/20">Live subscription billing</span>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -86,10 +86,10 @@ const UpgradePlanButtons = () => {
                             onClick={() => upgrade(plan.name)}
                             disabled={Boolean(loading)}
                             className={clsx(
-                                "group relative overflow-hidden rounded-[1.35rem] border p-5 text-left shadow-[0_18px_45px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 disabled:translate-y-0 disabled:opacity-60",
+                                "group relative overflow-hidden rounded-3xl border p-5 text-left shadow-[0_24px_60px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-1 disabled:translate-y-0 disabled:opacity-60",
                                 visual.featured
-                                    ? "border-[#3457ff] bg-[#111318] text-white ring-4 ring-[#3457ff]/10"
-                                    : "border-[#dbe3ef] bg-white text-[#111827] hover:border-[#3457ff]"
+                                    ? "border-[#f4c430]/60 bg-[#101827] text-white ring-4 ring-[#3457ff]/10"
+                                    : "border-white/10 bg-white/[0.04] text-white hover:border-[#3457ff]/70"
                             )}
                         >
                             <span className={clsx(
@@ -100,29 +100,29 @@ const UpgradePlanButtons = () => {
                             <div className="flex items-start justify-between gap-4">
                                 <div className={clsx(
                                     "flex h-11 w-11 items-center justify-center rounded-2xl text-xl",
-                                    visual.featured ? "bg-white/10 text-[#f4c430]" : "bg-[#eef3ff] text-[#3457ff]"
+                                    visual.featured ? "bg-[#f4c430] text-[#111318]" : "bg-[#3457ff]/15 text-[#93c5fd]"
                                 )}>
                                     {visual.icon}
                                 </div>
                                 <span className={clsx(
                                     "rounded-full px-3 py-1 text-xs font-extrabold",
-                                    visual.featured ? "bg-[#f4c430] text-[#111318]" : "bg-[#eef3ff] text-[#3457ff]"
+                                    visual.featured ? "bg-[#f4c430] text-[#111318]" : "bg-white/[0.08] text-[#cbd5e1]"
                                 )}>
                                     {visual.badge}
                                 </span>
                             </div>
 
                             <h4 className="mt-5 text-xl font-extrabold">{plan.name}</h4>
-                            <p className={clsx("mt-1 text-sm font-semibold", visual.featured ? "text-[#cbd5e1]" : "text-[#64748b]")}>{visual.pitch}</p>
+                            <p className="mt-1 text-sm font-semibold text-[#94a3b8]">{visual.pitch}</p>
 
                             <div className="mt-5 flex items-end gap-2">
-                                <strong className={clsx("text-4xl font-extrabold", visual.featured ? "text-[#f4c430]" : "text-[#3457ff]")}>${plan.price.toFixed(2)}</strong>
-                                <span className={clsx("pb-1 text-sm font-bold", visual.featured ? "text-[#cbd5e1]" : "text-[#64748b]")}>{plan.durationLabel}</span>
+                                <strong className={clsx("text-4xl font-extrabold", visual.featured ? "text-[#f4c430]" : "text-white")}>${plan.price.toFixed(2)}</strong>
+                                <span className="pb-1 text-sm font-bold text-[#94a3b8]">{plan.durationLabel}</span>
                             </div>
 
-                            <div className={clsx("mt-5 space-y-2 border-t pt-4 text-sm font-bold", visual.featured ? "border-white/10 text-[#e2e8f0]" : "border-[#e6edf6] text-[#334155]")}>
-                                <p className="flex items-center gap-2"><FiCheckCircle className={visual.featured ? "text-[#f4c430]" : "text-[#0f9f6e]"} /> {plan.dailyLimit} uploads per day</p>
-                                <p className="flex items-center gap-2"><FiCheckCircle className={visual.featured ? "text-[#f4c430]" : "text-[#0f9f6e]"} /> Full AI analysis output</p>
+                            <div className="mt-5 space-y-2 border-t border-white/10 pt-4 text-sm font-bold text-[#dbeafe]">
+                                <p className="flex items-center gap-2"><FiCheckCircle className="text-[#22c55e]" /> {plan.allowanceLabel}</p>
+                                <p className="flex items-center gap-2"><FiCheckCircle className="text-[#22c55e]" /> Full AI analysis output</p>
                             </div>
 
                             <span className={clsx(
@@ -138,7 +138,7 @@ const UpgradePlanButtons = () => {
                     );
                 })}
             </div>
-            {message && <p className="mt-3 rounded-xl bg-[#eef3ff] p-3 text-sm font-bold text-[#3457ff]">{message}</p>}
+            {message && <p className="mt-3 rounded-2xl border border-[#3457ff]/25 bg-[#3457ff]/15 p-3 text-sm font-bold text-[#bfdbfe]">{message}</p>}
         </div>
     );
 };

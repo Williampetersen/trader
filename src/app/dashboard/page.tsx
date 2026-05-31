@@ -78,10 +78,10 @@ const DashboardPage = async () => {
                 <Panel className="min-h-[350px]">
                     <h3 className="flex items-center gap-2 font-extrabold"><FiBarChart2 /> AI Analysis Summary</h3>
                     <MutedText className="mt-2 text-sm">Summary of your uploaded chart actions</MutedText>
-                    <div className="mt-8 h-[220px] rounded-2xl border border-[#e2e8f0] bg-[linear-gradient(to_right,#edf1f7_1px,transparent_1px),linear-gradient(to_bottom,#edf1f7_1px,transparent_1px)] bg-[size:46px_46px] p-5">
+                    <div className="mt-8 h-[220px] rounded-3xl border border-white/10 bg-[linear-gradient(to_right,rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:46px_46px] p-5">
                         <div className="flex h-full items-end gap-5">
                             {bars.map((height, index) => (
-                                <div key={`${height}-${index}`} className="flex flex-1 items-end rounded-t-xl bg-[#eef3ff]">
+                                <div key={`${height}-${index}`} className="flex flex-1 items-end rounded-t-xl bg-white/[0.06]">
                                     <div className="w-full rounded-t-xl bg-[#3457ff]" style={{ height: `${height}%` }} />
                                 </div>
                             ))}
@@ -94,18 +94,18 @@ const DashboardPage = async () => {
                     <MutedText className="mt-2 text-sm">Your latest uploads and analyses</MutedText>
                     <div className="mt-8 space-y-3">
                         {recent.length === 0 ? (
-                            <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                                 <strong>No chart reviews yet</strong>
                                 <MutedText className="mt-1 text-sm">Your first upload will appear here with the AI trade score.</MutedText>
                             </div>
                         ) : recent.map((item) => (
-                            <Link key={item.id} href={`/dashboard/results?id=${item.id}`} className="block rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4 transition-colors hover:border-[#3457ff] hover:bg-white">
+                            <Link key={item.id} href={`/dashboard/results?id=${item.id}`} className="block rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-colors hover:border-[#3457ff]/70 hover:bg-white/[0.07]">
                                 <strong>{item.symbol} - {item.timeframe}</strong>
                                 <MutedText className="mt-1 text-sm">{item.summary}</MutedText>
                             </Link>
                         ))}
                     </div>
-                    <Link href="/dashboard/history" className="mt-5 flex w-full items-center justify-center rounded-xl border border-[#dbe3ef] bg-white px-5 py-3 text-sm font-extrabold text-[#111827] transition-colors hover:border-[#3457ff] hover:text-[#3457ff]">
+                    <Link href="/dashboard/history" className="mt-5 flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-extrabold text-white transition-colors hover:border-[#3457ff]/70 hover:bg-white/[0.08]">
                         View All History
                     </Link>
                 </Panel>
@@ -127,24 +127,24 @@ const DashboardPage = async () => {
 };
 
 const WorkflowCard = ({ done, title, description, href }: { done: boolean; title: string; description: string; href: string }) => (
-    <Link href={href} className="group rounded-2xl border border-[#dbe3ef] bg-white p-5 shadow-[0_14px_35px_rgba(15,23,42,0.05)] transition-colors hover:border-[#3457ff]">
+    <Link href={href} className="group rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.18)] transition-colors hover:border-[#3457ff]/70 hover:bg-white/[0.07]">
         <div className="flex items-start gap-4">
-            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${done ? "bg-[#eafaf3] text-[#0f9f6e]" : "bg-[#fff7df] text-[#ad6b00]"}`}>
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${done ? "bg-[#16a34a]/20 text-[#86efac]" : "bg-[#f4c430]/15 text-[#fcd34d]"}`}>
                 <FiCheckCircle />
             </div>
             <div>
-                <h3 className="font-extrabold group-hover:text-[#3457ff]">{title}</h3>
-                <p className="mt-1 text-sm text-[#64748b]">{description}</p>
+                <h3 className="font-extrabold group-hover:text-[#93c5fd]">{title}</h3>
+                <p className="mt-1 text-sm text-[#94a3b8]">{description}</p>
             </div>
         </div>
     </Link>
 );
 
 const QuickAction = ({ href, icon, title, description }: { href: string; icon: React.ReactNode; title: string; description: string }) => (
-    <Link href={href} className="rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-5 transition-colors hover:border-[#3457ff] hover:bg-white">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef3ff] text-[#3457ff]">{icon}</div>
+    <Link href={href} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-[#3457ff]/70 hover:bg-white/[0.07]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#3457ff]/15 text-[#93c5fd]">{icon}</div>
         <h3 className="mt-4 font-extrabold">{title}</h3>
-        <p className="mt-1 text-sm text-[#64748b]">{description}</p>
+        <p className="mt-1 text-sm text-[#94a3b8]">{description}</p>
     </Link>
 );
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isMailConfigured, sendSupportMail } from "@/lib/server/mail";
 import { requireApiUser } from "@/lib/server/responses";
 import { newId, readDb, writeDb } from "@/lib/server/store";
 
@@ -33,5 +34,27 @@ export async function POST(request: NextRequest) {
     };
     db.supportTickets.push(ticket);
     await writeDb(db);
-    return NextResponse.json({ ticket });
+
+    let emailSent = false;
+    if (isMailConfigured()) {
+        try {
+            await sendSupportMail({
+                name: user.name,
+                email: user.email,
+                subject,
+                message,
+                source: "Dashboard support ticket",
+                metadata: {
+                    ticketId: ticket.id,
+                    userId: user.id,
+                    plan: user.plan.name,
+                },
+            });
+            emailSent = true;
+        } catch {
+            emailSent = false;
+        }
+    }
+
+    return NextResponse.json({ ticket, emailSent });
 }

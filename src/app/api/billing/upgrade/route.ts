@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { paidPlanNames, getPlanConfig } from "@/data/plans";
+import { getPlanConfig, paidPlanNames } from "@/data/plans";
 import { requireApiUser } from "@/lib/server/responses";
 import { PlanName } from "@/lib/server/store";
 import { appUrl, getStripe, stripeCurrency } from "@/lib/server/stripe";
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
                     },
                     product_data: {
                         name: `GPT Chart View - ${plan.name}`,
-                        description: `${plan.dailyLimit} uploads per day · ${plan.durationLabel}`,
+                        description: `${plan.allowanceLabel} | ${plan.durationLabel}`,
                     },
                 },
             };

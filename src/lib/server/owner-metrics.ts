@@ -1,11 +1,17 @@
 import { planCatalog, type PlanName } from "@/data/plans";
-import { AnalysisRecord, PaymentRecord, readDb, SupportTicketRecord, UserRecord } from "./store";
+import { AnalysisRecord, applyPlanRules, PaymentRecord, readDb, SupportTicketRecord, UserRecord, writeDb } from "./store";
 
 const onlineWindowMs = 15 * 60 * 1000;
 const dayMs = 24 * 60 * 60 * 1000;
 
 export async function getOwnerMetrics() {
     const db = await readDb();
+    const syncNow = new Date();
+    let plansChanged = false;
+    for (const user of db.users) {
+        plansChanged = applyPlanRules(user, syncNow) || plansChanged;
+    }
+    if (plansChanged) await writeDb(db);
     const now = Date.now();
     const users = db.users;
     const analyses = db.analyses;

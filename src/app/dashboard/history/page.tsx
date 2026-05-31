@@ -40,8 +40,8 @@ const HistoryPage = async ({ searchParams }: { searchParams: { q?: string } }) =
                 <h3 className="text-xl font-extrabold">Analysis History</h3>
                 <div className="mt-7 overflow-x-auto">
                     <table className="w-full min-w-[980px] text-left text-sm">
-                        <thead className="text-[#334155]">
-                            <tr className="border-b border-[#dbe3ef]">
+                        <thead className="text-[#cbd5e1]">
+                            <tr className="border-b border-white/10">
                                 <th className="py-4">Symbol</th>
                                 <th>Time Frame</th>
                                 <th>Summary</th>
@@ -54,15 +54,15 @@ const HistoryPage = async ({ searchParams }: { searchParams: { q?: string } }) =
                         </thead>
                         <tbody>
                             {analyses.map((row) => (
-                                <tr key={row.id} className="border-b border-[#e6edf6]">
+                                <tr key={row.id} className="border-b border-white/10">
                                     <td className="py-4 font-bold">{row.symbol}</td>
-                                    <td><span className="rounded-lg border border-[#dbe3ef] bg-[#f8fafc] px-2 py-1">{row.timeframe}</span></td>
+                                    <td><span className="rounded-lg border border-white/10 bg-white/[0.05] px-2 py-1">{row.timeframe}</span></td>
                                     <td>{row.summary}</td>
-                                    <td><span className="rounded-full bg-[#eef3ff] px-3 py-1 font-bold text-[#3457ff]">{row.entryType}</span></td>
-                                    <td><span className="rounded-lg border border-[#dbe3ef] px-3 py-1">{row.confidence}%</span></td>
+                                    <td><span className="rounded-full bg-[#3457ff]/20 px-3 py-1 font-bold text-[#bfdbfe]">{row.entryType}</span></td>
+                                    <td><span className="rounded-lg border border-white/10 px-3 py-1">{row.confidence}%</span></td>
                                     <td>{row.outcome}</td>
                                     <td>{new Date(row.createdAt).toLocaleString()}</td>
-                                    <td><Link href={`/dashboard/results?id=${row.id}`} className="text-[#3457ff]"><FiEye /></Link></td>
+                                    <td><Link href={`/dashboard/results?id=${row.id}`} className="text-[#93c5fd]"><FiEye /></Link></td>
                                 </tr>
                             ))}
                         </tbody>

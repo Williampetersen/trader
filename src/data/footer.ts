@@ -19,7 +19,19 @@ export const footerDetails: {
         },
         {
             text: "Pricing",
-            url: "#pricing"
+            url: "/#pricing"
+        },
+        {
+            text: "AI Trading Blog",
+            url: "/blog"
+        },
+        {
+            text: "HTML Sitemap",
+            url: "/sitemap"
+        },
+        {
+            text: "Contact",
+            url: "/contact"
         },
     ],
     email: 'support@gptchartview.com',

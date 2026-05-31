@@ -48,7 +48,7 @@ const SignupPage = () => {
                         </Link>
                         <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#304fff]">Start member access</p>
                         <h1 className="mt-3 text-4xl font-extrabold">Create your account</h1>
-                        <p className="mt-3 text-[#667085]">Signup creates your private dashboard, {trialPlan.dailyLimit} trial credits, and saved analysis history.</p>
+                        <p className="mt-3 text-[#667085]">Signup creates your private dashboard, {trialPlan.allowanceLabel}, and saved analysis history.</p>
 
                         <form onSubmit={submit} className="mt-8 space-y-5">
                             <label className="block">
@@ -82,7 +82,7 @@ const SignupPage = () => {
                     <p className="mt-5 max-w-lg text-[#d0d5dd]">The account is not a fake demo. Your uploads, AI results, chat messages, profile, billing records, and outcomes are stored per user.</p>
 
                     <div className="mt-12 grid gap-4">
-                        <PreviewRow icon={<FiCheckCircle />} title="Trial credits" text={`Start with ${trialPlan.dailyLimit} private chart analysis credits for ${trialPlan.durationLabel.toLowerCase()}.`} />
+                        <PreviewRow icon={<FiCheckCircle />} title="Trial credits" text={`Start with ${trialPlan.allowanceLabel}.`} />
                         <PreviewRow icon={<FiUploadCloud />} title="Real uploads" text="Upload a chart image and generate a saved result page." />
                         <PreviewRow icon={<FiLock />} title="Protected session" text="The dashboard redirects guests to login." />
                     </div>

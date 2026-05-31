@@ -55,7 +55,7 @@ const SupportPage = () => {
             return;
         }
         setTickets((current) => [data.ticket, ...current]);
-        setMessage("Support ticket created.");
+        setMessage(data.emailSent ? "Support ticket created and emailed to support@gptchartview.com." : "Support ticket created. Email delivery is not configured or failed.");
         form.reset();
     };
 
@@ -68,17 +68,17 @@ const SupportPage = () => {
 
             <div className="mb-10 grid gap-6 lg:grid-cols-[0.8fr_1fr]">
                 <Panel>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff7df] text-[#ad6b00]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f4c430]/15 text-[#fcd34d]">
                         <FiMail size={28} />
                     </div>
                     <h3 className="mt-6 text-xl font-extrabold">Contact Support</h3>
                     <MutedText className="mt-2">Submit a ticket tied to your account.</MutedText>
                     <form onSubmit={submit} className="mt-6 space-y-4">
-                        <input name="subject" required placeholder="Subject" className="w-full rounded-xl border border-[#dbe3ef] bg-[#f8fafc] px-4 py-3 outline-none transition-colors focus:border-[#3457ff] focus:bg-white" />
-                        <textarea name="message" required placeholder="Describe the problem" rows={5} className="w-full rounded-xl border border-[#dbe3ef] bg-[#f8fafc] px-4 py-3 outline-none transition-colors focus:border-[#3457ff] focus:bg-white" />
-                        <button className="w-full rounded-xl bg-[#3457ff] px-5 py-3 font-extrabold text-white shadow-[0_12px_25px_rgba(52,87,255,0.22)]">Create ticket</button>
+                        <input name="subject" required placeholder="Subject" className="w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" />
+                        <textarea name="message" required placeholder="Describe the problem" rows={5} className="w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" />
+                        <button className="w-full rounded-2xl bg-[#3457ff] px-5 py-3 font-extrabold text-white shadow-[0_14px_35px_rgba(52,87,255,0.28)]">Create ticket</button>
                     </form>
-                    {message && <p className="mt-4 rounded-xl bg-[#eef3ff] p-3 text-sm font-bold text-[#3457ff]">{message}</p>}
+                    {message && <p className="mt-4 rounded-2xl border border-[#3457ff]/25 bg-[#3457ff]/15 p-3 text-sm font-bold text-[#bfdbfe]">{message}</p>}
                 </Panel>
 
                 <Panel>
@@ -87,12 +87,12 @@ const SupportPage = () => {
                         {tickets.length === 0 ? (
                             <MutedText>No tickets yet.</MutedText>
                         ) : tickets.map((ticket) => (
-                            <div key={ticket.id} className="rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-4">
+                            <div key={ticket.id} className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
                                 <div className="flex items-center justify-between gap-4">
                                     <strong>{ticket.subject}</strong>
-                                    <span className="rounded-full bg-[#eafaf3] px-3 py-1 text-xs font-bold text-[#0f9f6e]">{ticket.status}</span>
+                                    <span className="rounded-full bg-[#16a34a]/20 px-3 py-1 text-xs font-bold text-[#86efac] ring-1 ring-[#4ade80]/20">{ticket.status}</span>
                                 </div>
-                                <p className="mt-2 text-sm text-[#64748b]">{ticket.message}</p>
+                                <p className="mt-2 text-sm text-[#94a3b8]">{ticket.message}</p>
                                 <p className="mt-2 text-xs text-[#94a3b8]">{new Date(ticket.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
@@ -103,13 +103,13 @@ const SupportPage = () => {
             <Panel>
                 <h3 className="text-lg font-extrabold">Frequently Asked Questions</h3>
                 <MutedText className="mt-1">Find answers to common questions</MutedText>
-                <div className="mt-3 flex items-center rounded-xl border border-[#dbe3ef] bg-[#f8fafc] px-4">
+                <div className="mt-3 flex items-center rounded-2xl border border-white/10 bg-[#101827] px-4">
                     <FiSearch className="text-[#94a3b8]" />
-                    <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent px-3 py-3 outline-none placeholder:text-[#94a3b8]" placeholder="Search FAQ..." />
+                    <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent px-3 py-3 text-white outline-none placeholder:text-[#64748b]" placeholder="Search FAQ..." />
                 </div>
-                <div className="mt-7 divide-y divide-[#e6edf6]">
+                <div className="mt-7 divide-y divide-white/10">
                     {filteredQuestions.map((question) => (
-                        <button key={question} className="flex w-full items-center justify-between py-5 text-left font-bold text-[#334155]">
+                        <button key={question} className="flex w-full items-center justify-between py-5 text-left font-bold text-[#cbd5e1]">
                             {question}
                             <FiChevronDown className="text-[#94a3b8]" />
                         </button>
