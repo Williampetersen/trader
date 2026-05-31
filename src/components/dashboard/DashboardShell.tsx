@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import type { FormEvent } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +21,7 @@ import {
     FiUpload,
     FiUser,
 } from "react-icons/fi";
+import { countries } from "@/data/countries";
 
 const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: FiGrid },
@@ -47,6 +49,12 @@ const pageTitles: Record<string, string> = {
 interface DashboardUser {
     name: string;
     email: string;
+    profile: {
+        mobile: string;
+        country: string;
+        gender: string;
+        ageGroup: string;
+    };
     plan: {
         name?: string;
         creditsLeft: number;
@@ -58,6 +66,7 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
     const pathname = usePathname();
     const router = useRouter();
     const title = pageTitles[pathname] || "Dashboard";
+    const needsProfile = !user.name || !user.profile.mobile || !user.profile.country || !user.profile.gender || !user.profile.ageGroup;
 
     const handleLogout = async () => {
         await fetch("/api/auth/logout", { method: "POST" });
@@ -171,8 +180,121 @@ const DashboardShell: React.FC<React.PropsWithChildren<{ user: DashboardUser }>>
                     {children}
                 </main>
             </div>
+            {needsProfile && <ProfileCompletionModal user={user} />}
         </div>
     );
 };
+
+const genderOptions = ["Male", "Female", "Non-binary", "Prefer not to say", "Other"];
+const ageGroupOptions = ["Under 18", "18-25", "26-39", "40-54", "55+"];
+
+const ProfileCompletionModal = ({ user }: { user: DashboardUser }) => {
+    const router = useRouter();
+    const [form, setForm] = useState({
+        name: user.name || "",
+        mobile: user.profile.mobile || "",
+        country: user.profile.country || "",
+        gender: user.profile.gender || "",
+        ageGroup: user.profile.ageGroup || "",
+    });
+    const [error, setError] = useState("");
+    const [saving, setSaving] = useState(false);
+    const [open, setOpen] = useState(true);
+
+    if (!open) return null;
+
+    const updateField = (field: keyof typeof form, value: string) => {
+        setForm((current) => ({ ...current, [field]: value }));
+        setError("");
+    };
+
+    const submit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setSaving(true);
+        setError("");
+
+        try {
+            const response = await fetch("/api/profile", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Unable to save profile.");
+                return;
+            }
+
+            setOpen(false);
+            router.refresh();
+        } catch {
+            setError("Network error. Please try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/82 px-4 py-6 backdrop-blur">
+            <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b1018] text-white shadow-[0_30px_90px_rgba(0,0,0,0.5)]">
+                <div className="border-b border-white/10 bg-[radial-gradient(circle_at_20%_0%,rgba(52,87,255,0.32),transparent_34%)] p-6 sm:p-7">
+                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#f4c430]">Profile required</p>
+                    <h2 className="mt-3 text-3xl font-extrabold">Complete your account details</h2>
+                    <p className="mt-3 text-sm leading-6 text-[#cbd5e1]">
+                        Add these details once so your dashboard, owner analytics, support tickets, and billing records stay organized.
+                    </p>
+                </div>
+
+                <form onSubmit={submit} className="p-6 sm:p-7">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <ModalTextField label="Name" value={form.name} onChange={(value) => updateField("name", value)} required />
+                        <ReadOnlyModalField label="Email" value={user.email} />
+                        <ModalTextField label="Phone" value={form.mobile} onChange={(value) => updateField("mobile", value)} placeholder="+45 12 34 56 78" required />
+                        <ModalSelectField label="Country" value={form.country} onChange={(value) => updateField("country", value)} options={countries} placeholder="Select country" required />
+                        <ModalSelectField label="Age group" value={form.ageGroup} onChange={(value) => updateField("ageGroup", value)} options={ageGroupOptions} placeholder="Select age group" required />
+                        <ModalSelectField label="Gender" value={form.gender} onChange={(value) => updateField("gender", value)} options={genderOptions} placeholder="Select gender" required />
+                    </div>
+
+                    {error && <p role="alert" className="mt-5 rounded-2xl border border-[#fb7185]/30 bg-[#7f1d1d]/25 p-3 text-sm font-bold text-[#fecaca]">{error}</p>}
+
+                    <button disabled={saving} className="mt-7 flex w-full items-center justify-center rounded-2xl bg-[#3457ff] px-5 py-4 font-extrabold text-white shadow-[0_16px_30px_rgba(52,87,255,0.28)] transition-colors hover:bg-[#263fd2] disabled:opacity-60">
+                        {saving ? "Saving profile..." : "Save and continue to dashboard"}
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+const modalFieldClass = "mt-2 w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]";
+
+const ModalTextField = ({ label, value, onChange, placeholder, required }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; required?: boolean }) => (
+    <label className="block">
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
+        <input className={modalFieldClass} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} required={required} />
+    </label>
+);
+
+const ReadOnlyModalField = ({ label, value }: { label: string; value: string }) => (
+    <label className="block">
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
+        <input className={`${modalFieldClass} text-[#94a3b8]`} value={value} readOnly />
+    </label>
+);
+
+const ModalSelectField = ({ label, value, onChange, options, placeholder, required }: { label: string; value: string; onChange: (value: string) => void; options: string[]; placeholder: string; required?: boolean }) => (
+    <label className="block">
+        <span className="font-bold text-[#cbd5e1]">{label}</span>
+        <select className={modalFieldClass} value={value} onChange={(event) => onChange(event.target.value)} required={required}>
+            <option value="">{placeholder}</option>
+            {options.map((option) => (
+                <option key={option} value={option}>
+                    {option}
+                </option>
+            ))}
+        </select>
+    </label>
+);
 
 export default DashboardShell;

@@ -11,7 +11,7 @@ const DashboardPage = async () => {
     const aiResponses = db.chats.filter((item) => item.userId === user.id && item.role === "assistant").length;
     const recent = analyses.slice(-3).reverse();
     const bars = [1, 2, 3, 4, 5, 6].map((_, index) => (analyses.length ? 25 + ((analyses.length + index * 13) % 70) : 8));
-    const profileComplete = Boolean(user.profile.country && user.profile.gender && user.profile.ageGroup);
+    const profileComplete = Boolean(user.name && user.profile.mobile && user.profile.country && user.profile.gender && user.profile.ageGroup);
 
     return (
         <div className="space-y-7">
@@ -62,7 +62,7 @@ const DashboardPage = async () => {
                 <WorkflowCard
                     done={profileComplete}
                     title="Profile completed"
-                    description={profileComplete ? "Your account details are complete." : "Add country, gender, and age group for a complete profile."}
+                    description={profileComplete ? "Your account details are complete." : "Add name, phone, country, gender, and age group for a complete profile."}
                     href="/dashboard/profile"
                 />
             </div>

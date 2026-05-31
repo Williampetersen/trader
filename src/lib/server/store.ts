@@ -106,6 +106,17 @@ export interface NewsletterLeadRecord {
     createdAt: string;
 }
 
+export interface AuthOtpRecord {
+    id: string;
+    email: string;
+    codeHash: string;
+    codeSalt: string;
+    attempts: number;
+    createdAt: string;
+    expiresAt: string;
+    resendAfter: string;
+}
+
 interface AppDb {
     users: UserRecord[];
     sessions: SessionRecord[];
@@ -115,6 +126,7 @@ interface AppDb {
     payments: PaymentRecord[];
     supportTickets?: SupportTicketRecord[];
     newsletterLeads?: NewsletterLeadRecord[];
+    authOtps?: AuthOtpRecord[];
 }
 
 const dataRoot = process.env.GCV_DATA_DIR || (process.env.VERCEL ? path.join("/tmp", "gpt-chart-view") : path.join(process.cwd(), ".local", "gpt-chart-view"));
@@ -135,6 +147,7 @@ const emptyDb = (): AppDb => ({
     payments: [],
     supportTickets: [],
     newsletterLeads: [],
+    authOtps: [],
 });
 
 export const newId = () => randomBytes(16).toString("hex");
@@ -290,6 +303,7 @@ export async function writeDb(db: AppDb) {
     db.supportTickets ||= [];
     db.ownerSessions ||= [];
     db.newsletterLeads ||= [];
+    db.authOtps ||= [];
     memoryDb = db;
     if (hasRemoteStore) {
         try {

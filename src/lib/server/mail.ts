@@ -59,6 +59,27 @@ export async function sendContactConfirmation(input: Pick<SupportMailInput, "nam
     });
 }
 
+export async function sendLoginOtpMail(input: { email: string; code: string }) {
+    const transporter = getTransporter();
+    return transporter.sendMail({
+        from: formatAddress(process.env.SMTP_FROM || supportEmail, "GPT Chart View Security"),
+        to: input.email,
+        subject: "Your GPT Chart View verification code",
+        text: `Your GPT Chart View verification code is ${input.code}. It expires in 15 minutes. If you did not request this code, you can ignore this email.`,
+        html: `
+            <div style="font-family:Arial,sans-serif;background:#05070f;padding:28px;color:#ffffff;">
+                <div style="max-width:560px;margin:0 auto;background:#0b1018;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:28px;">
+                    <p style="margin:0 0 10px;color:#16c7ff;font-size:12px;text-transform:uppercase;letter-spacing:0.16em;font-weight:800;">Secure login</p>
+                    <h1 style="margin:0 0 14px;font-size:24px;">Your verification code</h1>
+                    <p style="margin:0 0 22px;color:#cbd5e1;line-height:1.6;">Enter this 6-digit code to access your GPT Chart View dashboard. The code expires in 15 minutes.</p>
+                    <div style="font-size:34px;letter-spacing:0.24em;font-weight:900;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:18px 22px;text-align:center;">${escapeHtml(input.code)}</div>
+                    <p style="margin:22px 0 0;color:#94a3b8;font-size:13px;line-height:1.6;">If you did not request this code, you can ignore this email.</p>
+                </div>
+            </div>
+        `,
+    });
+}
+
 function buildText(input: SupportMailInput) {
     const metadata = input.metadata ? Object.entries(input.metadata).map(([key, value]) => `${key}: ${value}`).join("\n") : "";
     return [
