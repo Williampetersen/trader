@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { Analytics } from '@vercel/analytics/next';
 import { Source_Sans_3, Manrope } from "next/font/google";
 
 import { siteDetails } from '@/data/siteDetails';
@@ -76,6 +77,7 @@ export default function RootLayout({
           <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
         ))}
         {children}
+        <Analytics />
       </body>
     </html>
   );
