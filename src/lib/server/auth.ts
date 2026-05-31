@@ -30,6 +30,11 @@ export async function requireUser() {
 
 export async function createSessionResponse(userId: string) {
     const db = await readDb();
+    const user = db.users.find((item) => item.id === userId);
+    if (!user) {
+        return NextResponse.json({ error: "Unable to create session." }, { status: 500 });
+    }
+
     const session: SessionRecord = {
         id: newId(),
         userId,
@@ -38,7 +43,7 @@ export async function createSessionResponse(userId: string) {
     db.sessions.push(session);
     await writeDb(db);
 
-    const response = NextResponse.json({ ok: true, user: publicUser(db.users.find((user) => user.id === userId)!) });
+    const response = NextResponse.json({ ok: true, user: publicUser(user) });
     response.cookies.set(SESSION_COOKIE, session.id, {
         httpOnly: true,
         sameSite: "lax",

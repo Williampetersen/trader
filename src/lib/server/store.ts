@@ -117,7 +117,14 @@ interface AppDb {
     newsletterLeads?: NewsletterLeadRecord[];
 }
 
-const dbPath = path.join(process.cwd(), ".local", "gpt-chart-view", "db.json");
+const dataRoot = process.env.GCV_DATA_DIR || (process.env.VERCEL ? path.join("/tmp", "gpt-chart-view") : path.join(process.cwd(), ".local", "gpt-chart-view"));
+const dbPath = path.join(dataRoot, "db.json");
+let memoryDb: AppDb | null = null;
+const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisDbKey = process.env.GCV_DB_KEY || "gpt-chart-view:db";
+
+const hasRemoteStore = Boolean(redisUrl && redisToken);
 
 const emptyDb = (): AppDb => ({
     users: [],
@@ -250,9 +257,28 @@ export function applyPlanRules(user: UserRecord, now = new Date()) {
 }
 
 export async function readDb(): Promise<AppDb> {
+    if (hasRemoteStore) {
+        try {
+            const remoteDb = await readRemoteDb();
+            if (remoteDb) {
+                memoryDb = remoteDb;
+                return remoteDb;
+            }
+
+            const db = emptyDb();
+            await writeDb(db);
+            return db;
+        } catch (error) {
+            console.error("Remote database read failed", error);
+        }
+    }
+
+    if (memoryDb) return memoryDb;
+
     try {
         const raw = await readFile(dbPath, "utf8");
-        return JSON.parse(raw) as AppDb;
+        memoryDb = JSON.parse(raw) as AppDb;
+        return memoryDb;
     } catch {
         const db = emptyDb();
         await writeDb(db);
@@ -264,8 +290,49 @@ export async function writeDb(db: AppDb) {
     db.supportTickets ||= [];
     db.ownerSessions ||= [];
     db.newsletterLeads ||= [];
+    memoryDb = db;
+    if (hasRemoteStore) {
+        try {
+            await writeRemoteDb(db);
+            return;
+        } catch (error) {
+            console.error("Remote database write failed", error);
+        }
+    }
     await mkdir(path.dirname(dbPath), { recursive: true });
     await writeFile(dbPath, JSON.stringify(db, null, 2), "utf8");
+}
+
+async function readRemoteDb() {
+    const response = await fetch(redisUrl!, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${redisToken}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(["GET", redisDbKey]),
+        cache: "no-store",
+    });
+
+    if (!response.ok) throw new Error(`Redis GET failed with ${response.status}`);
+
+    const payload = await response.json() as { result?: string | null };
+    if (!payload.result) return null;
+    return JSON.parse(payload.result) as AppDb;
+}
+
+async function writeRemoteDb(db: AppDb) {
+    const response = await fetch(redisUrl!, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${redisToken}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(["SET", redisDbKey, JSON.stringify(db)]),
+        cache: "no-store",
+    });
+
+    if (!response.ok) throw new Error(`Redis SET failed with ${response.status}`);
 }
 
 export function hashPassword(password: string) {
