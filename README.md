@@ -56,6 +56,61 @@ Before starting, make sure you have the following installed:
 
 ---
 
+## Stripe Checkout
+
+Paid dashboard upgrades use Stripe Checkout.
+
+Required environment variables:
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_CURRENCY=usd
+STRIPE_PRICE_BASIC_ACCESS=price_xxx
+STRIPE_PRICE_PRO_TRADER=price_xxx
+STRIPE_PRICE_ADVANCED_TRADERS=price_xxx
+```
+
+The `STRIPE_PRICE_*` values should point to recurring Stripe prices:
+
+- Basic Access: $19 USD per week
+- Pro Trader: $49 USD per month
+- Advanced Traders: $99 USD per month
+
+Local webhook testing:
+
+```bash
+stripe listen --forward-to localhost:3001/api/stripe/webhook
+```
+
+Copy the `whsec_...` value from the Stripe CLI output into `STRIPE_WEBHOOK_SECRET`, then restart the dev server. Paid plans are activated only after Stripe confirms payment through the webhook or the verified success page.
+
+---
+
+## Owner Dashboard
+
+The private owner dashboard is separate from the user dashboard:
+
+- Owner login: `/owner/login`
+- Owner command center: `/owner`
+- Users: `/owner/users`
+- Revenue: `/owner/revenue`
+- Activity: `/owner/activity`
+- Support: `/owner/support`
+
+Required environment variables:
+
+```env
+OWNER_EMAIL=owner@gptchartview.local
+OWNER_PASSWORD=change-this-password
+```
+
+The owner dashboard shows real stored users, online users, active sessions, country data, plans, credits, payments, revenue, MRR estimate, uploads, AI activity, and support tickets. Online users are counted from account activity within the last 15 minutes.
+
+---
+
 ## Customization
 
 1. **Edit colors**: Update `globals.css` for primary, secondary, background, and accent colors.

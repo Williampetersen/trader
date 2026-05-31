@@ -14,7 +14,11 @@ export async function getSessionUser(): Promise<UserRecord | null> {
     if (!session || new Date(session.expiresAt).getTime() < Date.now()) return null;
     const user = db.users.find((item) => item.id === session.userId);
     if (!user) return null;
-    if (applyPlanRules(user)) await writeDb(db);
+    const now = new Date();
+    const planChanged = applyPlanRules(user, now);
+    const lastSeenChanged = !user.lastSeenAt || now.getTime() - new Date(user.lastSeenAt).getTime() > 60 * 1000;
+    if (lastSeenChanged) user.lastSeenAt = now.toISOString();
+    if (planChanged || lastSeenChanged) await writeDb(db);
     return user;
 }
 

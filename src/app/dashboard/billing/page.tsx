@@ -42,10 +42,10 @@ const BillingPage = async () => {
                 </ul>
 
                 <div className="mt-6 rounded-2xl border border-[#dbe3ef] bg-[#f8fafc] p-4">
-                    <strong>Cancel Subscription:</strong> Plan status is stored per user. Billing provider integration can replace this local plan record later.
+                    <strong>Stripe Checkout:</strong> Paid upgrades open Stripe&apos;s secure subscription checkout. Access is activated after Stripe confirms payment.
                 </div>
 
-                <Link href="/#pricing" className="mt-5 inline-block"><PrimaryButton>Upgrade Plan <FiArrowRight className="ml-2 inline" /></PrimaryButton></Link>
+                <Link href="/#pricing" className="mt-5 inline-block"><PrimaryButton>View Public Pricing <FiArrowRight className="ml-2 inline" /></PrimaryButton></Link>
                 <UpgradePlanButtons />
             </Panel>
 

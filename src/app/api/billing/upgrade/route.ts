@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { paidPlanNames, getPlanConfig } from "@/data/plans";
 import { requireApiUser } from "@/lib/server/responses";
-import { paidPlanNames } from "@/data/plans";
-import { PlanName, createPlan, newId, planDetails, readDb, writeDb } from "@/lib/server/store";
+import { PlanName } from "@/lib/server/store";
+import { appUrl, getStripe, stripeCurrency } from "@/lib/server/stripe";
+
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
     const { user, response } = await requireApiUser();
@@ -13,24 +17,48 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
     }
 
-    const db = await readDb();
-    const dbUser = db.users.find((item) => item.id === user.id);
-    if (!dbUser) return NextResponse.json({ error: "User not found." }, { status: 404 });
+    try {
+        const stripe = getStripe();
+        const plan = getPlanConfig(planName);
+        const baseUrl = appUrl();
+        const existingPrice = plan.stripePriceEnv ? process.env[plan.stripePriceEnv] : "";
+        const lineItem: Stripe.Checkout.SessionCreateParams.LineItem = existingPrice
+            ? { quantity: 1, price: existingPrice }
+            : {
+                quantity: 1,
+                price_data: {
+                    currency: stripeCurrency(),
+                    unit_amount: Math.round(plan.price * 100),
+                    recurring: {
+                        interval: plan.billingInterval || "month",
+                    },
+                    product_data: {
+                        name: `GPT Chart View - ${plan.name}`,
+                        description: `${plan.dailyLimit} uploads per day · ${plan.durationLabel}`,
+                    },
+                },
+            };
+        const session = await stripe.checkout.sessions.create({
+            mode: "subscription",
+            customer_email: user.email,
+            line_items: [lineItem],
+            metadata: {
+                userId: user.id,
+                planName,
+            },
+            subscription_data: {
+                metadata: {
+                    userId: user.id,
+                    planName,
+                },
+            },
+            success_url: `${baseUrl}/dashboard/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${baseUrl}/dashboard/billing?checkout=cancelled`,
+        });
 
-    const now = new Date();
-    const details = planDetails(planName);
-    const end = new Date(now.getTime() + details.days * 24 * 60 * 60 * 1000);
-    dbUser.plan = createPlan(planName, now);
-    db.payments.push({
-        id: newId(),
-        userId: user.id,
-        date: now.toISOString(),
-        plan: planName,
-        amount: details.amount,
-        start: now.toISOString(),
-        end: end.toISOString(),
-    });
-    await writeDb(db);
-
-    return NextResponse.json({ plan: dbUser.plan });
+        return NextResponse.json({ url: session.url, sessionId: session.id });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Unable to create Stripe Checkout session.";
+        return NextResponse.json({ error: message }, { status: 500 });
+    }
 }

@@ -11,9 +11,12 @@ export interface UserRecord {
     id: string;
     name: string;
     email: string;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
     passwordHash: string;
     passwordSalt: string;
     createdAt: string;
+    lastSeenAt?: string;
     profile: {
         mobile: string;
         country: string;
@@ -37,6 +40,12 @@ export interface UserRecord {
 export interface SessionRecord {
     id: string;
     userId: string;
+    expiresAt: string;
+}
+
+export interface OwnerSessionRecord {
+    id: string;
+    email: string;
     expiresAt: string;
 }
 
@@ -92,6 +101,7 @@ export interface SupportTicketRecord {
 interface AppDb {
     users: UserRecord[];
     sessions: SessionRecord[];
+    ownerSessions?: OwnerSessionRecord[];
     analyses: AnalysisRecord[];
     chats: ChatMessageRecord[];
     payments: PaymentRecord[];
@@ -103,6 +113,7 @@ const dbPath = path.join(process.cwd(), ".local", "gpt-chart-view", "db.json");
 const emptyDb = (): AppDb => ({
     users: [],
     sessions: [],
+    ownerSessions: [],
     analyses: [],
     chats: [],
     payments: [],
@@ -113,6 +124,11 @@ export const newId = () => randomBytes(16).toString("hex");
 
 export const defaultProfile = () => ({ mobile: "", country: "", gender: "", ageGroup: "" });
 
+const legacyPlanMap: Record<string, PlanName> = {
+    Starter: "Basic Access",
+    "Active Traders": "Pro Trader",
+};
+
 export function normalizeUser(user: UserRecord) {
     user.profile ||= defaultProfile();
     user.settings ||= { twoFactorEnabled: false, loginNotifications: true };
@@ -121,14 +137,14 @@ export function normalizeUser(user: UserRecord) {
 
 const dateKey = (date: Date) => date.toISOString().slice(0, 10);
 
-export function createPlan(planName: PlanName, now = new Date()) {
+export function createPlan(planName: PlanName, now = new Date(), options?: { autoRenewal?: boolean; expiresAt?: string }) {
     const config = getPlanConfig(planName);
     return {
         name: planName,
         dailyLimit: config.dailyLimit,
         creditsLeft: config.dailyLimit,
-        expiresAt: new Date(now.getTime() + config.durationDays * 24 * 60 * 60 * 1000).toISOString(),
-        autoRenewal: false,
+        expiresAt: options?.expiresAt || new Date(now.getTime() + config.durationDays * 24 * 60 * 60 * 1000).toISOString(),
+        autoRenewal: Boolean(options?.autoRenewal),
         lastCreditResetAt: now.toISOString(),
     };
 }
@@ -141,7 +157,11 @@ export function applyPlanRules(user: UserRecord, now = new Date()) {
     normalizeUser(user);
     let changed = false;
 
-    if (!planCatalog[user.plan.name]) {
+    const planName = String(user.plan.name);
+    if (legacyPlanMap[planName]) {
+        user.plan.name = legacyPlanMap[planName];
+        changed = true;
+    } else if (!planCatalog[user.plan.name]) {
         user.plan.name = "Trial";
         changed = true;
     }
@@ -200,6 +220,7 @@ export async function readDb(): Promise<AppDb> {
 
 export async function writeDb(db: AppDb) {
     db.supportTickets ||= [];
+    db.ownerSessions ||= [];
     await mkdir(path.dirname(dbPath), { recursive: true });
     await writeFile(dbPath, JSON.stringify(db, null, 2), "utf8");
 }
