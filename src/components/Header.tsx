@@ -1,10 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { Transition } from '@headlessui/react';
-import { HiOutlineXMark, HiBars3 } from 'react-icons/hi2';
-import { FiBarChart2 } from 'react-icons/fi';
+import { HiBars3, HiOutlineXMark } from 'react-icons/hi2';
+import { FiLogIn, FiSend } from 'react-icons/fi';
+import { FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
 
 import Container from './Container';
 import { siteDetails } from '@/data/siteDetails';
@@ -18,85 +20,84 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 mx-auto w-full border-b border-gray-200 bg-white/90 backdrop-blur">
+        <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#05070f]/82 text-white backdrop-blur-xl">
             <Container className="!px-0">
-                <nav className="mx-auto flex justify-between items-center py-3 px-5">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <FiBarChart2 className="text-secondary min-w-fit w-7 h-7" />
-                        <span className="manrope text-xl font-semibold text-foreground cursor-pointer">
-                            {siteDetails.siteName}
-                        </span>
+                <nav className="mx-auto grid min-h-[76px] grid-cols-[1fr_auto] items-center gap-4 px-5 lg:grid-cols-[1fr_auto_1fr]">
+                    <Link href="/" className="flex items-center">
+                        <Image src="/logo.png" alt={`${siteDetails.siteName} logo`} width={170} height={48} className="h-10 w-auto object-contain" priority />
                     </Link>
 
-                    {/* Desktop Menu */}
-                    <ul className="hidden md:flex items-center space-x-6">
-                        {menuItems.map(item => (
+                    <ul className="hidden items-center rounded-lg border border-white/10 bg-white/[0.07] p-1 lg:flex">
+                        {menuItems.map((item) => (
                             <li key={item.text}>
-                                <Link href={item.url} className="text-foreground hover:text-foreground-accent transition-colors">
+                                <Link href={item.url} className="block rounded-lg px-5 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
                                     {item.text}
                                 </Link>
                             </li>
                         ))}
-                        <li>
-                            <Link href="/login" className="text-foreground hover:text-secondary transition-colors">
-                                Login
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/signup" className="text-white bg-secondary hover:bg-[#243cc7] px-6 py-3 rounded-full transition-colors">
-                                Join free
-                            </Link>
-                        </li>
                     </ul>
 
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center">
+                    <div className="hidden items-center justify-end gap-3 lg:flex">
+                        <a href="https://x.com" aria-label="X profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FaXTwitter />
+                        </a>
+                        <a href="https://t.me" aria-label="Telegram channel" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FiSend />
+                        </a>
+                        <a href="https://www.linkedin.com" aria-label="LinkedIn profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FaLinkedinIn />
+                        </a>
+                        <div className="h-8 w-px bg-white/10" />
+                        <Link href="/login" className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
+                            <FiLogIn />
+                            Login
+                        </Link>
+                        <Link href="/signup" className="rounded-lg bg-[#16c7ff] px-6 py-3 text-sm font-extrabold text-[#03111a] transition-colors hover:bg-white">
+                            Start Now
+                        </Link>
+                    </div>
+
+                    <div className="flex items-center justify-end lg:hidden">
                         <button
                             onClick={toggleMenu}
                             type="button"
-                            className="bg-primary text-black focus:outline-none rounded-full w-10 h-10 flex items-center justify-center"
+                            className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#fed835] text-black focus:outline-none"
                             aria-controls="mobile-menu"
                             aria-expanded={isOpen}
                         >
-                            {isOpen ? (
-                                <HiOutlineXMark className="h-6 w-6" aria-hidden="true" />
-                            ) : (
-                                <HiBars3 className="h-6 w-6" aria-hidden="true" />
-                            )}
+                            {isOpen ? <HiOutlineXMark className="h-6 w-6" aria-hidden="true" /> : <HiBars3 className="h-6 w-6" aria-hidden="true" />}
                             <span className="sr-only">Toggle navigation</span>
                         </button>
                     </div>
                 </nav>
             </Container>
 
-            {/* Mobile Menu with Transition */}
             <Transition
                 show={isOpen}
                 enter="transition ease-out duration-200 transform"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-75 transform"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+                enterFrom="opacity-0 -translate-y-2"
+                enterTo="opacity-100 translate-y-0"
+                leave="transition ease-in duration-150 transform"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 -translate-y-2"
             >
-                <div id="mobile-menu" className="md:hidden bg-white shadow-lg">
-                    <ul className="flex flex-col space-y-4 pt-1 pb-6 px-6">
-                        {menuItems.map(item => (
+                <div id="mobile-menu" className="border-t border-white/10 bg-[#05070f] px-5 pb-6 pt-3 lg:hidden">
+                    <ul className="grid gap-2">
+                        {menuItems.map((item) => (
                             <li key={item.text}>
-                                <Link href={item.url} className="text-foreground hover:text-primary block" onClick={toggleMenu}>
+                                <Link href={item.url} className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
                                     {item.text}
                                 </Link>
                             </li>
                         ))}
                         <li>
-                            <Link href="/login" className="text-foreground hover:text-primary block" onClick={toggleMenu}>
+                            <Link href="/login" className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
                                 Login
                             </Link>
                         </li>
                         <li>
-                            <Link href="/signup" className="text-white bg-secondary hover:bg-[#243cc7] px-5 py-2 rounded-full block w-fit" onClick={toggleMenu}>
-                                Join free
+                            <Link href="/signup" className="block rounded-lg bg-[#16c7ff] px-4 py-3 text-sm font-extrabold text-[#03111a]" onClick={toggleMenu}>
+                                Start Now
                             </Link>
                         </li>
                     </ul>

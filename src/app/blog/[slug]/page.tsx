@@ -63,7 +63,7 @@ const BlogArticlePage = ({ params }: { params: { slug: string } }) => {
             "@type": "Organization",
             name: siteDetails.siteName,
             url: siteDetails.siteUrl,
-            logo: { "@type": "ImageObject", url: absoluteUrl("/images/logo.svg") },
+            logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png") },
         },
         mainEntityOfPage: url,
         keywords: [article.focusKeyword, ...article.relatedKeywords].join(", "),

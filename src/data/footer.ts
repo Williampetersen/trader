@@ -7,7 +7,7 @@ export const footerDetails: {
     telephone: string;
     socials: ISocials;
 } = {
-    subheading: "AI-powered chart review, trade scoring, and risk notes for active traders.",
+    subheading: "AI-powered chart review, trade scoring, risk notes, and private decision history for active traders.",
     quickLinks: [
         {
             text: "Product",
