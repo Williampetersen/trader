@@ -7,8 +7,8 @@ interface AiChartResult {
     detectedTimeframe?: string;
     summary?: string;
     entryType?: "Buy" | "Sell" | "Watch";
-    confidence?: number;
-    riskReward?: number;
+    confidence?: number | string;
+    riskReward?: number | string;
     support?: string;
     resistance?: string;
     stopLoss?: string;
@@ -38,7 +38,7 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                 Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 "Content-Type": "application/json",
                 "HTTP-Referer": "https://gptchartview.com",
-                "X-Title": "GPT Chart View",
+                "X-OpenRouter-Title": "GPT Chart View",
             },
             body: JSON.stringify({
                 model: "openai/gpt-4o-mini",
@@ -65,6 +65,8 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                                     "isCandlestickChart must be true only for a readable candlestick trading chart.",
                                     "If isCandlestickChart is false, set rejectionReason and use Watch plus Unknown/N/A values for the trading fields.",
                                     "entryType must be Buy, Sell, or Watch.",
+                                    "confidence must be a number from 0 to 100.",
+                                    "riskReward must be a decimal number such as 1.5 or 2.0.",
                                     "Use concise price/zone strings for levels. Use Watch when a trade setup is unclear.",
                                 ].join(" "),
                             },
@@ -78,7 +80,50 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                     },
                 ],
                 temperature: 0.2,
-                response_format: { type: "json_object" },
+                max_tokens: 1200,
+                response_format: {
+                    type: "json_schema",
+                    json_schema: {
+                        name: "chart_analysis",
+                        strict: true,
+                        schema: {
+                            type: "object",
+                            additionalProperties: false,
+                            properties: {
+                                isCandlestickChart: { type: "boolean" },
+                                rejectionReason: { type: "string" },
+                                detectedSymbol: { type: "string" },
+                                detectedTimeframe: { type: "string" },
+                                summary: { type: "string" },
+                                entryType: { type: "string", enum: ["Buy", "Sell", "Watch"] },
+                                confidence: { type: "number", minimum: 0, maximum: 100 },
+                                riskReward: { type: "number", minimum: 0.1, maximum: 20 },
+                                support: { type: "string" },
+                                resistance: { type: "string" },
+                                stopLoss: { type: "string" },
+                                entry: { type: "string" },
+                                tp1: { type: "string" },
+                                tp2: { type: "string" },
+                            },
+                            required: [
+                                "isCandlestickChart",
+                                "rejectionReason",
+                                "detectedSymbol",
+                                "detectedTimeframe",
+                                "summary",
+                                "entryType",
+                                "confidence",
+                                "riskReward",
+                                "support",
+                                "resistance",
+                                "stopLoss",
+                                "entry",
+                                "tp1",
+                                "tp2",
+                            ],
+                        },
+                    },
+                },
             }),
         });
 
@@ -89,7 +134,7 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
         }
 
         const payload = await response.json();
-        const content = payload.choices?.[0]?.message?.content;
+        const content = normalizeMessageContent(payload.choices?.[0]?.message?.content);
         if (!content) throw new AiAnalysisError("The AI analysis service returned an empty result.", 502);
         const parsed = parseJson(content) as AiChartResult;
         if (parsed.isCandlestickChart !== true) {
@@ -109,8 +154,8 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
             timeframe: cleanOptionalText(parsed.detectedTimeframe, "Auto"),
             summary: requireText(parsed.summary, "summary"),
             entryType,
-            confidence: clampNumber(parsed.confidence, 0, 100, "confidence"),
-            riskReward: clampNumber(parsed.riskReward, 0.1, 20, "riskReward"),
+            confidence: parseRequiredNumber(parsed.confidence, 0, 100, "confidence"),
+            riskReward: parseRequiredNumber(parsed.riskReward, 0.1, 20, "riskReward"),
             support: requireText(parsed.support, "support"),
             resistance: requireText(parsed.resistance, "resistance"),
             stopLoss: requireText(parsed.stopLoss, "stopLoss"),
@@ -124,6 +169,21 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
         throw new AiAnalysisError("The AI analysis could not be completed. Please upload a clear chart image and try again.", 502);
     }
 }
+
+const normalizeMessageContent = (content: unknown) => {
+    if (typeof content === "string") return content;
+    if (Array.isArray(content)) {
+        return content
+            .map((part) => {
+                if (typeof part === "string") return part;
+                if (part && typeof part === "object" && "text" in part) return String(part.text || "");
+                return "";
+            })
+            .join("")
+            .trim();
+    }
+    return "";
+};
 
 const parseJson = (content: string) => {
     try {
@@ -152,12 +212,21 @@ const normalizeEntryType = (value: unknown): AnalysisRecord["entryType"] => {
     throw new AiAnalysisError("The AI analysis result included an invalid entry type.", 502);
 };
 
-const clampNumber = (value: unknown, min: number, max: number, field: string) => {
-    const numeric = Number(value);
+const parseRequiredNumber = (value: unknown, min: number, max: number, field: string) => {
+    const numeric = parseNumber(value);
     if (!Number.isFinite(numeric)) {
         throw new AiAnalysisError(`The AI analysis result was missing ${field}.`, 502);
     }
     return Math.min(max, Math.max(min, numeric));
+};
+
+const parseNumber = (value: unknown) => {
+    if (typeof value === "number") return value;
+    if (typeof value !== "string") return Number.NaN;
+    const ratio = value.match(/1\s*[:/]\s*(\d+(?:\.\d+)?)/);
+    if (ratio) return Number(ratio[1]);
+    const numeric = value.match(/-?\d+(?:\.\d+)?/);
+    return numeric ? Number(numeric[0]) : Number.NaN;
 };
 
 const safeResponseText = async (response: Response) => {
