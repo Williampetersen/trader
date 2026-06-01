@@ -64,7 +64,7 @@ Required environment variables:
 
 ```env
 OPENAI_API_KEY=sk-proj-your-key
-OPENAI_MODEL=gpt-4.1-mini
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 Set these in `.env.local` for local development and in your Vercel project environment variables for production, then restart/redeploy the app.

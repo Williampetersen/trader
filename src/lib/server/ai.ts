@@ -39,7 +39,7 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+                model: process.env.OPENAI_MODEL || "gpt-4o-mini",
                 input: [
                     {
                         role: "user",
@@ -117,7 +117,7 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
         if (!response.ok) {
             const detail = await safeResponseText(response);
             console.error("OpenAI chart analysis failed", response.status, detail);
-            throw new AiAnalysisError("The AI analysis service failed. Check the OpenAI API key, model access, and billing.", 502);
+            throw new AiAnalysisError(openAiErrorMessage(response.status, detail), statusForOpenAiError(response.status));
         }
 
         const payload = await response.json();
@@ -204,4 +204,30 @@ const safeResponseText = async (response: Response) => {
     } catch {
         return "";
     }
+};
+
+const openAiErrorMessage = (status: number, detail: string) => {
+    const apiMessage = parseOpenAiErrorMessage(detail);
+    const suffix = apiMessage ? ` OpenAI said: ${apiMessage}` : "";
+
+    if (status === 401) return `OpenAI rejected the API key. Check OPENAI_API_KEY in Vercel and redeploy.${suffix}`;
+    if (status === 403) return `OpenAI denied access for this key or project. Check project permissions and model access.${suffix}`;
+    if (status === 404) return `OpenAI could not find the configured model. Set OPENAI_MODEL to gpt-4o-mini in Vercel and redeploy.${suffix}`;
+    if (status === 429) return `OpenAI quota or billing is blocking analysis. Add billing/credits to the OpenAI project or use a funded key.${suffix}`;
+    if (status >= 500) return `OpenAI is temporarily failing. Try again in a few minutes.${suffix}`;
+    return `OpenAI could not analyze the chart. Check OPENAI_API_KEY, OPENAI_MODEL, project billing, and model access.${suffix}`;
+};
+
+const parseOpenAiErrorMessage = (detail: string) => {
+    try {
+        const payload = JSON.parse(detail) as { error?: { message?: string } };
+        return payload.error?.message?.trim();
+    } catch {
+        return "";
+    }
+};
+
+const statusForOpenAiError = (status: number) => {
+    if (status === 400 || status === 401 || status === 403 || status === 404 || status === 429) return status;
+    return 502;
 };
