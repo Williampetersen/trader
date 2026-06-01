@@ -56,16 +56,17 @@ Before starting, make sure you have the following installed:
 
 ---
 
-## Real OpenAI Chart Analysis
+## Real OpenRouter Chart Analysis
 
-Chart uploads require an OpenAI API key on the server. Without it, `/api/analyses` returns a clear error and does not save a placeholder analysis or spend a user credit. OpenAI also rejects uploads that are not readable candlestick chart images.
+Chart uploads require an OpenRouter API key on the server. Without it, `/api/analyses` returns a clear error and does not save a placeholder analysis or spend a user credit. The selected vision model also rejects uploads that are not readable candlestick chart images.
 
 Required environment variables:
 
 ```env
-OPENAI_API_KEY=sk-proj-your-key
-OPENAI_MODEL=gpt-4o-mini
+OPENROUTER_API_KEY=sk-or-v1-your-key
 ```
+
+The app uses a built-in OpenRouter model default, so no OpenAI, Gemini, or model environment variables are required.
 
 Set these in `.env.local` for local development and in your Vercel project environment variables for production, then restart/redeploy the app.
 

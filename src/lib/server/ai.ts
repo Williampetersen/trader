@@ -25,33 +25,41 @@ export class AiAnalysisError extends Error {
 }
 
 export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File): Promise<AnalysisRecord> {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new AiAnalysisError("Real AI chart analysis is not configured. Add OPENAI_API_KEY on the server and try again.", 503);
+    if (!process.env.OPENROUTER_API_KEY) {
+        throw new AiAnalysisError("Real AI chart analysis is not configured. Add OPENROUTER_API_KEY on the server and try again.", 503);
     }
 
     try {
         const buffer = Buffer.from(await image.arrayBuffer());
         const dataUrl = `data:${image.type || "image/png"};base64,${buffer.toString("base64")}`;
-        const response = await fetch("https://api.openai.com/v1/responses", {
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 "Content-Type": "application/json",
+                "HTTP-Referer": "https://gptchartview.com",
+                "X-Title": "GPT Chart View",
             },
             body: JSON.stringify({
-                model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-                input: [
+                model: "openai/gpt-4o-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: [
+                            "You analyze trading chart screenshots for educational decision support.",
+                            "Return valid JSON only. Do not wrap it in markdown.",
+                            "Do not promise profit or give financial advice.",
+                        ].join(" "),
+                    },
                     {
                         role: "user",
                         content: [
                             {
-                                type: "input_text",
+                                type: "text",
                                 text: [
-                                    "You analyze trading chart screenshots for educational decision support.",
                                     "First decide whether the uploaded image is a readable financial candlestick chart.",
                                     "Reject the image if it is not a chart, if it has no visible candles, or if the candles/price action are too unclear to analyze.",
                                     "Use only visible chart evidence. If symbol or timeframe are visible, identify them; otherwise use Unknown.",
-                                    "Do not promise profit or give financial advice.",
                                     "Return JSON with these exact keys:",
                                     "isCandlestickChart, rejectionReason, detectedSymbol, detectedTimeframe, summary, entryType, confidence, riskReward, support, resistance, stopLoss, entry, tp1, tp2.",
                                     "isCandlestickChart must be true only for a readable candlestick trading chart.",
@@ -61,80 +69,34 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                                 ].join(" "),
                             },
                             {
-                                type: "input_image",
-                                image_url: dataUrl,
+                                type: "image_url",
+                                image_url: {
+                                    url: dataUrl,
+                                },
                             },
                         ],
                     },
                 ],
                 temperature: 0.2,
-                text: {
-                    format: {
-                        type: "json_schema",
-                        name: "chart_analysis",
-                        strict: true,
-                        schema: {
-                            type: "object",
-                            additionalProperties: false,
-                            properties: {
-                                isCandlestickChart: { type: "boolean" },
-                                rejectionReason: { type: "string" },
-                                detectedSymbol: { type: "string" },
-                                detectedTimeframe: { type: "string" },
-                                summary: { type: "string" },
-                                entryType: { type: "string", enum: ["Buy", "Sell", "Watch"] },
-                                confidence: { type: "number" },
-                                riskReward: { type: "number" },
-                                support: { type: "string" },
-                                resistance: { type: "string" },
-                                stopLoss: { type: "string" },
-                                entry: { type: "string" },
-                                tp1: { type: "string" },
-                                tp2: { type: "string" },
-                            },
-                            required: [
-                                "isCandlestickChart",
-                                "rejectionReason",
-                                "detectedSymbol",
-                                "detectedTimeframe",
-                                "summary",
-                                "entryType",
-                                "confidence",
-                                "riskReward",
-                                "support",
-                                "resistance",
-                                "stopLoss",
-                                "entry",
-                                "tp1",
-                                "tp2",
-                            ],
-                        },
-                    },
-                },
+                response_format: { type: "json_object" },
             }),
         });
 
         if (!response.ok) {
             const detail = await safeResponseText(response);
-            console.error("OpenAI chart analysis failed", response.status, detail);
-            throw new AiAnalysisError(openAiErrorMessage(response.status, detail), statusForOpenAiError(response.status));
+            console.error("OpenRouter chart analysis failed", response.status, detail);
+            throw new AiAnalysisError(openRouterErrorMessage(response.status, detail), statusForOpenRouterError(response.status));
         }
 
         const payload = await response.json();
-        const content = typeof payload.output_text === "string"
-            ? payload.output_text
-            : payload.output
-                ?.flatMap((item: { content?: { text?: string }[] }) => item.content || [])
-                .map((item: { text?: string }) => item.text || "")
-                .join("")
-                .trim();
+        const content = payload.choices?.[0]?.message?.content;
         if (!content) throw new AiAnalysisError("The AI analysis service returned an empty result.", 502);
         const parsed = parseJson(content) as AiChartResult;
         if (parsed.isCandlestickChart !== true) {
             const detail = parsed.rejectionReason?.trim();
             throw new AiAnalysisError(
                 detail
-                    ? `Please upload a clear candlestick chart image with visible candles and price action. OpenAI could not analyze this image: ${detail}`
+                    ? `Please upload a clear candlestick chart image with visible candles and price action. OpenRouter could not analyze this image: ${detail}`
                     : "Please upload a clear candlestick chart image with visible candles and price action.",
                 422
             );
@@ -206,19 +168,20 @@ const safeResponseText = async (response: Response) => {
     }
 };
 
-const openAiErrorMessage = (status: number, detail: string) => {
-    const apiMessage = parseOpenAiErrorMessage(detail);
-    const suffix = apiMessage ? ` OpenAI said: ${apiMessage}` : "";
+const openRouterErrorMessage = (status: number, detail: string) => {
+    const apiMessage = parseProviderErrorMessage(detail);
+    const suffix = apiMessage ? ` OpenRouter said: ${apiMessage}` : "";
 
-    if (status === 401) return `OpenAI rejected the API key. Check OPENAI_API_KEY in Vercel and redeploy.${suffix}`;
-    if (status === 403) return `OpenAI denied access for this key or project. Check project permissions and model access.${suffix}`;
-    if (status === 404) return `OpenAI could not find the configured model. Set OPENAI_MODEL to gpt-4o-mini in Vercel and redeploy.${suffix}`;
-    if (status === 429) return `OpenAI quota or billing is blocking analysis. Add billing/credits to the OpenAI project or use a funded key.${suffix}`;
-    if (status >= 500) return `OpenAI is temporarily failing. Try again in a few minutes.${suffix}`;
-    return `OpenAI could not analyze the chart. Check OPENAI_API_KEY, OPENAI_MODEL, project billing, and model access.${suffix}`;
+    if (status === 401) return `OpenRouter rejected the API key. Check OPENROUTER_API_KEY in Vercel and redeploy.${suffix}`;
+    if (status === 402) return `OpenRouter credits are required for this model. Add credits to OpenRouter or choose a free vision model.${suffix}`;
+    if (status === 403) return `OpenRouter denied access for this key or model. Check key permissions and model access.${suffix}`;
+    if (status === 404) return `OpenRouter could not find the built-in chart analysis model. Contact support or try again later.${suffix}`;
+    if (status === 429) return `OpenRouter rate limit or credits are blocking analysis. Check OpenRouter credits, limits, and model access.${suffix}`;
+    if (status >= 500) return `OpenRouter or the selected model provider is temporarily failing. Try again in a few minutes.${suffix}`;
+    return `OpenRouter could not analyze the chart. Check OPENROUTER_API_KEY, credits, and model access.${suffix}`;
 };
 
-const parseOpenAiErrorMessage = (detail: string) => {
+const parseProviderErrorMessage = (detail: string) => {
     try {
         const payload = JSON.parse(detail) as { error?: { message?: string } };
         return payload.error?.message?.trim();
@@ -227,7 +190,7 @@ const parseOpenAiErrorMessage = (detail: string) => {
     }
 };
 
-const statusForOpenAiError = (status: number) => {
-    if (status === 400 || status === 401 || status === 403 || status === 404 || status === 429) return status;
+const statusForOpenRouterError = (status: number) => {
+    if (status === 400 || status === 401 || status === 402 || status === 403 || status === 404 || status === 429) return status;
     return 502;
 };
