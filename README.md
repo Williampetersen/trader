@@ -56,6 +56,21 @@ Before starting, make sure you have the following installed:
 
 ---
 
+## Real AI Chart Analysis
+
+Chart uploads require an OpenAI API key on the server. Without it, `/api/analyses` returns a clear error and does not save a placeholder analysis or spend a user credit.
+
+Required environment variables:
+
+```env
+OPENAI_API_KEY=sk-proj-your-key
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Set these in `.env.local` for local development and in your Vercel project environment variables for production, then restart/redeploy the app.
+
+---
+
 ## Stripe Checkout
 
 Paid dashboard upgrades use Stripe Checkout.

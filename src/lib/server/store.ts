@@ -129,7 +129,7 @@ interface AppDb {
     authOtps?: AuthOtpRecord[];
 }
 
-const dataRoot = process.env.GCV_DATA_DIR || (process.env.VERCEL ? path.join("/tmp", "gpt-chart-view") : path.join(process.cwd(), ".local", "gpt-chart-view"));
+export const dataRoot = process.env.GCV_DATA_DIR || (process.env.VERCEL ? path.join("/tmp", "gpt-chart-view") : path.join(process.cwd(), ".local", "gpt-chart-view"));
 const dbPath = path.join(dataRoot, "db.json");
 let memoryDb: AppDb | null = null;
 const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;

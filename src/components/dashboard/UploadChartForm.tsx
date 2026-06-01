@@ -36,7 +36,7 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
         setError("");
         const form = new FormData(event.currentTarget);
         const response = await fetch("/api/analyses", { method: "POST", body: form });
-        const data = await response.json();
+        const data = await response.json().catch(() => ({ error: "Unable to analyze chart right now. Please try again." }));
         setLoading(false);
         if (!response.ok) {
             const message = data.error || "Unable to analyze chart.";

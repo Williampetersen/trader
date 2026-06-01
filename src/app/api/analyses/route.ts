@@ -3,8 +3,8 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { paidPlans } from "@/data/plans";
 import { requireApiUser } from "@/lib/server/responses";
-import { applyPlanRules, buildAnalysis, isPlanExpired, newId, readDb, type UserRecord, writeDb } from "@/lib/server/store";
-import { enrichAnalysisWithAi } from "@/lib/server/ai";
+import { applyPlanRules, buildAnalysis, dataRoot, isPlanExpired, newId, readDb, type UserRecord, writeDb } from "@/lib/server/store";
+import { AiAnalysisError, enrichAnalysisWithAi } from "@/lib/server/ai";
 
 const upgradePlans = paidPlans.map((plan) => ({
     name: plan.name,
@@ -42,50 +42,68 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-    const { user, response } = await requireApiUser();
-    if (!user) return response;
+    try {
+        const { user, response } = await requireApiUser();
+        if (!user) return response;
 
-    const db = await readDb();
-    const dbUser = db.users.find((item) => item.id === user.id);
-    if (!dbUser) return NextResponse.json({ error: "User not found." }, { status: 404 });
-    const planChanged = applyPlanRules(dbUser);
-    if (isPlanExpired(dbUser)) {
-        if (planChanged) await writeDb(db);
-        return upgradeRequired(dbUser, "plan_expired");
+        const db = await readDb();
+        const dbUser = db.users.find((item) => item.id === user.id);
+        if (!dbUser) return NextResponse.json({ error: "User not found." }, { status: 404 });
+        const planChanged = applyPlanRules(dbUser);
+        if (isPlanExpired(dbUser)) {
+            if (planChanged) await writeDb(db);
+            return upgradeRequired(dbUser, "plan_expired");
+        }
+        if (dbUser.plan.creditsLeft <= 0) {
+            if (planChanged) await writeDb(db);
+            return upgradeRequired(dbUser, "limit_reached");
+        }
+
+        const form = await request.formData();
+        const file = form.get("file") as File | null;
+        const symbol = String(form.get("symbol") || "EUR/USD");
+        const timeframe = String(form.get("timeframe") || "1h");
+        if (!file) return NextResponse.json({ error: "A chart image is required." }, { status: 400 });
+        if (!file.type.startsWith("image/")) {
+            return NextResponse.json({ error: "Upload a PNG, JPG, or WEBP chart image." }, { status: 400 });
+        }
+
+        const imageBytes = Buffer.from(await file.arrayBuffer());
+        const uploadId = newId();
+        const uploadDir = path.join(dataRoot, "uploads", user.id);
+        await mkdir(uploadDir, { recursive: true });
+        const extension = path.extname(file.name) || extensionForMime(file.type);
+        const imagePath = path.join(uploadDir, `${uploadId}${extension}`);
+
+        const baseAnalysis = {
+            ...buildAnalysis(user.id, file.name, symbol, timeframe),
+            id: uploadId,
+            imagePath,
+            imageMime: file.type || "image/png",
+        };
+        const analysis = await enrichAnalysisWithAi(baseAnalysis, new File([imageBytes], file.name, { type: file.type || "image/png" }));
+        await writeFile(imagePath, imageBytes);
+        db.analyses.push(analysis);
+        const now = new Date();
+        dbUser.plan.creditsLeft = Math.max(0, dbUser.plan.creditsLeft - 1);
+        dbUser.plan.lastCreditResetAt ||= now.toISOString();
+        if (dbUser.plan.name === "Trial" && dbUser.plan.creditsLeft <= 0) {
+            dbUser.plan.expiresAt = now.toISOString();
+        }
+        await writeDb(db);
+
+        return NextResponse.json({ analysis });
+    } catch (error) {
+        if (error instanceof AiAnalysisError) {
+            return NextResponse.json({ error: error.message }, { status: error.status });
+        }
+        console.error("Chart upload failed", error);
+        return NextResponse.json({ error: "Unable to analyze chart right now. Please try again." }, { status: 500 });
     }
-    if (dbUser.plan.creditsLeft <= 0) {
-        if (planChanged) await writeDb(db);
-        return upgradeRequired(dbUser, "limit_reached");
-    }
-
-    const form = await request.formData();
-    const file = form.get("file") as File | null;
-    const symbol = String(form.get("symbol") || "EUR/USD");
-    const timeframe = String(form.get("timeframe") || "1h");
-    if (!file) return NextResponse.json({ error: "A chart image is required." }, { status: 400 });
-
-    const uploadId = newId();
-    const uploadDir = path.join(process.cwd(), ".local", "gpt-chart-view", "uploads", user.id);
-    await mkdir(uploadDir, { recursive: true });
-    const extension = path.extname(file.name) || ".png";
-    const imagePath = path.join(uploadDir, `${uploadId}${extension}`);
-    await writeFile(imagePath, Buffer.from(await file.arrayBuffer()));
-
-    const baseAnalysis = {
-        ...buildAnalysis(user.id, file.name, symbol, timeframe),
-        id: uploadId,
-        imagePath,
-        imageMime: file.type || "image/png",
-    };
-    const analysis = await enrichAnalysisWithAi(baseAnalysis, file);
-    db.analyses.push(analysis);
-    const now = new Date();
-    dbUser.plan.creditsLeft = Math.max(0, dbUser.plan.creditsLeft - 1);
-    dbUser.plan.lastCreditResetAt ||= now.toISOString();
-    if (dbUser.plan.name === "Trial" && dbUser.plan.creditsLeft <= 0) {
-        dbUser.plan.expiresAt = now.toISOString();
-    }
-    await writeDb(db);
-
-    return NextResponse.json({ analysis });
 }
+
+const extensionForMime = (mime: string) => {
+    if (mime === "image/jpeg") return ".jpg";
+    if (mime === "image/webp") return ".webp";
+    return ".png";
+};
