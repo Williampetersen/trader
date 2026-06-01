@@ -25,25 +25,27 @@ export class AiAnalysisError extends Error {
 }
 
 export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File): Promise<AnalysisRecord> {
-    if (!process.env.GEMINI_API_KEY) {
-        throw new AiAnalysisError("Real AI chart analysis is not configured. Add GEMINI_API_KEY on the server and try again.", 503);
+    if (!process.env.OPENAI_API_KEY) {
+        throw new AiAnalysisError("Real AI chart analysis is not configured. Add OPENAI_API_KEY on the server and try again.", 503);
     }
 
     try {
         const buffer = Buffer.from(await image.arrayBuffer());
-        const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        const dataUrl = `data:${image.type || "image/png"};base64,${buffer.toString("base64")}`;
+        const response = await fetch("https://api.openai.com/v1/responses", {
             method: "POST",
             headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
                 "Content-Type": "application/json",
-                "x-goog-api-key": process.env.GEMINI_API_KEY,
             },
             body: JSON.stringify({
-                contents: [
+                model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+                input: [
                     {
                         role: "user",
-                        parts: [
+                        content: [
                             {
+                                type: "input_text",
                                 text: [
                                     "You analyze trading chart screenshots for educational decision support.",
                                     "First decide whether the uploaded image is a readable financial candlestick chart.",
@@ -59,39 +61,80 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
                                 ].join(" "),
                             },
                             {
-                                inlineData: {
-                                    mimeType: image.type || "image/png",
-                                    data: buffer.toString("base64"),
-                                },
+                                type: "input_image",
+                                image_url: dataUrl,
                             },
                         ],
                     },
                 ],
-                generationConfig: {
-                    temperature: 0.2,
-                    responseMimeType: "application/json",
+                temperature: 0.2,
+                text: {
+                    format: {
+                        type: "json_schema",
+                        name: "chart_analysis",
+                        strict: true,
+                        schema: {
+                            type: "object",
+                            additionalProperties: false,
+                            properties: {
+                                isCandlestickChart: { type: "boolean" },
+                                rejectionReason: { type: "string" },
+                                detectedSymbol: { type: "string" },
+                                detectedTimeframe: { type: "string" },
+                                summary: { type: "string" },
+                                entryType: { type: "string", enum: ["Buy", "Sell", "Watch"] },
+                                confidence: { type: "number" },
+                                riskReward: { type: "number" },
+                                support: { type: "string" },
+                                resistance: { type: "string" },
+                                stopLoss: { type: "string" },
+                                entry: { type: "string" },
+                                tp1: { type: "string" },
+                                tp2: { type: "string" },
+                            },
+                            required: [
+                                "isCandlestickChart",
+                                "rejectionReason",
+                                "detectedSymbol",
+                                "detectedTimeframe",
+                                "summary",
+                                "entryType",
+                                "confidence",
+                                "riskReward",
+                                "support",
+                                "resistance",
+                                "stopLoss",
+                                "entry",
+                                "tp1",
+                                "tp2",
+                            ],
+                        },
+                    },
                 },
             }),
         });
 
         if (!response.ok) {
             const detail = await safeResponseText(response);
-            console.error("Gemini chart analysis failed", response.status, detail);
-            throw new AiAnalysisError("The AI analysis service failed. Check the Gemini API key, model access, and billing.", 502);
+            console.error("OpenAI chart analysis failed", response.status, detail);
+            throw new AiAnalysisError("The AI analysis service failed. Check the OpenAI API key, model access, and billing.", 502);
         }
 
         const payload = await response.json();
-        const content = payload.candidates?.[0]?.content?.parts
-            ?.map((part: { text?: string }) => part.text || "")
-            .join("")
-            .trim();
+        const content = typeof payload.output_text === "string"
+            ? payload.output_text
+            : payload.output
+                ?.flatMap((item: { content?: { text?: string }[] }) => item.content || [])
+                .map((item: { text?: string }) => item.text || "")
+                .join("")
+                .trim();
         if (!content) throw new AiAnalysisError("The AI analysis service returned an empty result.", 502);
         const parsed = parseJson(content) as AiChartResult;
         if (parsed.isCandlestickChart !== true) {
             const detail = parsed.rejectionReason?.trim();
             throw new AiAnalysisError(
                 detail
-                    ? `Please upload a clear candlestick chart image with visible candles and price action. Gemini could not analyze this image: ${detail}`
+                    ? `Please upload a clear candlestick chart image with visible candles and price action. OpenAI could not analyze this image: ${detail}`
                     : "Please upload a clear candlestick chart image with visible candles and price action.",
                 422
             );
