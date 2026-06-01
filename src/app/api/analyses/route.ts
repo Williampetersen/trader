@@ -61,8 +61,6 @@ export async function POST(request: NextRequest) {
 
         const form = await request.formData();
         const file = form.get("file") as File | null;
-        const symbol = String(form.get("symbol") || "EUR/USD");
-        const timeframe = String(form.get("timeframe") || "1h");
         if (!file) return NextResponse.json({ error: "A chart image is required." }, { status: 400 });
         if (!file.type.startsWith("image/")) {
             return NextResponse.json({ error: "Upload a PNG, JPG, or WEBP chart image." }, { status: 400 });
@@ -76,7 +74,7 @@ export async function POST(request: NextRequest) {
         const imagePath = path.join(uploadDir, `${uploadId}${extension}`);
 
         const baseAnalysis = {
-            ...buildAnalysis(user.id, file.name, symbol, timeframe),
+            ...buildAnalysis(user.id, file.name, "Chart", "Auto"),
             id: uploadId,
             imagePath,
             imageMime: file.type || "image/png",

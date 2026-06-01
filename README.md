@@ -56,15 +56,15 @@ Before starting, make sure you have the following installed:
 
 ---
 
-## Real AI Chart Analysis
+## Real Gemini Chart Analysis
 
-Chart uploads require an OpenAI API key on the server. Without it, `/api/analyses` returns a clear error and does not save a placeholder analysis or spend a user credit.
+Chart uploads require a Gemini API key on the server. Without it, `/api/analyses` returns a clear error and does not save a placeholder analysis or spend a user credit. Gemini also rejects uploads that are not readable candlestick chart images.
 
 Required environment variables:
 
 ```env
-OPENAI_API_KEY=sk-proj-your-key
-OPENAI_MODEL=gpt-4o-mini
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 Set these in `.env.local` for local development and in your Vercel project environment variables for production, then restart/redeploy the app.

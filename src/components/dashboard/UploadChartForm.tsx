@@ -82,24 +82,6 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
                 )}
 
                 <form onSubmit={submit} className="mt-8 space-y-5">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <label>
-                            <span className="font-bold">Symbol</span>
-                            <input name="symbol" defaultValue="EUR/USD" disabled={blocked} className="mt-2 w-full rounded-xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff] disabled:opacity-60" />
-                        </label>
-                        <label>
-                            <span className="font-bold">Time frame</span>
-                            <select name="timeframe" defaultValue="1h" disabled={blocked} className="mt-2 w-full rounded-xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors focus:border-[#3457ff] disabled:opacity-60">
-                                <option>5m</option>
-                                <option>15m</option>
-                                <option>30m</option>
-                                <option>1h</option>
-                                <option>4h</option>
-                                <option>1D</option>
-                            </select>
-                        </label>
-                    </div>
-
                     <label
                         onClick={() => {
                             if (blocked) setUpgradeOpen(true);
@@ -141,7 +123,7 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
                     <Guide icon={<FiCheck />} title="Allowed Chart Type:">Use clear candlestick screenshots for best analysis quality.</Guide>
                     <Guide icon={<FiUpload />} title="How to Upload:">Select a PNG, JPG, or WEBP chart image and submit it for analysis.</Guide>
                     <Guide icon={<FiImage />} title="Supported Trading Styles:">Scalping, intraday, swing trading, and higher-timeframe reviews.</Guide>
-                    <Guide icon={<FiSearch />} title="Chart Requirements:">Include a visible symbol and timeframe, and avoid cluttered screenshots.</Guide>
+                    <Guide icon={<FiSearch />} title="Chart Requirements:">The image must contain visible candlesticks and readable price action. Non-chart images are rejected.</Guide>
                 </div>
             </Panel>
         </div>

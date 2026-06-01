@@ -1,6 +1,10 @@
 import { AnalysisRecord } from "./store";
 
 interface AiChartResult {
+    isCandlestickChart?: boolean;
+    rejectionReason?: string;
+    detectedSymbol?: string;
+    detectedTimeframe?: string;
     summary?: string;
     entryType?: "Buy" | "Sell" | "Watch";
     confidence?: number;
@@ -21,66 +25,83 @@ export class AiAnalysisError extends Error {
 }
 
 export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File): Promise<AnalysisRecord> {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new AiAnalysisError("Real AI chart analysis is not configured. Add OPENAI_API_KEY on the server and try again.", 503);
+    if (!process.env.GEMINI_API_KEY) {
+        throw new AiAnalysisError("Real AI chart analysis is not configured. Add GEMINI_API_KEY on the server and try again.", 503);
     }
 
     try {
         const buffer = Buffer.from(await image.arrayBuffer());
-        const dataUrl = `data:${image.type || "image/png"};base64,${buffer.toString("base64")}`;
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
                 "Content-Type": "application/json",
+                "x-goog-api-key": process.env.GEMINI_API_KEY,
             },
             body: JSON.stringify({
-                model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-                response_format: { type: "json_object" },
-                messages: [
-                    {
-                        role: "system",
-                        content: [
-                            "You analyze trading chart screenshots for educational decision support.",
-                            "Use only visible chart evidence and the provided symbol/timeframe.",
-                            "If the image is not a readable trading chart, set entryType to Watch and explain why.",
-                            "Return valid JSON only. Do not promise profit or give financial advice.",
-                        ].join(" "),
-                    },
+                contents: [
                     {
                         role: "user",
-                        content: [
+                        parts: [
                             {
-                                type: "text",
                                 text: [
-                                    `Analyze this ${analysis.symbol} ${analysis.timeframe} chart screenshot.`,
+                                    "You analyze trading chart screenshots for educational decision support.",
+                                    "First decide whether the uploaded image is a readable financial candlestick chart.",
+                                    "Reject the image if it is not a chart, if it has no visible candles, or if the candles/price action are too unclear to analyze.",
+                                    "Use only visible chart evidence. If symbol or timeframe are visible, identify them; otherwise use Unknown.",
+                                    "Do not promise profit or give financial advice.",
                                     "Return JSON with these exact keys:",
-                                    "summary, entryType, confidence, riskReward, support, resistance, stopLoss, entry, tp1, tp2.",
+                                    "isCandlestickChart, rejectionReason, detectedSymbol, detectedTimeframe, summary, entryType, confidence, riskReward, support, resistance, stopLoss, entry, tp1, tp2.",
+                                    "isCandlestickChart must be true only for a readable candlestick trading chart.",
+                                    "If isCandlestickChart is false, set rejectionReason and use Watch plus Unknown/N/A values for the trading fields.",
                                     "entryType must be Buy, Sell, or Watch.",
                                     "Use concise price/zone strings for levels. Use Watch when a trade setup is unclear.",
                                 ].join(" "),
                             },
-                            { type: "image_url", image_url: { url: dataUrl } },
+                            {
+                                inlineData: {
+                                    mimeType: image.type || "image/png",
+                                    data: buffer.toString("base64"),
+                                },
+                            },
                         ],
                     },
                 ],
+                generationConfig: {
+                    temperature: 0.2,
+                    responseMimeType: "application/json",
+                },
             }),
         });
 
         if (!response.ok) {
             const detail = await safeResponseText(response);
-            console.error("OpenAI chart analysis failed", response.status, detail);
-            throw new AiAnalysisError("The AI analysis service failed. Check the OpenAI API key, model access, and billing.", 502);
+            console.error("Gemini chart analysis failed", response.status, detail);
+            throw new AiAnalysisError("The AI analysis service failed. Check the Gemini API key, model access, and billing.", 502);
         }
 
         const payload = await response.json();
-        const content = payload.choices?.[0]?.message?.content;
+        const content = payload.candidates?.[0]?.content?.parts
+            ?.map((part: { text?: string }) => part.text || "")
+            .join("")
+            .trim();
         if (!content) throw new AiAnalysisError("The AI analysis service returned an empty result.", 502);
-        const parsed = JSON.parse(content) as AiChartResult;
+        const parsed = parseJson(content) as AiChartResult;
+        if (parsed.isCandlestickChart !== true) {
+            const detail = parsed.rejectionReason?.trim();
+            throw new AiAnalysisError(
+                detail
+                    ? `Please upload a clear candlestick chart image with visible candles and price action. Gemini could not analyze this image: ${detail}`
+                    : "Please upload a clear candlestick chart image with visible candles and price action.",
+                422
+            );
+        }
         const entryType = normalizeEntryType(parsed.entryType);
 
         return {
             ...analysis,
+            symbol: cleanOptionalText(parsed.detectedSymbol, "Chart"),
+            timeframe: cleanOptionalText(parsed.detectedTimeframe, "Auto"),
             summary: requireText(parsed.summary, "summary"),
             entryType,
             confidence: clampNumber(parsed.confidence, 0, 100, "confidence"),
@@ -99,10 +120,25 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
     }
 }
 
+const parseJson = (content: string) => {
+    try {
+        return JSON.parse(content);
+    } catch {
+        const match = content.match(/\{[\s\S]*\}/);
+        if (!match) throw new AiAnalysisError("The AI analysis service returned invalid JSON.", 502);
+        return JSON.parse(match[0]);
+    }
+};
+
 const requireText = (value: unknown, field: string) => {
     if (typeof value !== "string" || !value.trim()) {
         throw new AiAnalysisError(`The AI analysis result was missing ${field}.`, 502);
     }
+    return value.trim();
+};
+
+const cleanOptionalText = (value: unknown, fallback: string) => {
+    if (typeof value !== "string" || !value.trim()) return fallback;
     return value.trim();
 };
 
