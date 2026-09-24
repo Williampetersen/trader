@@ -6,6 +6,8 @@ import { requireApiUser } from "@/lib/server/responses";
 import { applyPlanRules, buildAnalysis, dataRoot, isPlanExpired, newId, readDb, type UserRecord, writeDb } from "@/lib/server/store";
 import { AiAnalysisError, enrichAnalysisWithAi } from "@/lib/server/ai";
 
+const MAX_IMAGE_BYTES = 7 * 1024 * 1024;
+
 const upgradePlans = paidPlans.map((plan) => ({
     name: plan.name,
     price: plan.price,
@@ -65,6 +67,13 @@ export async function POST(request: NextRequest) {
         if (!file.type.startsWith("image/")) {
             return NextResponse.json({ error: "Upload a PNG, JPG, or WEBP chart image." }, { status: 400 });
         }
+        if (file.size > MAX_IMAGE_BYTES) {
+            return NextResponse.json({ error: "This image is too large. Upload a chart screenshot under 7 MB." }, { status: 400 });
+        }
+        const hints = {
+            symbol: String(form.get("symbol") || "").trim().slice(0, 30),
+            timeframe: String(form.get("timeframe") || "").trim().slice(0, 12),
+        };
 
         const imageBytes = Buffer.from(await file.arrayBuffer());
         const uploadId = newId();
@@ -79,7 +88,7 @@ export async function POST(request: NextRequest) {
             imagePath,
             imageMime: file.type || "image/png",
         };
-        const analysis = await enrichAnalysisWithAi(baseAnalysis, new File([imageBytes], file.name, { type: file.type || "image/png" }));
+        const analysis = await enrichAnalysisWithAi(baseAnalysis, new File([imageBytes], file.name, { type: file.type || "image/png" }), hints);
         await writeFile(imagePath, imageBytes);
         db.analyses.push(analysis);
         const now = new Date();

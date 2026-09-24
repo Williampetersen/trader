@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { FiCheck, FiImage, FiSearch, FiUpload } from "react-icons/fi";
-import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, PrimaryButton, type Tone } from "@/components/dashboard/DashboardUi";
+import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, PrimaryButton, inputClass, type Tone } from "@/components/dashboard/DashboardUi";
 import PlanUpgradeModal from "@/components/dashboard/PlanUpgradeModal";
 
 interface UploadChartFormProps {
@@ -107,6 +107,23 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
                             onChange={(event) => setFileName(event.target.files?.[0]?.name || "")}
                         />
                     </label>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <label className="block">
+                            <span className="text-sm font-medium text-slate-700">Symbol <span className="font-normal text-slate-400">(optional)</span></span>
+                            <input name="symbol" disabled={blocked} maxLength={30} placeholder="e.g. BTCUSDT, EURUSD, XAUUSD" className={clsx(inputClass, "mt-1.5 uppercase placeholder:normal-case")} />
+                        </label>
+                        <label className="block">
+                            <span className="text-sm font-medium text-slate-700">Timeframe <span className="font-normal text-slate-400">(optional)</span></span>
+                            <select name="timeframe" disabled={blocked} defaultValue="" className={clsx(inputClass, "mt-1.5")}>
+                                <option value="">Auto-detect from chart</option>
+                                {["1m", "5m", "15m", "30m", "1H", "4H", "1D", "1W"].map((timeframe) => (
+                                    <option key={timeframe} value={timeframe}>{timeframe}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <p className="-mt-2 text-xs text-slate-400">Leave empty and the AI reads them from the screenshot. Filling them in improves accuracy.</p>
 
                     {error && <Notice tone="red">{error}</Notice>}
                     <PrimaryButton disabled={loading} className="w-full py-3">

@@ -19,6 +19,7 @@ import {
     FiUser,
 } from "react-icons/fi";
 import { countries } from "@/data/countries";
+import { Steps } from "@/components/auth/AuthLayout";
 import AppFrame, { type AppNavItem } from "./AppFrame";
 import { Avatar, Notice, inputClass, primaryButtonClass } from "./DashboardUi";
 
@@ -185,10 +186,11 @@ const ProfileCompletionModal = ({ user }: { user: DashboardUser }) => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/40 px-4 py-6 backdrop-blur-sm">
             <div className="w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl">
                 <div className="border-b border-slate-100 p-6">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#3457ff]">Profile required</p>
-                    <h2 className="mt-2 text-2xl font-bold text-slate-800">Complete your account details</h2>
+                    <Steps steps={["Email", "Verify", "Profile"]} current={2} />
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#3457ff]">Last step</p>
+                    <h2 className="mt-2 text-2xl font-bold text-slate-800">Complete your profile</h2>
                     <p className="mt-2 text-sm leading-6 text-slate-500">
-                        Add these details once so your dashboard, owner analytics, support tickets, and billing records stay organized.
+                        Add these details once and your {user.plan.name === "Trial" ? "3 free chart analyses are" : "dashboard is"} ready to use.
                     </p>
                 </div>
 
@@ -205,7 +207,7 @@ const ProfileCompletionModal = ({ user }: { user: DashboardUser }) => {
                     {error && <Notice tone="red" className="mt-5">{error}</Notice>}
 
                     <button disabled={saving} className={clsx(primaryButtonClass, "mt-6 w-full py-3")}>
-                        {saving ? "Saving profile..." : "Save and continue to dashboard"}
+                        {saving ? "Saving profile..." : "Save and start analyzing"}
                     </button>
                 </form>
             </div>

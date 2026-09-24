@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { FiArrowRight, FiLock, FiShield } from "react-icons/fi";
+import { FiActivity, FiArrowRight, FiCreditCard, FiHeadphones, FiLock, FiMail, FiShield, FiUsers } from "react-icons/fi";
+import AuthLayout, { AuthCard } from "@/components/auth/AuthLayout";
+
+const inputClass = "auth-input w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3.5 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#3457ff] focus:ring-2 focus:ring-[#3457ff]/15";
 
 const OwnerLoginPage = () => {
     const router = useRouter();
@@ -34,68 +36,76 @@ const OwnerLoginPage = () => {
     };
 
     return (
-        <main className="min-h-screen bg-[#070b12] px-5 py-8 text-white">
-            <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(52,87,255,0.24),transparent_34%),radial-gradient(circle_at_82%_25%,rgba(244,196,48,0.14),transparent_28%)]" />
-            <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl lg:grid-cols-[1fr_0.9fr]">
-                <section className="flex items-center p-6 sm:p-10">
-                    <div className="mx-auto w-full max-w-md">
-                        <Link href="/" className="mb-8 flex items-center gap-3">
-                            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4c430] text-[#111318]"><FiShield /></span>
-                            <span className="text-xl font-extrabold">GPT Chart View Owner</span>
-                        </Link>
-                        <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f4c430]">Private admin access</p>
-                        <h1 className="mt-3 text-4xl font-extrabold">Owner dashboard login</h1>
-                        <p className="mt-3 text-[#94a3b8]">View users, revenue, subscriptions, uploads, support tickets, countries, and live platform activity.</p>
+        <AuthLayout asideTone="dark" aside={<OwnerAside />}>
+            <AuthCard>
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-tr from-slate-900 to-slate-700 text-xl text-white shadow-md shadow-slate-900/20">
+                    <FiShield />
+                </div>
+                <p className="mt-5 text-xs font-bold uppercase tracking-wider text-slate-500">Private admin access</p>
+                <h1 className="mt-2 text-2xl font-bold text-slate-800 sm:text-3xl">Owner console login</h1>
+                <p className="mt-2 text-sm leading-6 text-slate-500">View users, revenue, subscriptions, uploads, support tickets and live platform activity.</p>
 
-                        <form onSubmit={submit} className="mt-8 space-y-5">
-                            <label className="block">
-                                <span className="font-bold">Owner email</span>
-                                <input
-                                    name="email"
-                                    type="email"
-                                    required
-                                    autoComplete="off"
-                                    autoCapitalize="none"
-                                    spellCheck={false}
-                                    className="auth-input mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]"
-                                    placeholder="Enter owner email"
-                                />
-                            </label>
-                            <label className="block">
-                                <span className="font-bold">Password</span>
-                                <input
-                                    name="password"
-                                    type="password"
-                                    required
-                                    autoComplete="new-password"
-                                    className="auth-input mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]"
-                                    placeholder="Enter owner password"
-                                />
-                            </label>
-                            {error && <p className="rounded-2xl border border-[#f87171]/20 bg-[#dc2626]/15 p-3 text-sm font-bold text-[#fca5a5]">{error}</p>}
-                            <button disabled={loading} className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#3457ff] px-5 py-4 font-extrabold text-white shadow-[0_18px_35px_rgba(52,87,255,0.28)] transition-colors hover:bg-[#263fd2] disabled:opacity-60">
-                                {loading ? "Checking access..." : "Enter owner console"}
-                                {!loading && <FiArrowRight />}
-                            </button>
-                        </form>
-                    </div>
-                </section>
-
-                <section className="hidden border-l border-white/10 bg-[#0b1018]/80 p-10 lg:block">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/[0.06] text-[#f4c430]">
-                        <FiLock size={30} />
-                    </div>
-                    <h2 className="mt-8 max-w-md text-5xl font-extrabold leading-tight">Separate control room for the business.</h2>
-                    <p className="mt-5 max-w-md text-[#94a3b8]">This is not the user app. It is a private operating dashboard for monitoring growth, payments, product usage, and support.</p>
-                    <div className="mt-10 grid gap-3">
-                        {["Live user status", "Revenue and MRR view", "Country and plan breakdowns", "Support ticket operations"].map((item) => (
-                            <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-extrabold text-[#cbd5e1]">{item}</div>
-                        ))}
-                    </div>
-                </section>
-            </div>
-        </main>
+                <form onSubmit={submit} className="mt-6 space-y-4">
+                    <label className="block">
+                        <span className="text-sm font-medium text-slate-700">Owner email</span>
+                        <div className="relative mt-1.5">
+                            <FiMail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                                name="email"
+                                type="email"
+                                required
+                                autoComplete="off"
+                                autoCapitalize="none"
+                                spellCheck={false}
+                                className={inputClass}
+                                placeholder="owner@example.com"
+                            />
+                        </div>
+                    </label>
+                    <label className="block">
+                        <span className="text-sm font-medium text-slate-700">Password</span>
+                        <div className="relative mt-1.5">
+                            <FiLock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                                name="password"
+                                type="password"
+                                required
+                                autoComplete="new-password"
+                                className={inputClass}
+                                placeholder="Enter owner password"
+                            />
+                        </div>
+                    </label>
+                    {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">{error}</p>}
+                    <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-tr from-slate-900 to-slate-700 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-md shadow-slate-900/20 transition-all hover:shadow-lg hover:shadow-slate-900/30 disabled:pointer-events-none disabled:opacity-50">
+                        {loading ? "Checking access..." : "Enter owner console"}
+                        {!loading && <FiArrowRight />}
+                    </button>
+                </form>
+            </AuthCard>
+        </AuthLayout>
     );
 };
+
+const OwnerAside = () => (
+    <>
+        <p className="text-sm font-bold uppercase tracking-wider text-white/60">Owner console</p>
+        <h2 className="mt-3 max-w-lg text-4xl font-bold leading-tight xl:text-5xl">The control room for your business.</h2>
+        <p className="mt-4 max-w-lg text-white/70">A private dashboard for monitoring growth, payments, product usage and support. Separate from the member app.</p>
+        <div className="mt-8 grid max-w-lg grid-cols-2 gap-3">
+            {[
+                { icon: <FiUsers />, label: "Live user status" },
+                { icon: <FiCreditCard />, label: "Revenue and MRR" },
+                { icon: <FiActivity />, label: "Uploads and AI usage" },
+                { icon: <FiHeadphones />, label: "Support tickets" },
+            ].map((item) => (
+                <div key={item.label} className="flex items-center gap-3 rounded-xl bg-white/10 p-4 text-sm font-medium text-white/90 ring-1 ring-inset ring-white/10">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/15">{item.icon}</span>
+                    {item.label}
+                </div>
+            ))}
+        </div>
+    </>
+);
 
 export default OwnerLoginPage;

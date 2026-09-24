@@ -41,7 +41,7 @@ See `.env.example` for the full list. The important ones:
 - Shared layout: `src/components/dashboard/AppFrame.tsx` (floating white sidebar, sticky top bar with breadcrumb, mobile drawer).
 - Shared UI kit: `src/components/dashboard/DashboardUi.tsx` (`Panel`, `PanelHeader`, `StatCard`, `StatGrid`, `Badge`, `Notice`, `IconTile`, `Avatar`, button/input/table classes, `toneGradients`). `src/components/owner/OwnerUi.tsx` re-exports these under owner names. Change colors here.
 - Font: Roboto (`src/lib/fonts.ts`), applied via the `.app-theme` class.
-- Not yet restyled: `/login`, `/signup`, `/owner/login` (still dark).
+- Auth pages `/login`, `/signup`, `/owner/login` use the same light style via `src/components/auth/AuthLayout.tsx` (white form card + blue value panel; dark slate panel for owner). Signup shows a 3-step bar (Email → Verify → Profile); the Profile step is the pop-up in `DashboardShell.tsx`.
 
 ### 2. Free trial = 3 uploads per account, no time limit (commit `cabd54a`)
 - Each account gets **3 free uploads in total, for life**. After that they must buy a plan.
@@ -52,8 +52,12 @@ See `.env.example` for the full list. The important ones:
 
 ## How the chart analysis works today
 
-- `src/lib/server/ai.ts` sends the uploaded image to OpenRouter model `openai/gpt-4o-mini` with a strict JSON schema, and gets back symbol, timeframe, entry type, entry, SL, TP1, TP2, support, resistance, confidence and risk/reward.
-- Weaknesses: small model misreads price-axis numbers; levels are estimated from pixels with no market data; no server-side check that the numbers make sense.
+- `src/lib/server/ai.ts` sends the uploaded image to **Claude Haiku 4.5** (`claude-haiku-4-5`) via the official `@anthropic-ai/sdk`, using structured outputs (zod schema). It returns symbol, timeframe, Buy/Sell/Watch, entry, SL, TP1, TP2, support, resistance, confidence and a summary.
+- Needs `ANTHROPIC_API_KEY` (from platform.claude.com, prepaid credits, separate from a Claude subscription). If it's missing, the old OpenRouter `gpt-4o-mini` path is used as a fallback when `OPENROUTER_API_KEY` is set.
+- Cost: about $0.005 per analysis (~$0.46 per 100). To improve reading accuracy, change `CLAUDE_MODEL` to `claude-sonnet-5` (~$0.009 per analysis).
+- Server checks: Buy needs SL < entry < TP1 ≤ TP2 (Sell reversed). If the levels are inconsistent, the AI gets one retry with the problems listed; if still wrong, the result becomes "Watch". Risk/reward is calculated by the server from entry/SL/TP1.
+- Upload form has optional Symbol and Timeframe fields; when filled, they're passed to the AI and used for the saved analysis. Max image size 7 MB.
+- Remaining weakness: levels are still estimated from the image, with no live market data (see next step).
 - Uploaded images are written to `/tmp` on Vercel, so they can disappear between deploys. Move them to durable storage (e.g. Vercel Blob) later.
 
 ## Next step: real-time analysis (planned, not started)
