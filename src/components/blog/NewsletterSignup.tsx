@@ -38,20 +38,20 @@ const NewsletterSignup = ({ source = "blog" }: { source?: string }) => {
     };
 
     return (
-        <form onSubmit={submit} className="rounded-[2rem] border border-[#d9e2ef] bg-white p-5 shadow-sm">
-            <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#304fff]">Free guide</p>
-            <h3 className="mt-2 text-2xl font-extrabold text-[#101828]">Get the AI Trading Checklist</h3>
-            <p className="mt-2 text-[#667085]">Join the GPT Chart View list for practical prompts, risk checklists, and product updates.</p>
+        <form onSubmit={submit} className="rounded-[28px] border border-black/[0.08] bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-accent">Free guide</p>
+            <h3 className="mt-2 text-2xl font-semibold text-ink">Get the AI Trading Checklist</h3>
+            <p className="mt-2 text-muted">Join the GPT Chart View list for practical prompts, risk checklists, and product updates.</p>
             <div className="mt-5 grid gap-3 md:grid-cols-[1fr_1.2fr_auto]">
-                <input name="name" placeholder="Name" className="rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] px-4 py-3 outline-none focus:border-[#304fff]" />
-                <input name="email" type="email" required placeholder="Email address" className="rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] px-4 py-3 outline-none focus:border-[#304fff]" />
+                <input name="name" placeholder="Name" className="rounded-xl border border-black/[0.08] bg-canvas px-4 py-3 outline-none focus:border-accent" />
+                <input name="email" type="email" required placeholder="Email address" className="rounded-xl border border-black/[0.08] bg-canvas px-4 py-3 outline-none focus:border-accent" />
                 <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-                <button disabled={status === "saving"} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#304fff] px-5 py-3 font-extrabold text-white transition-colors hover:bg-[#243cc7] disabled:opacity-60">
+                <button disabled={status === "saving"} className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-60">
                     {status === "saving" ? "Saving..." : "Send it"}
                     {status === "saved" ? <FiCheckCircle /> : <FiArrowRight />}
                 </button>
             </div>
-            {message && <p className={`mt-3 rounded-2xl p-3 text-sm font-bold ${status === "saved" ? "bg-[#ecfdf3] text-[#067647]" : "bg-[#fff1ef] text-[#b42318]"}`}>{message}</p>}
+            {message && <p className={`mt-3 rounded-2xl p-3 text-sm font-semibold ${status === "saved" ? "bg-[#ecfdf3] text-[#067647]" : "bg-[#fff1ef] text-[#b42318]"}`}>{message}</p>}
         </form>
     );
 };

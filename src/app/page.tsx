@@ -1,261 +1,224 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
-  FiArrowRight,
+  FiBookOpen,
   FiCheckCircle,
-  FiDatabase,
+  FiChevronRight,
+  FiClock,
+  FiCpu,
+  FiCreditCard,
+  FiLayers,
   FiLock,
-  FiShield,
+  FiMessageCircle,
+  FiPercent,
+  FiTarget,
   FiTrendingUp,
-  FiZap,
+  FiUploadCloud,
 } from "react-icons/fi";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Container from "@/components/Container";
 import Pricing from "@/components/Pricing/Pricing";
+import FAQ from "@/components/FAQ";
+import ProductPreview from "@/components/ProductPreview";
 
-const brandLogos = [
-  "/brand/brand1.svg",
-  "/brand/brand2.svg",
-  "/brand/brand3.svg",
-  "/brand/brand4.svg",
-  "/brand/brand5.svg",
-  "/brand/brand6.svg",
-  "/brand/brand7.svg",
+const primaryButton = "inline-flex items-center justify-center rounded-full bg-accent px-7 py-3 text-[17px] text-white transition-colors hover:bg-accent-hover";
+const textLink = "inline-flex items-center gap-0.5 text-[17px] text-link hover:underline";
+
+const steps = [
+  {
+    title: "Upload your chart",
+    description: "Take a screenshot from TradingView, MT4, MT5, Binance or your broker app and drop it in. Add the symbol and timeframe if you like.",
+    icon: <FiUploadCloud />,
+  },
+  {
+    title: "Get a structured read",
+    description: "The AI identifies the trend, support and resistance, and a possible entry, stop-loss and two targets, with a confidence score.",
+    icon: <FiCpu />,
+  },
+  {
+    title: "Ask, decide, track",
+    description: "Ask follow-up questions in chat, then mark the trade as won, lost or not taken to build your own track record.",
+    icon: <FiMessageCircle />,
+  },
 ];
 
-const analysisModes = [
+const features = [
   {
-    title: "Chart Pulse",
-    description: "Fast AI review of trend, structure, key levels, momentum, and trade quality from a clean chart screenshot.",
-    metric: "82",
-    metricLabel: "sample setup score",
+    title: "Trend and bias",
+    description: "Buy, Sell or Watch, with the market structure that supports it.",
     icon: <FiTrendingUp />,
   },
   {
-    title: "Risk Engine",
-    description: "Entry, stop, targets, risk/reward, volatility notes, and invalidation are mapped before the trade is considered.",
-    metric: "1:2.4",
-    metricLabel: "sample risk/reward",
-    icon: <FiShield />,
+    title: "Key levels",
+    description: "Support and resistance read directly from your chart.",
+    icon: <FiLayers />,
   },
   {
-    title: "Trade Memory",
-    description: "Every upload, AI answer, chat note, and outcome is saved to the member account for later review.",
-    metric: "3",
-    metricLabel: "free trial analyses",
-    icon: <FiDatabase />,
+    title: "Entry, stop and targets",
+    description: "A defined plan with a stop-loss and two take-profit levels.",
+    icon: <FiTarget />,
+  },
+  {
+    title: "Risk/reward, calculated",
+    description: "Worked out by our server from the exact levels, not guessed by the AI.",
+    icon: <FiPercent />,
+  },
+  {
+    title: "Follow-up chat",
+    description: "Ask why a level matters or what would invalidate the idea.",
+    icon: <FiMessageCircle />,
+  },
+  {
+    title: "Private history",
+    description: "Every chart, result and outcome is saved to your account.",
+    icon: <FiClock />,
   },
 ];
 
-const workflow = [
-  ["Upload", "Add a clean chart screenshot from TradingView, MT4, MT5, Binance, or your broker platform."],
-  ["Analyze", "AI reads the image and returns bias, confidence, levels, volatility, and risk notes."],
-  ["Review", "Ask follow-up questions in chat before deciding whether the setup is worth taking."],
-  ["Track", "Mark won, lost, or not taken so your private history becomes a learning system."],
+const principles = [
+  {
+    title: "Checked before you see it",
+    description: "Stop-loss and targets must sit on the correct side of the entry. If the levels don't add up, the result is marked Watch instead of Buy or Sell.",
+    icon: <FiCheckCircle />,
+  },
+  {
+    title: "Education, not advice",
+    description: "GPT Chart View explains what your chart shows. It doesn't know your finances and never promises results. You make the decision.",
+    icon: <FiBookOpen />,
+  },
+  {
+    title: "Your charts stay private",
+    description: "Uploads, results and chat history are linked to your account and visible only to you.",
+    icon: <FiLock />,
+  },
+  {
+    title: "Secure checkout with Stripe",
+    description: "Payments are handled by Stripe. We never see or store your card number.",
+    icon: <FiCreditCard />,
+  },
 ];
 
-const stats = [
-  ["20+", "AI trading guides"],
-  ["3", "free trial credits"],
-  ["60/day", "advanced plan uploads"],
-  ["24/7", "member access"],
-];
+const SectionHeading = ({ title, description }: { title: string; description: string }) => (
+  <div className="mx-auto max-w-3xl text-center">
+    <h2 className="text-balance text-[40px] font-semibold leading-[1.1] md:text-[56px]">{title}</h2>
+    <p className="mx-auto mt-5 max-w-2xl text-balance text-[19px] leading-[1.45] text-muted md:text-[21px]">{description}</p>
+  </div>
+);
 
 const HomePage: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="overflow-hidden bg-[#05070f] text-white">
-        <section className="relative min-h-[760px] pt-24">
-          <div className="absolute inset-x-0 top-0 h-[720px] overflow-hidden">
-            <video
-              className="h-full w-full object-cover opacity-75"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster="/favicon.png"
-              aria-label="AI trading intelligence visual"
-            >
-              <source src="/video/gptchartview2.webm" type="video/webm" />
-            </video>
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,15,0.08)_0%,rgba(5,7,15,0.62)_56%,#05070f_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,#05070f_0%,rgba(5,7,15,0.18)_34%,rgba(5,7,15,0.18)_66%,#05070f_100%)]" />
-          </div>
-
-          <Container>
-            <div className="relative mx-auto flex min-h-[660px] max-w-5xl flex-col items-center justify-end pb-14 text-center">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-extrabold text-white backdrop-blur">
-                <FiZap className="text-[#16c7ff]" />
-                AI-powered chart analysis workspace
-              </div>
-              <h1 className="max-w-5xl text-5xl font-extrabold leading-tight md:text-7xl">
-                Turn market charts into
-                <span className="block bg-[linear-gradient(90deg,#18c8ff,#d94cff)] bg-clip-text text-transparent">
-                  trade-ready AI insights
-                </span>
-              </h1>
-              <p className="mt-5 max-w-3xl text-lg font-semibold leading-8 text-white/80 md:text-xl">
-                Upload a chart, receive a structured AI trade score, review key levels, ask follow-up questions, and save every decision inside your private dashboard.
-              </p>
-              <div className="mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:justify-center">
-                <Link href="/signup" className="inline-flex items-center justify-center gap-3 rounded-lg bg-white px-8 py-4 font-extrabold text-[#05070f] transition-colors hover:bg-[#dff7ff]">
-                  Start free analysis
-                  <FiArrowRight />
-                </Link>
-                <Link href="/login" className="inline-flex items-center justify-center gap-3 rounded-lg border border-white/15 bg-white/10 px-8 py-4 font-extrabold text-white transition-colors hover:bg-white/15">
-                  Member login
-                </Link>
-              </div>
+      <main className="bg-white text-ink">
+        <section className="pt-28 md:pt-36">
+          <Container className="text-center">
+            <p className="text-[17px] font-semibold text-accent md:text-[19px]">AI chart analysis</p>
+            <h1 className="mx-auto mt-3 max-w-4xl text-balance text-[44px] font-semibold leading-[1.05] tracking-[-0.025em] sm:text-[56px] md:text-[76px]">
+              A second opinion on every chart.
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-balance text-[19px] leading-[1.45] text-muted md:text-[21px]">
+              Upload a screenshot and get the trend, key levels, entry, stop&#8209;loss and targets, with the reasoning explained in plain language.
+            </p>
+            <div className="mt-9 flex flex-col items-center justify-center gap-5 sm:flex-row sm:gap-8">
+              <Link href="/signup" className={primaryButton}>
+                Try 3 analyses free
+              </Link>
+              <Link href="#how-it-works" className={textLink}>
+                See how it works
+                <FiChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
+            <p className="mt-5 text-sm text-subtle">No card required · Educational analysis, not financial advice</p>
+          </Container>
+
+          <Container className="mt-14 md:mt-20">
+            <ProductPreview />
+          </Container>
+
+          <Container className="py-14 text-center md:py-16">
+            <p className="text-[15px] text-muted">
+              Works with screenshots from <span className="text-ink">TradingView, MetaTrader 4, MetaTrader 5, Binance</span> and most broker apps.
+            </p>
           </Container>
         </section>
 
-        <section className="relative py-8">
+        <section id="how-it-works" className="bg-canvas py-20 md:py-28">
           <Container>
-            <p className="text-center text-sm font-extrabold uppercase text-white/60">Market ecosystem and infrastructure signals</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
-              {brandLogos.map((logo, index) => (
-                <div key={logo} className="flex h-20 items-center justify-center rounded-lg border border-white/10 bg-white/[0.035] p-2">
-                  <Image src={logo} alt={`Market ecosystem badge ${index + 1}`} width={200} height={72} className="h-full w-full object-contain opacity-80" />
+            <SectionHeading title="From screenshot to a clear plan." description="Three steps, right in your browser. Nothing to install." />
+            <ol className="mx-auto mt-14 grid max-w-[1100px] gap-5 md:grid-cols-3">
+              {steps.map((step, index) => (
+                <li key={step.title} className="rounded-[28px] bg-white p-8">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/10 text-xl text-accent" aria-hidden="true">
+                    {step.icon}
+                  </div>
+                  <p className="mt-6 text-sm font-semibold text-muted">Step {index + 1}</p>
+                  <h3 className="mt-1 text-2xl font-semibold">{step.title}</h3>
+                  <p className="mt-3 leading-[1.5] text-muted">{step.description}</p>
+                </li>
+              ))}
+            </ol>
+          </Container>
+        </section>
+
+        <section id="features" className="py-20 md:py-28">
+          <Container>
+            <SectionHeading title="Everything you need to judge a setup." description="Every analysis comes back in the same clear format, so charts are easy to compare." />
+            <div className="mx-auto mt-14 grid max-w-[1100px] gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <div key={feature.title} className="rounded-[28px] bg-canvas p-8">
+                  <div className="text-[28px] text-accent" aria-hidden="true">{feature.icon}</div>
+                  <h3 className="mt-5 text-[21px] font-semibold">{feature.title}</h3>
+                  <p className="mt-2 leading-[1.5] text-muted">{feature.description}</p>
                 </div>
               ))}
             </div>
           </Container>
         </section>
 
-        <section id="product" className="py-24">
+        <section className="bg-canvas py-20 md:py-28">
           <Container>
-            <div className="mx-auto max-w-4xl text-center">
-              <p className="text-sm font-extrabold uppercase text-[#16c7ff]">AI chart intelligence</p>
-              <h2 className="mt-4 text-4xl font-extrabold leading-tight md:text-6xl">
-                More than a signal. A private review system for active traders.
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-white/62">
-                GPT Chart View is built for traders who want visual AI analysis, risk notes, saved history, and a clear reason to take or skip a setup.
-              </p>
-            </div>
-
-            <div className="mt-14 grid gap-5 lg:grid-cols-3">
-              {analysisModes.map((mode, index) => (
-                <article key={mode.title} className={`min-h-[430px] rounded-lg border border-white/10 p-6 ${index === 0 ? "bg-[#14171b]" : index === 1 ? "bg-[#170d25]" : "bg-[#061d3b]"}`}>
-                  <div className="mb-10 flex h-14 w-14 items-center justify-center rounded-lg bg-white/10 text-3xl text-[#d94cff]">
-                    {mode.icon}
+            <SectionHeading title="Built to be honest about risk." description="AI can read a chart quickly. It can't predict the future. GPT Chart View is designed around that." />
+            <div className="mx-auto mt-14 grid max-w-[1100px] gap-5 md:grid-cols-2">
+              {principles.map((item) => (
+                <div key={item.title} className="flex gap-5 rounded-[28px] bg-white p-8">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/10 text-xl text-accent" aria-hidden="true">
+                    {item.icon}
                   </div>
-                  <h3 className="text-2xl font-extrabold">{mode.title}</h3>
-                  <p className="mt-4 leading-7 text-white/68">{mode.description}</p>
-                  <div className="mt-10 border-t border-white/10 pt-6">
-                    <p className="text-5xl font-extrabold">{mode.metric}</p>
-                    <p className="mt-2 text-sm font-semibold text-white/55">{mode.metricLabel}</p>
+                  <div>
+                    <h3 className="text-[21px] font-semibold">{item.title}</h3>
+                    <p className="mt-2 leading-[1.5] text-muted">{item.description}</p>
                   </div>
-                </article>
+                </div>
               ))}
             </div>
           </Container>
         </section>
 
-        <section id="workflow" className="py-20">
-          <Container>
-            <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-              <div>
-                <p className="text-sm font-extrabold uppercase text-[#16c7ff]">Inside the member app</p>
-                <h2 className="mt-4 max-w-2xl text-4xl font-extrabold leading-tight md:text-6xl">
-                  Analyze charts, chat with AI, and keep every decision synced.
-                </h2>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-white/65">
-                  No loose public demo. Every upload belongs to the signed-in user, every result is saved, and credits follow the plan attached to that account.
-                </p>
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {["Private uploads", "Saved results", "AI chat history", "Plan-based credits"].map((item) => (
-                    <div key={item} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-4 font-bold">
-                      <FiCheckCircle className="text-[#21e7a4]" />
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                <video
-                  className="aspect-video w-full rounded-lg object-cover"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-label="GPT Chart View product demo"
-                >
-                  <source src="/video/gptchartview.webm" type="video/webm" />
-                </video>
-                <div className="grid gap-3 border-t border-white/10 p-4 sm:grid-cols-4">
-                  {workflow.map(([title, description], index) => (
-                    <div key={title} className="rounded-lg bg-[#0b1020] p-4">
-                      <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-extrabold text-[#05070f]">{index + 1}</div>
-                      <h3 className="font-extrabold">{title}</h3>
-                      <p className="mt-2 text-sm leading-6 text-white/58">{description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-20">
-          <Container>
-            <div className="rounded-lg border border-white/10 bg-[#090d18] p-6 md:p-10">
-              <div className="grid gap-8 lg:grid-cols-[0.8fr_1fr]">
-                <div>
-                  <p className="text-sm font-extrabold uppercase text-[#d94cff]">Performance workspace</p>
-                  <h2 className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl">
-                    Built for education, discipline, and repeatable market review.
-                  </h2>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {stats.map(([value, label]) => (
-                    <div key={label} className="rounded-lg border border-white/10 bg-white/[0.035] p-6">
-                      <p className="text-4xl font-extrabold bg-[linear-gradient(90deg,#18c8ff,#d94cff)] bg-clip-text text-transparent">{value}</p>
-                      <p className="mt-2 text-sm font-semibold text-white/62">{label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section id="pricing" className="py-20">
+        <section id="pricing" className="py-20 md:py-28">
           <Container>
             <Pricing />
           </Container>
         </section>
 
-        <section className="py-20">
+        <section id="faq" className="bg-canvas py-20 md:py-28">
           <Container>
-            <div className="grid gap-6 lg:grid-cols-[1fr_0.55fr]">
-              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-8 md:p-10">
-                <p className="text-sm font-extrabold uppercase text-[#16c7ff]">Start now</p>
-                <h2 className="mt-4 text-4xl font-extrabold leading-tight md:text-6xl">Create your AI trading workspace.</h2>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-white/65">
-                  Get three trial chart analyses, then upgrade when your credits finish. Paid plans unlock daily limits based on the plan you choose.
-                </p>
-                <Link href="/signup" className="mt-8 inline-flex items-center justify-center gap-3 rounded-lg bg-white px-8 py-4 font-extrabold text-[#05070f] transition-colors hover:bg-[#dff7ff]">
-                  Open dashboard
-                  <FiArrowRight />
-                </Link>
-              </div>
-              <div className="rounded-lg border border-white/10 bg-[#101626] p-8">
-                <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-white/10 text-3xl text-[#21e7a4]">
-                  <FiLock />
-                </div>
-                <h3 className="mt-8 text-2xl font-extrabold">Secure member access</h3>
-                <p className="mt-4 leading-7 text-white/62">
-                  API keys stay server-side. User uploads, plan credits, billing, support tickets, and chart history are tied to each signed-in account.
-                </p>
-              </div>
+            <FAQ />
+          </Container>
+        </section>
+
+        <section className="py-24 text-center md:py-32">
+          <Container>
+            <h2 className="text-balance text-[40px] font-semibold leading-[1.05] tracking-[-0.025em] md:text-[64px]">Try it on your next chart.</h2>
+            <p className="mt-5 text-[19px] text-muted md:text-[21px]">3 free analyses. No card required.</p>
+            <div className="mt-9 flex flex-col items-center justify-center gap-5 sm:flex-row sm:gap-8">
+              <Link href="/signup" className={primaryButton}>
+                Create free account
+              </Link>
+              <Link href="/login" className={textLink}>
+                Log in
+                <FiChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
           </Container>
         </section>

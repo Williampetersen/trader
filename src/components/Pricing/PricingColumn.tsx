@@ -1,6 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx";
-import { BsArrowRight, BsCheckCircle, BsStarFill } from "react-icons/bs";
+import { FiCheck } from "react-icons/fi";
 
 import { IPricing } from "@/types";
 
@@ -14,40 +14,36 @@ const PricingColumn: React.FC<Props> = ({ tier, highlight }: Props) => {
 
     return (
         <div className={clsx(
-            "relative flex min-h-[410px] flex-col rounded-lg border p-6 transition-transform hover:-translate-y-1",
-            highlight ? "border-[#16c7ff] bg-[#0d1730] shadow-[0_0_40px_rgba(22,199,255,0.16)]" : "border-white/10 bg-white/[0.035]"
+            "relative flex flex-col rounded-[28px] bg-white p-8",
+            highlight ? "ring-2 ring-accent" : "ring-1 ring-line"
         )}>
             {highlight && (
-                <div className="absolute right-5 top-5 flex items-center gap-2 rounded-lg bg-[#fed835] px-3 py-1 text-xs font-extrabold text-black">
-                    <BsStarFill />
-                    Most selected
-                </div>
+                <p className="absolute right-6 top-6 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+                    Recommended
+                </p>
             )}
 
-            <div className="pb-6">
-                <h3 className="text-2xl font-extrabold text-white">{name}</h3>
-                <p className="mt-2 min-h-12 text-base text-white/58">{description}</p>
-                <p className="mt-8 flex items-end gap-3">
-                    <span className="text-5xl font-extrabold text-white">${price}</span>
-                    <span className="pb-2 text-base font-semibold text-white/50">{duration}</span>
-                </p>
-            </div>
+            <h3 className="text-2xl font-semibold">{name}</h3>
+            <p className="mt-1.5 text-[15px] text-muted">{description}</p>
+            <p className="mt-8 flex items-baseline gap-2">
+                <span className="text-5xl font-semibold tracking-[-0.03em]">${price}</span>
+                <span className="text-[15px] text-muted">{duration?.toLowerCase()}</span>
+            </p>
 
-            <ul className="space-y-4 border-t border-white/10 pt-6">
+            <ul className="mt-8 flex-1 space-y-3 border-t border-line pt-6">
                 {features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                        <BsCheckCircle className="mt-1 h-5 w-5 shrink-0 text-[#21e7a4]" />
-                        <span className="text-base text-white/68">{feature}</span>
+                    <li key={feature} className="flex items-start gap-3 text-[15px]">
+                        <FiCheck className="mt-1 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                        <span>{feature}</span>
                     </li>
                 ))}
             </ul>
 
             <Link href="/signup" className={clsx(
-                "mt-auto flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-sm font-extrabold transition-colors",
-                highlight ? "bg-[#16c7ff] text-[#03111a] hover:bg-white" : "bg-white text-[#05070f] hover:bg-[#dff7ff]"
+                "mt-10 block rounded-full px-5 py-3 text-center text-[15px] transition-colors",
+                highlight ? "bg-accent text-white hover:bg-accent-hover" : "text-accent ring-1 ring-inset ring-accent hover:bg-accent hover:text-white"
             )}>
-                Create account
-                <BsArrowRight />
+                Get started
             </Link>
         </div>
     );

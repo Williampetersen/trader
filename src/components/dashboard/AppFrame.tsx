@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { IconType } from "react-icons";
 import { FiMenu, FiX } from "react-icons/fi";
-import { roboto } from "@/lib/fonts";
 
 export interface AppNavItem {
     label: string;
@@ -33,7 +32,7 @@ const AppFrame = ({ brand, nav, isActive, section, title, headerActions, sidebar
     }, [pathname]);
 
     return (
-        <div className={clsx(roboto.className, "app-theme min-h-screen bg-[#f5f7fb] text-base text-slate-700")}>
+        <div className="app-theme min-h-screen bg-[#f5f7fb] text-base text-slate-700">
             {menuOpen && (
                 <button aria-label="Close menu" onClick={() => setMenuOpen(false)} className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-sm xl:hidden" />
             )}

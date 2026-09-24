@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { Source_Sans_3, Manrope } from "next/font/google";
 
 import { siteDetails } from '@/data/siteDetails';
+import { inter } from '@/lib/fonts';
 
 import "./globals.css";
 
-const manrope = Manrope({ subsets: ['latin'] });
-const sourceSans = Source_Sans_3({ subsets: ['latin'] });
 const siteUrl = siteDetails.siteUrl;
 const favicon = '/favicon.png';
 const ogImage = '/images/hero-chart.webp';
@@ -74,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         {googleAnalyticsId && (
           <>
@@ -92,9 +90,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body
-        className={`${manrope.className} ${sourceSans.className} antialiased`}
-      >
+      <body className="font-sans antialiased">
         <Analytics />
         {[organizationSchema, websiteSchema].map((schema, index) => (
           <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />

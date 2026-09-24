@@ -2,7 +2,6 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { FiBarChart2, FiCheck } from "react-icons/fi";
-import { roboto } from "@/lib/fonts";
 
 interface AuthLayoutProps {
     topLink?: { href: string; label: string; prompt?: string };
@@ -11,7 +10,7 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout = ({ topLink, aside, asideTone = "blue", children }: React.PropsWithChildren<AuthLayoutProps>) => (
-    <main className={clsx(roboto.className, "app-theme min-h-screen bg-[#f5f7fb] text-base text-slate-700 lg:grid lg:grid-cols-[1fr_1fr]")}>
+    <main className="app-theme min-h-screen bg-[#f5f7fb] text-base text-slate-700 lg:grid lg:grid-cols-[1fr_1fr]">
         <div className="flex min-h-screen flex-col px-5 py-6 sm:px-10">
             <header className="flex items-center justify-between gap-4">
                 <Link href="/" className="flex items-center gap-3">
@@ -107,7 +106,7 @@ export const AnalysisPreview = () => (
             </div>
             <span className="font-bold text-slate-700">78%</span>
             <span className="text-slate-300">|</span>
-            <span className="text-slate-500">R:R <strong className="text-slate-700">1 : 2.4</strong></span>
+            <span className="text-slate-500">R:R <strong className="text-slate-700">1 : 1.6</strong></span>
         </div>
         <p className="mt-3 text-[11px] text-slate-400">Example output for illustration only.</p>
     </div>
