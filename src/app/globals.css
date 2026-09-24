@@ -45,6 +45,11 @@ h1, h2, h3, h4, h5, h6 {
   font-style: normal;
 }
 
+.app-theme h1, .app-theme h2, .app-theme h3,
+.app-theme h4, .app-theme h5, .app-theme h6 {
+  font-family: inherit;
+}
+
 #logos svg {
   @apply w-fit h-10 sm:h-12;
 }

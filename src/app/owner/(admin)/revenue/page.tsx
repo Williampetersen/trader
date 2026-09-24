@@ -1,4 +1,5 @@
-import { FiCreditCard, FiDollarSign, FiRepeat, FiTrendingUp } from "react-icons/fi";
+import { FiCreditCard, FiDollarSign, FiRepeat, FiTrendingUp, FiUsers } from "react-icons/fi";
+import { IconTile, PanelHeader, StatGrid, tableClass, type Tone } from "@/components/dashboard/DashboardUi";
 import { OwnerBadge, OwnerMuted, OwnerPanel, OwnerStat, formatDate, formatMoney } from "@/components/owner/OwnerUi";
 import { getOwnerMetrics } from "@/lib/server/owner-metrics";
 
@@ -7,27 +8,26 @@ const OwnerRevenuePage = async () => {
     const maxPlan = Math.max(1, ...metrics.planBreakdown.map((item) => item.count));
 
     return (
-        <div className="space-y-7">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <OwnerStat label="Total revenue" value={formatMoney(metrics.summary.totalRevenue)} detail="All recorded payments" tone="green" />
-                <OwnerStat label="This month" value={formatMoney(metrics.summary.monthRevenue)} detail="Current calendar month" tone="amber" />
-                <OwnerStat label="Estimated MRR" value={formatMoney(metrics.summary.mrr)} detail="Based on active paid plans" tone="blue" />
-                <OwnerStat label="Paid users" value={String(metrics.summary.paidUsers)} detail={`${metrics.summary.expiredUsers} expired accounts`} tone="purple" />
-            </div>
+        <div className="space-y-8">
+            <StatGrid>
+                <OwnerStat label="Total revenue" value={formatMoney(metrics.summary.totalRevenue)} detail="All recorded payments" icon={<FiDollarSign />} tone="green" />
+                <OwnerStat label="This month" value={formatMoney(metrics.summary.monthRevenue)} detail="Current calendar month" icon={<FiTrendingUp />} tone="amber" />
+                <OwnerStat label="Estimated MRR" value={formatMoney(metrics.summary.mrr)} detail="Based on active paid plans" icon={<FiRepeat />} tone="blue" />
+                <OwnerStat label="Paid users" value={String(metrics.summary.paidUsers)} detail={`${metrics.summary.expiredUsers} expired accounts`} icon={<FiUsers />} tone="purple" />
+            </StatGrid>
 
-            <div className="grid gap-7 xl:grid-cols-[0.9fr_1fr]">
+            <div className="grid gap-6 xl:grid-cols-[0.9fr_1fr]">
                 <OwnerPanel>
-                    <h2 className="flex items-center gap-3 text-2xl font-extrabold"><FiTrendingUp /> Plan Revenue Mix</h2>
-                    <OwnerMuted className="mt-1">Current plan distribution and recurring value signal.</OwnerMuted>
-                    <div className="mt-7 space-y-5">
+                    <PanelHeader icon={<FiTrendingUp />} title="Plan Revenue Mix" description="Current plan distribution and recurring value signal." />
+                    <div className="mt-6 space-y-5">
                         {metrics.planBreakdown.map((item) => (
                             <div key={item.label}>
-                                <div className="flex justify-between gap-4 text-sm font-extrabold">
-                                    <span>{item.label}</span>
-                                    <span>{item.count} users</span>
+                                <div className="flex justify-between gap-4 text-sm">
+                                    <span className="font-medium text-slate-700">{item.label}</span>
+                                    <span className="font-bold text-slate-800">{item.count} users</span>
                                 </div>
-                                <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/10">
-                                    <div className="h-full rounded-full bg-[#f4c430]" style={{ width: `${(item.count / maxPlan) * 100}%` }} />
+                                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                                    <div className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400" style={{ width: `${(item.count / maxPlan) * 100}%` }} />
                                 </div>
                             </div>
                         ))}
@@ -35,28 +35,26 @@ const OwnerRevenuePage = async () => {
                 </OwnerPanel>
 
                 <OwnerPanel>
-                    <h2 className="flex items-center gap-3 text-2xl font-extrabold"><FiRepeat /> Subscription Health</h2>
-                    <OwnerMuted className="mt-1">Auto-renewing and prepaid/trial user mix.</OwnerMuted>
-                    <div className="mt-7 grid gap-4 sm:grid-cols-3">
-                        <Mini icon={<FiCreditCard />} label="Auto-renewing" value={String(metrics.userRows.filter((user) => user.autoRenewal && !user.expired).length)} />
-                        <Mini icon={<FiDollarSign />} label="Paid active" value={String(metrics.summary.paidUsers)} />
-                        <Mini icon={<FiRepeat />} label="Trials" value={String(metrics.summary.trialUsers)} />
+                    <PanelHeader icon={<FiRepeat />} title="Subscription Health" description="Auto-renewing and prepaid/trial user mix." />
+                    <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                        <Mini icon={<FiCreditCard />} tone="blue" label="Auto-renewing" value={String(metrics.userRows.filter((user) => user.autoRenewal && !user.expired).length)} />
+                        <Mini icon={<FiDollarSign />} tone="green" label="Paid active" value={String(metrics.summary.paidUsers)} />
+                        <Mini icon={<FiRepeat />} tone="gray" label="Trials" value={String(metrics.summary.trialUsers)} />
                     </div>
-                    <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                        <OwnerMuted className="text-sm">Recommendation</OwnerMuted>
-                        <p className="mt-2 font-bold text-[#cbd5e1]">Connect the Stripe `price_...` IDs in `.env.local` so Checkout uses your existing Stripe products instead of dynamically-created subscription prices.</p>
+                    <div className="mt-6 rounded-xl bg-slate-50 p-4">
+                        <OwnerMuted className="text-xs font-bold uppercase tracking-wider">Recommendation</OwnerMuted>
+                        <p className="mt-1 text-sm text-slate-700">Connect the Stripe <code className="rounded bg-white px-1 py-0.5 text-xs">price_...</code> IDs in <code className="rounded bg-white px-1 py-0.5 text-xs">.env.local</code> so Checkout uses your existing Stripe products instead of dynamically-created subscription prices.</p>
                     </div>
                 </OwnerPanel>
             </div>
 
-            <OwnerPanel>
-                <h2 className="text-2xl font-extrabold">Payment History</h2>
-                <OwnerMuted className="mt-1">All payment records stored after signup, trial creation, and paid Stripe checkout fulfillment.</OwnerMuted>
-                <div className="mt-7 overflow-x-auto">
-                    <table className="w-full min-w-[1000px] text-left text-sm">
-                        <thead className="text-[#94a3b8]">
-                            <tr className="border-b border-white/10">
-                                <th className="py-4">Customer</th>
+            <OwnerPanel className="px-0 pb-2">
+                <PanelHeader className="px-6" title="Payment History" description="All payment records stored after signup, trial creation, and paid Stripe checkout fulfillment." />
+                <div className="mt-6 overflow-x-auto">
+                    <table className={`${tableClass} min-w-[960px]`}>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
                                 <th>Date</th>
@@ -66,16 +64,16 @@ const OwnerRevenuePage = async () => {
                         </thead>
                         <tbody>
                             {metrics.paymentRows.map((payment) => (
-                                <tr key={payment.id} className="border-b border-white/10">
-                                    <td className="py-4">
-                                        <strong>{payment.userName}</strong>
+                                <tr key={payment.id}>
+                                    <td>
+                                        <p className="font-medium text-slate-800">{payment.userName}</p>
                                         <OwnerMuted className="text-xs">{payment.userEmail}</OwnerMuted>
                                     </td>
                                     <td><OwnerBadge tone={payment.plan === "Trial" ? "gray" : "blue"}>{payment.plan}</OwnerBadge></td>
-                                    <td><strong>{formatMoney(payment.amount)}</strong></td>
-                                    <td>{formatDate(payment.date)}</td>
-                                    <td>{formatDate(payment.end)}</td>
-                                    <td className="font-mono text-xs text-[#94a3b8]">{payment.id.slice(0, 18)}</td>
+                                    <td className="font-bold text-slate-800">{formatMoney(payment.amount)}</td>
+                                    <td className="whitespace-nowrap">{formatDate(payment.date)}</td>
+                                    <td className="whitespace-nowrap">{formatDate(payment.end)}</td>
+                                    <td className="font-mono text-xs text-slate-500">{payment.id.slice(0, 18)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -87,11 +85,11 @@ const OwnerRevenuePage = async () => {
     );
 };
 
-const Mini = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-        <div className="text-[#f4c430]">{icon}</div>
-        <strong className="mt-4 block text-3xl">{value}</strong>
-        <OwnerMuted className="mt-1 text-sm">{label}</OwnerMuted>
+const Mini = ({ icon, tone, label, value }: { icon: React.ReactNode; tone: Tone; label: string; value: string }) => (
+    <div className="rounded-xl border border-slate-200/80 p-4">
+        <IconTile tone={tone} className="h-10 w-10 text-base">{icon}</IconTile>
+        <strong className="mt-4 block text-2xl font-bold text-slate-800">{value}</strong>
+        <OwnerMuted className="text-sm">{label}</OwnerMuted>
     </div>
 );
 

@@ -1,9 +1,10 @@
 "use client";
 
+import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { FiCheck, FiImage, FiSearch, FiUpload } from "react-icons/fi";
-import { MutedText, Panel } from "@/components/dashboard/DashboardUi";
+import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, PrimaryButton, type Tone } from "@/components/dashboard/DashboardUi";
 import PlanUpgradeModal from "@/components/dashboard/PlanUpgradeModal";
 
 interface UploadChartFormProps {
@@ -52,7 +53,7 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
     };
 
     return (
-        <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-7 xl:grid-cols-[0.9fr_1fr]">
+        <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <PlanUpgradeModal
                 open={upgradeOpen}
                 onClose={() => setUpgradeOpen(false)}
@@ -60,37 +61,42 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
                     ? "Your trial includes 3 total chart analyses. Choose a paid plan to continue with fresh upload credits."
                     : "Your current plan cannot accept another upload right now. Choose a plan below to continue immediately.")}
             />
-            <Panel className="min-h-[620px]">
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-                    <div>
-                        <h2 className="flex items-center gap-2 text-xl font-extrabold"><FiImage /> Upload Chart for AI Analysis</h2>
-                        <MutedText className="mt-2">Upload a chart to get AI-powered trading insights. Supports PNG, JPG.</MutedText>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm shadow-inner">
-                        <strong>{plan.name}</strong>
-                        <p className="mt-1 text-[#94a3b8]">{plan.creditsLeft} / {plan.dailyLimit} {creditLabel}</p>
-                    </div>
-                </div>
+            <Panel>
+                <PanelHeader
+                    icon={<FiImage />}
+                    title="Upload Chart for AI Analysis"
+                    description="Upload a chart to get AI-powered trading insights. Supports PNG, JPG, WEBP."
+                    action={
+                        <div className="text-right">
+                            <Badge tone={blocked ? "red" : "blue"}>{plan.name}</Badge>
+                            <p className="mt-1 text-xs text-slate-500">{plan.creditsLeft} / {plan.dailyLimit} {creditLabel}</p>
+                        </div>
+                    }
+                />
 
                 {blocked && (
-                    <div className="mt-6 flex flex-col justify-between gap-4 rounded-2xl border border-[#f4c430]/40 bg-[#f4c430]/10 p-4 text-sm font-bold text-[#fde68a] sm:flex-row sm:items-center">
+                    <Notice tone="amber" className="mt-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                         <span>{plan.name === "Trial" ? "Your free trial is finished. Buy a plan to upload another chart." : expired ? "Your plan access has expired. Buy a plan to upload again." : "No upload credits left for this plan right now."}</span>
-                        <button type="button" onClick={() => setUpgradeOpen(true)} className="rounded-xl bg-[#f4c430] px-4 py-2 text-sm font-extrabold text-[#111318] transition-colors hover:bg-[#ffd84d]">
+                        <button type="button" onClick={() => setUpgradeOpen(true)} className="shrink-0 rounded-lg bg-gradient-to-tr from-orange-500 to-amber-400 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-md shadow-orange-500/20">
                             View plans
                         </button>
-                    </div>
+                    </Notice>
                 )}
 
-                <form onSubmit={submit} className="mt-8 space-y-5">
+                <form onSubmit={submit} className="mt-6 space-y-5">
                     <label
                         onClick={() => {
                             if (blocked) setUpgradeOpen(true);
                         }}
-                        className={`flex min-h-[240px] flex-col items-center justify-center rounded-[1.75rem] border-2 border-dashed border-white/15 bg-[#101827] text-center transition-colors ${blocked ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-[#3457ff] hover:bg-white/[0.04]"}`}
+                        className={clsx(
+                            "flex min-h-[260px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 text-center transition-colors",
+                            blocked ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-[#3457ff] hover:bg-blue-50/50"
+                        )}
                     >
-                        <FiUpload className="text-6xl text-[#93c5fd]" />
-                        <p className="mt-5 text-lg">{fileName || "Drop an image or click to upload"}</p>
-                        <span className="mt-4 rounded-xl bg-[#3457ff] px-5 py-3 text-sm font-extrabold text-white shadow-[0_12px_24px_rgba(52,87,255,0.2)]">Choose File</span>
+                        <IconTile tone="blue" className="h-16 w-16 text-2xl"><FiUpload /></IconTile>
+                        <p className="mt-5 font-medium text-slate-700">{fileName || "Drop an image or click to upload"}</p>
+                        <p className="mt-1 text-sm text-slate-400">PNG, JPG or WEBP</p>
+                        <span className="mt-4 rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-700">Choose File</span>
                         <input
                             name="file"
                             type="file"
@@ -102,40 +108,40 @@ const UploadChartForm: React.FC<UploadChartFormProps> = ({ plan, expired }) => {
                         />
                     </label>
 
-                    {error && <p className="rounded-xl border border-[#fb7185]/30 bg-[#7f1d1d]/25 p-3 text-sm font-bold text-[#fecaca]">{error}</p>}
-                    <button disabled={loading} className="w-full rounded-xl bg-[#3457ff] px-5 py-3 text-sm font-extrabold text-white shadow-[0_12px_25px_rgba(52,87,255,0.22)] transition-colors hover:bg-[#263fd2] disabled:opacity-60">
+                    {error && <Notice tone="red">{error}</Notice>}
+                    <PrimaryButton disabled={loading} className="w-full py-3">
                         {loading ? "Analyzing chart..." : blocked ? "Choose a plan to continue" : "Analyze Chart"}
-                    </button>
+                    </PrimaryButton>
                 </form>
 
                 {loading && (
-                    <div className="mt-8 rounded-2xl border border-[#f4c430]/35 bg-[#f4c430]/10 p-6">
-                        <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#3457ff] border-t-transparent" />
-                        <h3 className="text-center text-2xl font-extrabold">Analyzing Your Chart</h3>
-                        <MutedText className="mt-2 text-center">Creating user-specific analysis and saving it to your history.</MutedText>
+                    <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6 text-center">
+                        <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-[#3457ff] border-t-transparent" />
+                        <h3 className="text-lg font-bold text-slate-800">Analyzing Your Chart</h3>
+                        <MutedText className="mt-1 text-sm">Creating user-specific analysis and saving it to your history.</MutedText>
                     </div>
                 )}
             </Panel>
 
-            <Panel>
-                <h2 className="text-xl font-extrabold">Chart Upload Guidelines</h2>
-                <div className="mt-7 space-y-6">
-                    <Guide icon={<FiCheck />} title="Allowed Chart Type:">Use clear candlestick screenshots for best analysis quality.</Guide>
-                    <Guide icon={<FiUpload />} title="How to Upload:">Select a PNG, JPG, or WEBP chart image and submit it for analysis.</Guide>
-                    <Guide icon={<FiImage />} title="Supported Trading Styles:">Scalping, intraday, swing trading, and higher-timeframe reviews.</Guide>
-                    <Guide icon={<FiSearch />} title="Chart Requirements:">The image must contain visible candlesticks and readable price action. Non-chart images are rejected.</Guide>
+            <Panel className="h-fit">
+                <PanelHeader title="Chart Upload Guidelines" description="Follow these for the most accurate read" />
+                <div className="mt-6 space-y-5">
+                    <Guide icon={<FiCheck />} tone="green" title="Allowed Chart Type">Use clear candlestick screenshots for best analysis quality.</Guide>
+                    <Guide icon={<FiUpload />} tone="blue" title="How to Upload">Select a PNG, JPG, or WEBP chart image and submit it for analysis.</Guide>
+                    <Guide icon={<FiImage />} tone="purple" title="Supported Trading Styles">Scalping, intraday, swing trading, and higher-timeframe reviews.</Guide>
+                    <Guide icon={<FiSearch />} tone="yellow" title="Chart Requirements">The image must contain visible candlesticks and readable price action. Non-chart images are rejected.</Guide>
                 </div>
             </Panel>
         </div>
     );
 };
 
-const Guide: React.FC<React.PropsWithChildren<{ icon: React.ReactNode; title: string }>> = ({ icon, title, children }) => (
+const Guide: React.FC<React.PropsWithChildren<{ icon: React.ReactNode; tone: Tone; title: string }>> = ({ icon, tone, title, children }) => (
     <div className="flex gap-4">
-        <div className="flex h-9 w-11 shrink-0 items-center justify-center rounded-xl bg-[#3457ff]/15 text-[#93c5fd]">{icon}</div>
+        <IconTile tone={tone} className="h-10 w-10 text-base">{icon}</IconTile>
         <div>
-            <h3 className="font-extrabold">{title}</h3>
-            <p className="mt-1 leading-relaxed text-[#94a3b8]">{children}</p>
+            <h3 className="font-bold text-slate-800">{title}</h3>
+            <p className="mt-0.5 text-sm leading-relaxed text-slate-500">{children}</p>
         </div>
     </div>
 );

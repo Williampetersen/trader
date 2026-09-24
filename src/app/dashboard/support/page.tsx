@@ -1,8 +1,9 @@
 "use client";
 
+import clsx from "clsx";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { FiChevronDown, FiMail, FiSearch } from "react-icons/fi";
-import { MutedText, Panel } from "@/components/dashboard/DashboardUi";
+import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, PrimaryButton, inputClass } from "@/components/dashboard/DashboardUi";
 
 const questions = [
     "How do I subscribe to GPT Chart View?",
@@ -60,40 +61,37 @@ const SupportPage = () => {
     };
 
     return (
-        <div className="mx-auto max-w-[1215px]">
-            <div className="mb-8 text-center">
-                <h2 className="text-4xl font-extrabold">Support Center</h2>
-                <MutedText className="mt-3">Create support tickets and search common answers.</MutedText>
-            </div>
-
-            <div className="mb-10 grid gap-6 lg:grid-cols-[0.8fr_1fr]">
+        <div className="mx-auto max-w-[1215px] space-y-6">
+            <div className="grid gap-6 lg:grid-cols-[0.8fr_1fr]">
                 <Panel>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f4c430]/15 text-[#fcd34d]">
-                        <FiMail size={28} />
+                    <div className="flex items-start gap-4">
+                        <IconTile tone="yellow"><FiMail /></IconTile>
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800">Contact Support</h3>
+                            <MutedText className="text-sm">Submit a ticket tied to your account.</MutedText>
+                        </div>
                     </div>
-                    <h3 className="mt-6 text-xl font-extrabold">Contact Support</h3>
-                    <MutedText className="mt-2">Submit a ticket tied to your account.</MutedText>
                     <form onSubmit={submit} className="mt-6 space-y-4">
-                        <input name="subject" required placeholder="Subject" className="w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" />
-                        <textarea name="message" required placeholder="Describe the problem" rows={5} className="w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]" />
-                        <button className="w-full rounded-2xl bg-[#3457ff] px-5 py-3 font-extrabold text-white shadow-[0_14px_35px_rgba(52,87,255,0.28)]">Create ticket</button>
+                        <input name="subject" required placeholder="Subject" className={inputClass} />
+                        <textarea name="message" required placeholder="Describe the problem" rows={5} className={inputClass} />
+                        <PrimaryButton className="w-full py-3">Create ticket</PrimaryButton>
                     </form>
-                    {message && <p className="mt-4 rounded-2xl border border-[#3457ff]/25 bg-[#3457ff]/15 p-3 text-sm font-bold text-[#bfdbfe]">{message}</p>}
+                    {message && <Notice className="mt-4">{message}</Notice>}
                 </Panel>
 
                 <Panel>
-                    <h3 className="text-lg font-extrabold">Your Tickets</h3>
+                    <PanelHeader title="Your Tickets" description={`${tickets.length} ticket${tickets.length === 1 ? "" : "s"} on your account`} />
                     <div className="mt-5 space-y-3">
                         {tickets.length === 0 ? (
-                            <MutedText>No tickets yet.</MutedText>
+                            <MutedText className="py-8 text-center">No tickets yet.</MutedText>
                         ) : tickets.map((ticket) => (
-                            <div key={ticket.id} className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+                            <div key={ticket.id} className="rounded-xl border border-slate-200/80 p-4">
                                 <div className="flex items-center justify-between gap-4">
-                                    <strong>{ticket.subject}</strong>
-                                    <span className="rounded-full bg-[#16a34a]/20 px-3 py-1 text-xs font-bold text-[#86efac] ring-1 ring-[#4ade80]/20">{ticket.status}</span>
+                                    <strong className="text-slate-800">{ticket.subject}</strong>
+                                    <Badge tone={ticket.status === "Open" ? "amber" : "green"}>{ticket.status}</Badge>
                                 </div>
-                                <p className="mt-2 text-sm text-[#94a3b8]">{ticket.message}</p>
-                                <p className="mt-2 text-xs text-[#94a3b8]">{new Date(ticket.createdAt).toLocaleString()}</p>
+                                <p className="mt-2 text-sm text-slate-600">{ticket.message}</p>
+                                <p className="mt-2 text-xs text-slate-400">{new Date(ticket.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
                     </div>
@@ -101,17 +99,16 @@ const SupportPage = () => {
             </div>
 
             <Panel>
-                <h3 className="text-lg font-extrabold">Frequently Asked Questions</h3>
-                <MutedText className="mt-1">Find answers to common questions</MutedText>
-                <div className="mt-3 flex items-center rounded-2xl border border-white/10 bg-[#101827] px-4">
-                    <FiSearch className="text-[#94a3b8]" />
-                    <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent px-3 py-3 text-white outline-none placeholder:text-[#64748b]" placeholder="Search FAQ..." />
+                <PanelHeader title="Frequently Asked Questions" description="Find answers to common questions" />
+                <div className="relative mt-4">
+                    <FiSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input value={query} onChange={(event) => setQuery(event.target.value)} className={clsx(inputClass, "pl-10")} placeholder="Search FAQ..." />
                 </div>
-                <div className="mt-7 divide-y divide-white/10">
+                <div className="mt-4 divide-y divide-slate-100">
                     {filteredQuestions.map((question) => (
-                        <button key={question} className="flex w-full items-center justify-between py-5 text-left font-bold text-[#cbd5e1]">
+                        <button key={question} className="flex w-full items-center justify-between py-4 text-left font-medium text-slate-700 hover:text-[#3457ff]">
                             {question}
-                            <FiChevronDown className="text-[#94a3b8]" />
+                            <FiChevronDown className="text-slate-400" />
                         </button>
                     ))}
                 </div>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { LightButton, PrimaryButton } from "@/components/dashboard/DashboardUi";
 
 const OwnerTicketActions = ({ ticketId, status }: { ticketId: string; status: string }) => {
     const router = useRouter();
@@ -19,10 +20,12 @@ const OwnerTicketActions = ({ ticketId, status }: { ticketId: string; status: st
         router.refresh();
     };
 
+    const Button = status === "Open" ? PrimaryButton : LightButton;
+
     return (
-        <button onClick={updateStatus} disabled={loading} className="rounded-2xl bg-[#3457ff] px-4 py-2 text-xs font-extrabold text-white transition-colors hover:bg-[#263fd2] disabled:opacity-60">
+        <Button onClick={updateStatus} disabled={loading} className="shrink-0">
             {loading ? "Saving..." : status === "Open" ? "Mark answered" : "Reopen"}
-        </button>
+        </Button>
     );
 };
 

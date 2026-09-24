@@ -1,9 +1,10 @@
+import clsx from "clsx";
 import Link from "next/link";
-import { FiArrowRight, FiCheckCircle, FiClock } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiClock, FiCreditCard } from "react-icons/fi";
 import { requireUser } from "@/lib/server/auth";
 import { readDb } from "@/lib/server/store";
 import { getPlanConfig } from "@/data/plans";
-import { MutedText, Panel, PrimaryButton } from "@/components/dashboard/DashboardUi";
+import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, outlineButtonClass, tableClass } from "@/components/dashboard/DashboardUi";
 import UpgradePlanButtons from "@/components/dashboard/UpgradePlanButtons";
 
 const BillingPage = async () => {
@@ -16,47 +17,49 @@ const BillingPage = async () => {
     return (
         <div className="mx-auto max-w-[1215px] space-y-8">
             <Panel>
-                <h2 className="text-xl font-extrabold">Current Plan</h2>
-                <MutedText className="mt-1">Your active subscription details</MutedText>
-                <div className="mt-7 rounded-3xl border border-[#3457ff]/30 bg-[#3457ff]/15 p-4 text-[#bfdbfe]">
+                <PanelHeader title="Current Plan" description="Your active subscription details" />
+
+                <Notice tone={expired ? "red" : "blue"} className="mt-6">
                     <strong>{expired ? "This plan has expired" : user.plan.autoRenewal ? "This plan renews automatically" : "This is a prepaid plan with no auto-renewal"}</strong>
-                    <p className="mt-2 text-sm text-[#cbd5e1]">
+                    <p className="mt-1 font-normal">
                         {expired ? "Upgrade to restore chart uploads." : `Your access is valid until ${new Date(user.plan.expiresAt).toLocaleDateString()}.`}
                     </p>
-                </div>
+                </Notice>
 
-                <div className="mt-6 flex items-start justify-between border-b border-white/10 pb-6">
-                    <div>
-                        <h3 className="text-2xl font-extrabold">{user.plan.name}</h3>
-                        <MutedText>{planConfig.durationLabel} access | {planConfig.allowanceLabel}</MutedText>
+                <div className="mt-6 flex items-center justify-between gap-4 border-b border-slate-100 pb-6">
+                    <div className="flex items-center gap-4">
+                        <IconTile tone="blue" className="h-12 w-12 text-xl"><FiCreditCard /></IconTile>
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-800">{user.plan.name}</h3>
+                            <MutedText className="text-sm">{planConfig.durationLabel} access · {planConfig.allowanceLabel}</MutedText>
+                        </div>
                     </div>
-                    <strong className="text-2xl">${planConfig.price.toFixed(2)}</strong>
+                    <strong className="text-2xl font-bold text-slate-800">${planConfig.price.toFixed(2)}</strong>
                 </div>
 
-                <h3 className="mt-6 font-extrabold">Plan Features:</h3>
-                <ul className="mt-4 space-y-3 text-lg">
+                <h3 className="mt-6 text-sm font-bold uppercase tracking-wider text-slate-400">Plan features</h3>
+                <ul className="mt-3 grid gap-3 text-slate-700 sm:grid-cols-2">
                     {planConfig.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-3"><FiCheckCircle className="text-[#22c55e]" />{feature}</li>
+                        <li key={feature} className="flex items-center gap-3"><FiCheckCircle className="shrink-0 text-emerald-500" />{feature}</li>
                     ))}
-                    <li className="flex items-center gap-3"><FiCheckCircle className="text-[#22c55e]" />Private user history</li>
+                    <li className="flex items-center gap-3"><FiCheckCircle className="shrink-0 text-emerald-500" />Private user history</li>
                 </ul>
 
-                <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-[#cbd5e1]">
-                    <strong>Stripe Checkout:</strong> Paid upgrades open Stripe&apos;s secure subscription checkout. Access is activated after Stripe confirms payment.
+                <div className="mt-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
+                    <strong className="text-slate-800">Stripe Checkout:</strong> Paid upgrades open Stripe&apos;s secure subscription checkout. Access is activated after Stripe confirms payment.
                 </div>
 
-                <Link href="/#pricing" className="mt-5 inline-block"><PrimaryButton>View Public Pricing <FiArrowRight className="ml-2 inline" /></PrimaryButton></Link>
+                <Link href="/#pricing" className={clsx(outlineButtonClass, "mt-5")}>View Public Pricing <FiArrowRight /></Link>
                 <UpgradePlanButtons />
             </Panel>
 
-            <Panel>
-                <h2 className="flex items-center gap-2 text-xl font-extrabold"><FiClock /> Payment History</h2>
-                <MutedText className="mt-1">Your recent subscription payments</MutedText>
-                <div className="mt-7 overflow-x-auto rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-                    <table className="w-full min-w-[780px] text-left">
-                        <thead className="bg-white/[0.04] text-[#cbd5e1]">
-                            <tr className="border-b border-white/10">
-                                <th className="p-4">Date</th>
+            <Panel className="px-0 pb-2">
+                <PanelHeader className="px-6" icon={<FiClock />} title="Payment History" description="Your recent subscription payments" />
+                <div className="mt-6 overflow-x-auto">
+                    <table className={`${tableClass} min-w-[780px]`}>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
                                 <th>Start</th>
@@ -66,18 +69,18 @@ const BillingPage = async () => {
                         </thead>
                         <tbody>
                             {payments.map((payment) => (
-                                <tr key={payment.id} className="border-b border-white/10">
-                                    <td className="p-4">{new Date(payment.date).toLocaleDateString()}</td>
-                                    <td>{payment.plan}</td>
-                                    <td>${payment.amount.toFixed(2)}</td>
+                                <tr key={payment.id}>
+                                    <td>{new Date(payment.date).toLocaleDateString()}</td>
+                                    <td><Badge tone={payment.plan === "Trial" ? "gray" : "blue"}>{payment.plan}</Badge></td>
+                                    <td className="font-bold text-slate-800">${payment.amount.toFixed(2)}</td>
                                     <td>{new Date(payment.start).toLocaleDateString()}</td>
                                     <td>{new Date(payment.end).toLocaleDateString()}</td>
-                                    <td>{payment.id.slice(0, 10)}</td>
+                                    <td className="font-mono text-xs text-slate-500">{payment.id.slice(0, 10)}</td>
                                 </tr>
                             ))}
                             {payments.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="p-4 text-center text-[#94a3b8]">No payments yet.</td>
+                                    <td colSpan={6} className="py-10 text-center text-slate-500">No payments yet.</td>
                                 </tr>
                             )}
                         </tbody>

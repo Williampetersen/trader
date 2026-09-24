@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
+import clsx from "clsx";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FiBarChart2, FiCreditCard, FiEdit, FiUser } from "react-icons/fi";
-import { MutedText, Panel } from "./DashboardUi";
+import { FiBarChart2, FiCalendar, FiCreditCard, FiSave } from "react-icons/fi";
+import { Avatar, Badge, MutedText, Notice, Panel, PanelHeader, PrimaryButton, inputClass } from "./DashboardUi";
 import { countries } from "@/data/countries";
 
 interface ProfileFormProps {
@@ -72,78 +72,72 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     };
 
     return (
-        <div className="grid grid-cols-1 gap-7 lg:grid-cols-[1fr_340px]">
-            <Panel>
-                <form onSubmit={submit}>
-                    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                        <div>
-                            <h3 className="text-lg font-extrabold">Profile Information</h3>
-                            <MutedText className="mt-1 text-sm">Changes are saved to your user account.</MutedText>
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition-colors hover:border-[#3457ff]/60 hover:bg-white/[0.08] disabled:opacity-60"
-                        >
-                            <FiEdit />
-                            {saving ? "Saving..." : "Save Profile"}
-                        </button>
+        <div className="space-y-6">
+            <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+                <div className="h-28 bg-gradient-to-tr from-[#3457ff] via-[#5a7bff] to-[#a5b8ff]" />
+                <div className="flex flex-col gap-4 px-6 pb-6 sm:flex-row sm:items-end">
+                    <Avatar name={currentUser.name} className="-mt-10 h-20 w-20 rounded-xl border-4 border-white text-2xl" />
+                    <div>
+                        <h2 className="text-xl font-bold text-slate-800">{currentUser.name}</h2>
+                        <MutedText className="text-sm">{currentUser.email} · {currentUser.plan.name} member</MutedText>
                     </div>
-
-                    <div className="mt-7 flex items-center gap-5 border-b border-white/10 pb-7">
-                        <Image src="/images/hero-chart.webp" alt={currentUser.name} width={86} height={86} className="h-[86px] w-[86px] rounded-2xl border border-white/10 object-cover" unoptimized />
-                        <div>
-                            <strong className="text-2xl">{currentUser.name}</strong>
-                            <MutedText className="text-sm">{currentUser.plan.name} member</MutedText>
-                        </div>
-                    </div>
-
-                    <div className="mt-7 grid grid-cols-1 gap-7 md:grid-cols-2">
-                        <TextField label="Name" value={form.name} onChange={(value) => updateField("name", value)} required />
-                        <ReadOnlyField label="Email" value={currentUser.email} />
-                        <TextField label="Mobile" value={form.mobile} onChange={(value) => updateField("mobile", value)} placeholder="+45 12 34 56 78" />
-                        <SelectField label="Country" value={form.country} onChange={(value) => updateField("country", value)} options={countries} placeholder="Select country" />
-                        <SelectField label="Gender" value={form.gender} onChange={(value) => updateField("gender", value)} options={genderOptions} placeholder="Select gender" />
-                        <SelectField label="Age group" value={form.ageGroup} onChange={(value) => updateField("ageGroup", value)} options={ageGroupOptions} placeholder="Select age group" />
-                    </div>
-
-                    {message && <p className="mt-5 rounded-2xl border border-[#4ade80]/20 bg-[#16a34a]/20 p-3 text-sm font-bold text-[#86efac]">{message}</p>}
-                    {error && <p className="mt-5 rounded-2xl border border-[#fb7185]/30 bg-[#7f1d1d]/25 p-3 text-sm font-bold text-[#fecaca]">{error}</p>}
-                </form>
-            </Panel>
-
-            <Panel className="h-fit">
-                <h3 className="text-lg font-extrabold">Account Details</h3>
-                <div className="mt-7 space-y-6 text-lg">
-                    <Detail icon={<FiUser />} label="Member Since" value={new Date(currentUser.createdAt).toLocaleDateString()} />
-                    <Detail icon={<FiCreditCard />} label="Plan Type" value={currentUser.plan.name} badge />
-                    <Detail icon={<FiBarChart2 />} label="Credits Left" value={String(currentUser.plan.creditsLeft)} badgeGreen />
                 </div>
-            </Panel>
+            </section>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+                <Panel>
+                    <form onSubmit={submit}>
+                        <PanelHeader
+                            title="Profile Information"
+                            description="Changes are saved to your user account."
+                            action={<PrimaryButton type="submit" disabled={saving}><FiSave />{saving ? "Saving..." : "Save Profile"}</PrimaryButton>}
+                        />
+
+                        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+                            <TextField label="Name" value={form.name} onChange={(value) => updateField("name", value)} required />
+                            <ReadOnlyField label="Email" value={currentUser.email} />
+                            <TextField label="Mobile" value={form.mobile} onChange={(value) => updateField("mobile", value)} placeholder="+45 12 34 56 78" />
+                            <SelectField label="Country" value={form.country} onChange={(value) => updateField("country", value)} options={countries} placeholder="Select country" />
+                            <SelectField label="Gender" value={form.gender} onChange={(value) => updateField("gender", value)} options={genderOptions} placeholder="Select gender" />
+                            <SelectField label="Age group" value={form.ageGroup} onChange={(value) => updateField("ageGroup", value)} options={ageGroupOptions} placeholder="Select age group" />
+                        </div>
+
+                        {message && <Notice tone="green" className="mt-5">{message}</Notice>}
+                        {error && <Notice tone="red" className="mt-5">{error}</Notice>}
+                    </form>
+                </Panel>
+
+                <Panel className="h-fit">
+                    <PanelHeader title="Account Details" />
+                    <div className="mt-4 divide-y divide-slate-100 text-sm">
+                        <Detail icon={<FiCalendar />} label="Member Since"><strong className="text-slate-800">{new Date(currentUser.createdAt).toLocaleDateString()}</strong></Detail>
+                        <Detail icon={<FiCreditCard />} label="Plan Type"><Badge tone="blue">{currentUser.plan.name}</Badge></Detail>
+                        <Detail icon={<FiBarChart2 />} label="Credits Left"><Badge tone="green">{currentUser.plan.creditsLeft}</Badge></Detail>
+                    </div>
+                </Panel>
+            </div>
         </div>
     );
 };
 
-const fieldClass = "mt-3 w-full rounded-2xl border border-white/10 bg-[#101827] px-4 py-3 text-white outline-none transition-colors placeholder:text-[#64748b] focus:border-[#3457ff]";
-
 const TextField = ({ label, value, onChange, placeholder, required }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; required?: boolean }) => (
     <label className="block">
-        <span className="font-bold text-[#cbd5e1]">{label}</span>
-        <input className={fieldClass} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} required={required} />
+        <span className="text-sm font-medium text-slate-700">{label}</span>
+        <input className={clsx(inputClass, "mt-1.5")} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} required={required} />
     </label>
 );
 
 const ReadOnlyField = ({ label, value }: { label: string; value: string }) => (
     <label className="block">
-        <span className="font-bold text-[#cbd5e1]">{label}</span>
-        <input className={`${fieldClass} text-[#94a3b8]`} value={value} readOnly />
+        <span className="text-sm font-medium text-slate-700">{label}</span>
+        <input className={clsx(inputClass, "mt-1.5")} value={value} readOnly />
     </label>
 );
 
 const SelectField = ({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (value: string) => void; options: string[]; placeholder: string }) => (
     <label className="block">
-        <span className="font-bold text-[#cbd5e1]">{label}</span>
-        <select className={fieldClass} value={value} onChange={(event) => onChange(event.target.value)}>
+        <span className="text-sm font-medium text-slate-700">{label}</span>
+        <select className={clsx(inputClass, "mt-1.5")} value={value} onChange={(event) => onChange(event.target.value)}>
             <option value="">{placeholder}</option>
             {options.map((option) => (
                 <option key={option} value={option}>
@@ -154,10 +148,10 @@ const SelectField = ({ label, value, onChange, options, placeholder }: { label: 
     </label>
 );
 
-const Detail = ({ icon, label, value, badge, badgeGreen }: { icon: React.ReactNode; label: string; value: string; badge?: boolean; badgeGreen?: boolean }) => (
-    <div className="flex items-center justify-between gap-4">
-        <span className="flex items-center gap-3 text-[#cbd5e1]">{icon}{label}</span>
-        <strong className={badge || badgeGreen ? `rounded-full px-3 py-1 text-sm ${badgeGreen ? "bg-[#16a34a]/20 text-[#86efac] ring-1 ring-[#4ade80]/20" : "bg-[#3457ff]/20 text-[#bfdbfe] ring-1 ring-[#60a5fa]/20"}` : ""}>{value}</strong>
+const Detail = ({ icon, label, children }: React.PropsWithChildren<{ icon: React.ReactNode; label: string }>) => (
+    <div className="flex items-center justify-between gap-4 py-3">
+        <span className="flex items-center gap-3 text-slate-600">{icon}{label}</span>
+        {children}
     </div>
 );
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FiAward, FiBarChart2, FiEye, FiTarget, FiTrendingDown, FiUpload } from "react-icons/fi";
 import { requireUser } from "@/lib/server/auth";
 import { readDb } from "@/lib/server/store";
-import { Disclaimer, MutedText, Panel, PrimaryButton, StatCard } from "@/components/dashboard/DashboardUi";
+import { Badge, Disclaimer, Panel, PanelHeader, StatCard, StatGrid, primaryButtonClass, tableClass } from "@/components/dashboard/DashboardUi";
 
 const HistoryPage = async ({ searchParams }: { searchParams: { q?: string } }) => {
     const user = await requireUser();
@@ -20,29 +20,26 @@ const HistoryPage = async ({ searchParams }: { searchParams: { q?: string } }) =
     const buys = analyses.filter((item) => item.entryType === "Buy").length;
 
     return (
-        <div className="mx-auto max-w-[1505px] space-y-7">
-            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <div>
-                    <h2 className="text-3xl font-extrabold">Chart Analysis History</h2>
-                    <MutedText className="mt-2">{analyses.length} matching analyses{query ? ` for "${searchParams.q}"` : ""}</MutedText>
-                </div>
-                <Link href="/dashboard/upload"><PrimaryButton><FiUpload className="mr-2 inline" /> Upload New Chart</PrimaryButton></Link>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="space-y-8">
+            <StatGrid>
                 <StatCard label="Total Analyses" value={String(analyses.length)} description="Chart analyses completed" icon={<FiBarChart2 />} />
                 <StatCard label="Win Rate" value={`${winRate}%`} description={`${wins} won, ${Math.max(0, completed.length - wins)} lost`} icon={<FiAward />} tone={winRate > 50 ? "green" : "red"} />
-                <StatCard label="Avg Risk / Reward" value={avgRisk} description="Average planned ratio" icon={<FiTarget />} tone="green" />
-                <StatCard label="Entry Types" value={`Buy: ${buys} Sell: ${sells}`} icon={<FiTrendingDown />} tone="blue" />
-            </div>
+                <StatCard label="Avg Risk / Reward" value={avgRisk} description="Average planned ratio" icon={<FiTarget />} tone="purple" />
+                <StatCard label="Entry Types" value={`${buys} / ${sells}`} description="Buy / Sell signals" icon={<FiTrendingDown />} tone="yellow" />
+            </StatGrid>
 
-            <Panel>
-                <h3 className="text-xl font-extrabold">Analysis History</h3>
-                <div className="mt-7 overflow-x-auto">
-                    <table className="w-full min-w-[980px] text-left text-sm">
-                        <thead className="text-[#cbd5e1]">
-                            <tr className="border-b border-white/10">
-                                <th className="py-4">Symbol</th>
+            <Panel className="px-0 pb-2">
+                <PanelHeader
+                    className="px-6"
+                    title="Analysis History"
+                    description={`${analyses.length} matching analyses${query ? ` for "${searchParams.q}"` : ""}`}
+                    action={<Link href="/dashboard/upload" className={primaryButtonClass}><FiUpload /> Upload New Chart</Link>}
+                />
+                <div className="mt-6 overflow-x-auto">
+                    <table className={`${tableClass} min-w-[980px]`}>
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
                                 <th>Time Frame</th>
                                 <th>Summary</th>
                                 <th>Entry Type</th>
@@ -54,20 +51,31 @@ const HistoryPage = async ({ searchParams }: { searchParams: { q?: string } }) =
                         </thead>
                         <tbody>
                             {analyses.map((row) => (
-                                <tr key={row.id} className="border-b border-white/10">
-                                    <td className="py-4 font-bold">{row.symbol}</td>
-                                    <td><span className="rounded-lg border border-white/10 bg-white/[0.05] px-2 py-1">{row.timeframe}</span></td>
-                                    <td>{row.summary}</td>
-                                    <td><span className="rounded-full bg-[#3457ff]/20 px-3 py-1 font-bold text-[#bfdbfe]">{row.entryType}</span></td>
-                                    <td><span className="rounded-lg border border-white/10 px-3 py-1">{row.confidence}%</span></td>
-                                    <td>{row.outcome}</td>
-                                    <td>{new Date(row.createdAt).toLocaleString()}</td>
-                                    <td><Link href={`/dashboard/results?id=${row.id}`} className="text-[#93c5fd]"><FiEye /></Link></td>
+                                <tr key={row.id}>
+                                    <td className="font-bold text-slate-800">{row.symbol}</td>
+                                    <td><Badge tone="gray">{row.timeframe}</Badge></td>
+                                    <td className="max-w-[320px] text-slate-500">{row.summary}</td>
+                                    <td><Badge tone={row.entryType === "Buy" ? "green" : row.entryType === "Sell" ? "red" : "amber"}>{row.entryType}</Badge></td>
+                                    <td>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100">
+                                                <div className="h-full rounded-full bg-gradient-to-r from-[#3457ff] to-[#6b8cff]" style={{ width: `${row.confidence}%` }} />
+                                            </div>
+                                            <span className="text-xs font-bold text-slate-600">{row.confidence}%</span>
+                                        </div>
+                                    </td>
+                                    <td className="text-slate-600">{row.outcome}</td>
+                                    <td className="whitespace-nowrap text-slate-500">{new Date(row.createdAt).toLocaleString()}</td>
+                                    <td>
+                                        <Link href={`/dashboard/results?id=${row.id}`} aria-label={`View ${row.symbol} analysis`} className="grid h-8 w-8 place-items-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-[#3457ff]">
+                                            <FiEye />
+                                        </Link>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    {analyses.length === 0 && <MutedText className="py-10 text-center">No analyses yet. Upload your first chart to start.</MutedText>}
+                    {analyses.length === 0 && <p className="py-10 text-center text-slate-500">No analyses yet. Upload your first chart to start.</p>}
                 </div>
             </Panel>
 

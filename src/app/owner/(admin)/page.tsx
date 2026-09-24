@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { FiActivity, FiCreditCard, FiHeadphones, FiUpload, FiUsers, FiWifi } from "react-icons/fi";
+import { FiActivity, FiArrowRight, FiCreditCard, FiDollarSign, FiHeadphones, FiUpload, FiUsers, FiWifi } from "react-icons/fi";
+import { IconTile, StatGrid, tableClass, type Tone } from "@/components/dashboard/DashboardUi";
 import { OwnerBadge, OwnerMuted, OwnerPanel, OwnerStat, formatDate, formatMoney } from "@/components/owner/OwnerUi";
 import { getOwnerMetrics } from "@/lib/server/owner-metrics";
 
@@ -9,61 +10,56 @@ const OwnerHomePage = async () => {
     const maxUpload = Math.max(1, ...metrics.uploadTrend.map((item) => item.count));
 
     return (
-        <div className="space-y-7">
-            <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#111318] shadow-[0_28px_80px_rgba(0,0,0,0.28)]">
-                <div className="grid gap-7 bg-[linear-gradient(135deg,rgba(52,87,255,0.24),transparent_45%),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:auto,46px_46px,46px_46px] p-7 lg:grid-cols-[1fr_390px]">
+        <div className="space-y-8">
+            <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+                <div className="grid gap-6 bg-[radial-gradient(circle_at_0%_0%,rgba(52,87,255,0.10),transparent_45%),radial-gradient(circle_at_100%_100%,rgba(249,115,22,0.07),transparent_40%)] p-6 lg:grid-cols-[1fr_420px] lg:p-8">
                     <div>
-                        <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f4c430]">Business command center</p>
-                        <h2 className="mt-3 max-w-4xl text-4xl font-extrabold text-white lg:text-5xl">Monitor users, revenue, uploads, and support from one private owner dashboard.</h2>
-                        <p className="mt-4 max-w-2xl text-[#cbd5e1]">The data here comes from real signups, sessions, subscriptions, payments, chart analyses, chat messages, profiles, countries, and support tickets.</p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-[#3457ff]">Business command center</p>
+                        <h2 className="mt-2 max-w-3xl text-3xl font-bold text-slate-800">Monitor users, revenue, uploads, and support from one private owner dashboard.</h2>
+                        <p className="mt-3 max-w-2xl text-slate-500">The data here comes from real signups, sessions, subscriptions, payments, chart analyses, chat messages, profiles, countries, and support tickets.</p>
                     </div>
-                    <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5">
-                        <p className="text-sm font-bold text-[#94a3b8]">Live platform health</p>
-                        <div className="mt-5 grid grid-cols-2 gap-3">
-                            <Health label="Online" value={String(metrics.summary.onlineUsers)} icon={<FiWifi />} />
-                            <Health label="Sessions" value={String(metrics.summary.activeSessions)} icon={<FiActivity />} />
-                            <Health label="Open tickets" value={String(metrics.summary.openTickets)} icon={<FiHeadphones />} />
-                            <Health label="Uploads today" value={String(metrics.summary.uploadsToday)} icon={<FiUpload />} />
-                        </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <Health label="Online" value={String(metrics.summary.onlineUsers)} icon={<FiWifi />} tone="green" />
+                        <Health label="Sessions" value={String(metrics.summary.activeSessions)} icon={<FiActivity />} tone="blue" />
+                        <Health label="Open tickets" value={String(metrics.summary.openTickets)} icon={<FiHeadphones />} tone="amber" />
+                        <Health label="Uploads today" value={String(metrics.summary.uploadsToday)} icon={<FiUpload />} tone="purple" />
                     </div>
                 </div>
             </section>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <OwnerStat label="Total users" value={String(metrics.summary.totalUsers)} detail={`${metrics.summary.paidUsers} paid · ${metrics.summary.trialUsers} trial`} tone="blue" />
-                <OwnerStat label="Online now" value={String(metrics.summary.onlineUsers)} detail="Active within 15 minutes" tone="green" />
-                <OwnerStat label="Monthly revenue" value={formatMoney(metrics.summary.monthRevenue)} detail={`${formatMoney(metrics.summary.mrr)} estimated MRR`} tone="amber" />
-                <OwnerStat label="Total uploads" value={String(metrics.summary.totalUploads)} detail={`${metrics.summary.aiMessages} AI responses`} tone="purple" />
-            </div>
+            <StatGrid>
+                <OwnerStat label="Total users" value={String(metrics.summary.totalUsers)} detail={`${metrics.summary.paidUsers} paid · ${metrics.summary.trialUsers} trial`} icon={<FiUsers />} tone="blue" />
+                <OwnerStat label="Online now" value={String(metrics.summary.onlineUsers)} detail="Active within 15 minutes" icon={<FiWifi />} tone="green" />
+                <OwnerStat label="Monthly revenue" value={formatMoney(metrics.summary.monthRevenue)} detail={`${formatMoney(metrics.summary.mrr)} estimated MRR`} icon={<FiDollarSign />} tone="amber" />
+                <OwnerStat label="Total uploads" value={String(metrics.summary.totalUploads)} detail={`${metrics.summary.aiMessages} AI responses`} icon={<FiUpload />} tone="purple" />
+            </StatGrid>
 
-            <div className="grid gap-7 xl:grid-cols-[1fr_0.85fr]">
+            <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
                 <OwnerPanel>
-                    <div className="flex items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-xl font-extrabold">Signup Trend</h3>
-                            <OwnerMuted className="mt-1 text-sm">New accounts created during the last 7 days</OwnerMuted>
+                    <div className="h-[240px] rounded-xl bg-gradient-to-tr from-[#3457ff] to-[#6b8cff] p-5 shadow-lg shadow-[#3457ff]/20">
+                        <div className="flex h-full items-end gap-3 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:100%_40px]">
+                            {metrics.signupTrend.map((item) => (
+                                <div key={item.label} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                                    <span className="text-xs font-bold text-white">{item.count}</span>
+                                    <div className="w-full max-w-[42px] rounded-t-md bg-white/90" style={{ height: `${Math.max(4, (item.count / maxSignup) * 80)}%` }} />
+                                    <span className="text-[11px] text-white/80">{item.label}</span>
+                                </div>
+                            ))}
                         </div>
-                        <Link href="/owner/users" className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-extrabold text-[#cbd5e1] transition-colors hover:bg-white/[0.08]">View users</Link>
                     </div>
-                    <div className="mt-8 flex h-[230px] items-end gap-4">
-                        {metrics.signupTrend.map((item) => (
-                            <div key={item.label} className="flex flex-1 flex-col items-center gap-3">
-                                <div className="flex h-[180px] w-full items-end rounded-2xl bg-white/[0.04] p-2">
-                                    <div className="w-full rounded-xl bg-[#3457ff]" style={{ height: `${Math.max(8, (item.count / maxSignup) * 100)}%` }} />
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-sm font-extrabold">{item.count}</p>
-                                    <OwnerMuted className="text-xs">{item.label}</OwnerMuted>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="mt-6 flex items-center justify-between gap-4">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800">Signup Trend</h3>
+                            <OwnerMuted className="mt-0.5 text-sm">New accounts created during the last 7 days</OwnerMuted>
+                        </div>
+                        <Link href="/owner/users" className="inline-flex items-center gap-1 text-sm font-medium text-[#3457ff] hover:underline">View users <FiArrowRight /></Link>
                     </div>
                 </OwnerPanel>
 
                 <OwnerPanel>
-                    <h3 className="text-xl font-extrabold">Plan Mix</h3>
-                    <OwnerMuted className="mt-1 text-sm">Current user plan distribution</OwnerMuted>
-                    <div className="mt-7 space-y-4">
+                    <h3 className="text-lg font-bold text-slate-800">Plan Mix</h3>
+                    <OwnerMuted className="mt-0.5 text-sm">Current user plan distribution</OwnerMuted>
+                    <div className="mt-6 space-y-5">
                         {metrics.planBreakdown.map((item) => (
                             <Breakdown key={item.label} label={item.label} value={item.count} total={metrics.summary.totalUsers} />
                         ))}
@@ -71,20 +67,20 @@ const OwnerHomePage = async () => {
                 </OwnerPanel>
             </div>
 
-            <div className="grid gap-7 xl:grid-cols-2">
-                <OwnerPanel>
-                    <div className="flex items-center justify-between gap-4">
+            <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
+                <OwnerPanel className="px-0 pb-2">
+                    <div className="flex items-center justify-between gap-4 px-6">
                         <div>
-                            <h3 className="text-xl font-extrabold">Recent Users</h3>
-                            <OwnerMuted className="mt-1 text-sm">Latest signups with country, plan, and online status</OwnerMuted>
+                            <h3 className="text-lg font-bold text-slate-800">Recent Users</h3>
+                            <OwnerMuted className="mt-0.5 text-sm">Latest signups with country, plan, and online status</OwnerMuted>
                         </div>
-                        <FiUsers className="text-[#f4c430]" size={24} />
+                        <Link href="/owner/users" className="inline-flex items-center gap-1 text-sm font-medium text-[#3457ff] hover:underline">All users <FiArrowRight /></Link>
                     </div>
-                    <div className="mt-6 overflow-x-auto">
-                        <table className="w-full min-w-[720px] text-left text-sm">
-                            <thead className="text-[#94a3b8]">
-                                <tr className="border-b border-white/10">
-                                    <th className="py-3">User</th>
+                    <div className="mt-5 overflow-x-auto">
+                        <table className={`${tableClass} min-w-[640px]`}>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
                                     <th>Country</th>
                                     <th>Plan</th>
                                     <th>Uploads</th>
@@ -93,9 +89,9 @@ const OwnerHomePage = async () => {
                             </thead>
                             <tbody>
                                 {metrics.recentUsers.map((user) => (
-                                    <tr key={user.id} className="border-b border-white/10">
-                                        <td className="py-4">
-                                            <strong>{user.name}</strong>
+                                    <tr key={user.id}>
+                                        <td>
+                                            <p className="font-medium text-slate-800">{user.name}</p>
                                             <OwnerMuted className="text-xs">{user.email}</OwnerMuted>
                                         </td>
                                         <td>{user.country}</td>
@@ -112,25 +108,29 @@ const OwnerHomePage = async () => {
                 <OwnerPanel>
                     <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h3 className="text-xl font-extrabold">Recent Payments</h3>
-                            <OwnerMuted className="mt-1 text-sm">Latest plan purchases and subscription records</OwnerMuted>
+                            <h3 className="text-lg font-bold text-slate-800">Recent Payments</h3>
+                            <OwnerMuted className="mt-0.5 text-sm">Latest plan purchases and subscription records</OwnerMuted>
                         </div>
-                        <FiCreditCard className="text-[#f4c430]" size={24} />
                     </div>
-                    <div className="mt-6 space-y-3">
+                    <div className="mt-5">
                         {metrics.recentPayments.length === 0 ? (
-                            <OwnerMuted>No payments yet.</OwnerMuted>
-                        ) : metrics.recentPayments.map((payment) => (
-                            <div key={payment.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <strong>{payment.userName}</strong>
-                                        <OwnerMuted className="text-sm">{payment.plan} · {formatDate(payment.date)}</OwnerMuted>
-                                    </div>
-                                    <OwnerBadge tone="green">{formatMoney(payment.amount)}</OwnerBadge>
-                                </div>
-                            </div>
-                        ))}
+                            <OwnerMuted className="py-8 text-center">No payments yet.</OwnerMuted>
+                        ) : (
+                            <ol className="relative space-y-5 before:absolute before:bottom-2 before:left-[19px] before:top-2 before:w-px before:bg-slate-200">
+                                {metrics.recentPayments.map((payment) => (
+                                    <li key={payment.id} className="relative flex items-start gap-4">
+                                        <IconTile tone="green" className="h-10 w-10 text-base"><FiCreditCard /></IconTile>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <p className="font-medium text-slate-800">{payment.userName}</p>
+                                                <strong className="text-sm text-emerald-600">{formatMoney(payment.amount)}</strong>
+                                            </div>
+                                            <OwnerMuted className="text-xs">{payment.plan} · {formatDate(payment.date)}</OwnerMuted>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ol>
+                        )}
                     </div>
                 </OwnerPanel>
             </div>
@@ -138,19 +138,19 @@ const OwnerHomePage = async () => {
             <OwnerPanel>
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <h3 className="text-xl font-extrabold">Upload Trend</h3>
-                        <OwnerMuted className="mt-1 text-sm">Chart analyses created during the last 7 days</OwnerMuted>
+                        <h3 className="text-lg font-bold text-slate-800">Upload Trend</h3>
+                        <OwnerMuted className="mt-0.5 text-sm">Chart analyses created during the last 7 days</OwnerMuted>
                     </div>
-                    <Link href="/owner/activity" className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-extrabold text-[#cbd5e1] transition-colors hover:bg-white/[0.08]">View activity</Link>
+                    <Link href="/owner/activity" className="inline-flex items-center gap-1 text-sm font-medium text-[#3457ff] hover:underline">View activity <FiArrowRight /></Link>
                 </div>
-                <div className="mt-7 grid gap-3 sm:grid-cols-7">
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
                     {metrics.uploadTrend.map((item) => (
-                        <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                            <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                                <div className="h-full rounded-full bg-[#f4c430]" style={{ width: `${Math.max(8, (item.count / maxUpload) * 100)}%` }} />
-                            </div>
-                            <strong className="mt-4 block text-2xl">{item.count}</strong>
+                        <div key={item.label} className="rounded-xl border border-slate-200/80 p-4">
                             <OwnerMuted className="text-xs">{item.label}</OwnerMuted>
+                            <strong className="mt-1 block text-2xl font-bold text-slate-800">{item.count}</strong>
+                            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                                <div className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400" style={{ width: `${Math.max(4, (item.count / maxUpload) * 100)}%` }} />
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -159,21 +159,24 @@ const OwnerHomePage = async () => {
     );
 };
 
-const Health = ({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) => (
-    <div className="rounded-2xl border border-white/10 bg-[#070b12]/60 p-4">
-        <div className="flex items-center gap-2 text-[#f4c430]">{icon}<span className="text-xs font-extrabold uppercase tracking-[0.12em]">{label}</span></div>
-        <strong className="mt-3 block text-3xl">{value}</strong>
+const Health = ({ label, value, icon, tone }: { label: string; value: string; icon: React.ReactNode; tone: Tone }) => (
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+        <IconTile tone={tone} className="h-10 w-10 text-base">{icon}</IconTile>
+        <div className="min-w-0">
+            <p className="truncate text-xs text-slate-500">{label}</p>
+            <strong className="block text-xl font-bold text-slate-800">{value}</strong>
+        </div>
     </div>
 );
 
 const Breakdown = ({ label, value, total }: { label: string; value: number; total: number }) => (
     <div>
-        <div className="flex justify-between gap-4 text-sm font-extrabold">
-            <span>{label}</span>
-            <span>{value}</span>
+        <div className="flex justify-between gap-4 text-sm">
+            <span className="font-medium text-slate-700">{label}</span>
+            <span className="font-bold text-slate-800">{value}</span>
         </div>
-        <div className="mt-2 h-2 rounded-full bg-white/10">
-            <div className="h-2 rounded-full bg-[#f4c430]" style={{ width: `${total ? (value / total) * 100 : 0}%` }} />
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-gradient-to-r from-[#3457ff] to-[#6b8cff]" style={{ width: `${total ? (value / total) * 100 : 0}%` }} />
         </div>
     </div>
 );
