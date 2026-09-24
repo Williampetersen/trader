@@ -4,8 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { Transition } from '@headlessui/react';
-import { HiOutlineXMark } from 'react-icons/hi2';
+import { HiBars3, HiOutlineXMark } from 'react-icons/hi2';
+import { FiLogIn, FiSend } from 'react-icons/fi';
+import { FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
 
+import Container from './Container';
 import { siteDetails } from '@/data/siteDetails';
 import { menuItems } from '@/data/menuItems';
 
@@ -17,49 +20,57 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-black/[0.08] bg-white/80 text-ink backdrop-blur-xl backdrop-saturate-150">
-            <nav className="mx-auto flex h-14 w-full max-w-[1100px] items-center justify-between gap-6 px-5">
-                <Link href="/" className="flex items-center gap-2.5" aria-label={`${siteDetails.siteName} home`}>
-                    <Image src="/favicon.png" alt="" width={26} height={26} className="h-[26px] w-[26px]" priority />
-                    <span className="text-[15px] font-semibold tracking-[-0.01em]">{siteDetails.siteName}</span>
-                </Link>
-
-                <ul className="hidden items-center gap-7 lg:flex">
-                    {menuItems.map((item) => (
-                        <li key={item.text}>
-                            <Link href={item.url} className="text-[13px] text-ink/80 transition-colors hover:text-ink">
-                                {item.text}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-
-                <div className="hidden items-center gap-5 lg:flex">
-                    <Link href="/login" className="text-[13px] text-ink/80 transition-colors hover:text-ink">
-                        Log in
+        <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#05070f]/82 text-white backdrop-blur-xl">
+            <Container className="!px-0">
+                <nav className="mx-auto grid min-h-[76px] grid-cols-[1fr_auto] items-center gap-4 px-5 lg:grid-cols-[1fr_auto_1fr]">
+                    <Link href="/" className="flex items-center">
+                        <Image src="/logo.png" alt={`${siteDetails.siteName} logo`} width={170} height={48} className="h-10 w-auto object-contain" priority />
                     </Link>
-                    <Link href="/signup" className="rounded-full bg-accent px-4 py-1.5 text-[13px] text-white transition-colors hover:bg-accent-hover">
-                        Get started
-                    </Link>
-                </div>
 
-                <button
-                    onClick={toggleMenu}
-                    type="button"
-                    className="-mr-2 flex h-10 w-10 items-center justify-center rounded-full text-ink/80 transition-colors hover:bg-black/5 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:hidden"
-                    aria-controls="mobile-menu"
-                    aria-expanded={isOpen}
-                >
-                    {isOpen ? (
-                        <HiOutlineXMark className="h-6 w-6" aria-hidden="true" />
-                    ) : (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
-                            <path d="M4 9h16M4 15h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        </svg>
-                    )}
-                    <span className="sr-only">Toggle navigation</span>
-                </button>
-            </nav>
+                    <ul className="hidden items-center rounded-lg border border-white/10 bg-white/[0.07] p-1 lg:flex">
+                        {menuItems.map((item) => (
+                            <li key={item.text}>
+                                <Link href={item.url} className="block rounded-lg px-5 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
+                                    {item.text}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="hidden items-center justify-end gap-3 lg:flex">
+                        <a href="https://x.com" aria-label="X profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FaXTwitter />
+                        </a>
+                        <a href="https://t.me" aria-label="Telegram channel" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FiSend />
+                        </a>
+                        <a href="https://www.linkedin.com" aria-label="LinkedIn profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                            <FaLinkedinIn />
+                        </a>
+                        <div className="h-8 w-px bg-white/10" />
+                        <Link href="/login" className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-white/10 px-4 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
+                            <FiLogIn />
+                            Login
+                        </Link>
+                        <Link href="/signup" className="whitespace-nowrap rounded-lg bg-[#16c7ff] px-6 py-3 text-sm font-extrabold text-[#03111a] transition-colors hover:bg-white">
+                            Start Now
+                        </Link>
+                    </div>
+
+                    <div className="flex items-center justify-end lg:hidden">
+                        <button
+                            onClick={toggleMenu}
+                            type="button"
+                            className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#fed835] text-black focus:outline-none"
+                            aria-controls="mobile-menu"
+                            aria-expanded={isOpen}
+                        >
+                            {isOpen ? <HiOutlineXMark className="h-6 w-6" aria-hidden="true" /> : <HiBars3 className="h-6 w-6" aria-hidden="true" />}
+                            <span className="sr-only">Toggle navigation</span>
+                        </button>
+                    </div>
+                </nav>
+            </Container>
 
             <Transition
                 show={isOpen}
@@ -70,24 +81,26 @@ const Header: React.FC = () => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 -translate-y-2"
             >
-                <div id="mobile-menu" className="border-t border-black/[0.06] bg-white px-8 pb-8 pt-4 lg:hidden">
-                    <ul className="grid gap-1">
+                <div id="mobile-menu" className="border-t border-white/10 bg-[#05070f] px-5 pb-6 pt-3 lg:hidden">
+                    <ul className="grid gap-2">
                         {menuItems.map((item) => (
                             <li key={item.text}>
-                                <Link href={item.url} className="block py-2 text-2xl font-semibold tracking-[-0.02em] text-ink" onClick={toggleMenu}>
+                                <Link href={item.url} className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
                                     {item.text}
                                 </Link>
                             </li>
                         ))}
+                        <li>
+                            <Link href="/login" className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
+                                Login
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/signup" className="block rounded-lg bg-[#16c7ff] px-4 py-3 text-sm font-extrabold text-[#03111a]" onClick={toggleMenu}>
+                                Start Now
+                            </Link>
+                        </li>
                     </ul>
-                    <div className="mt-8 grid gap-3">
-                        <Link href="/signup" className="rounded-full bg-accent px-5 py-3 text-center text-[17px] text-white" onClick={toggleMenu}>
-                            Get started
-                        </Link>
-                        <Link href="/login" className="rounded-full border border-line px-5 py-3 text-center text-[17px] text-ink" onClick={toggleMenu}>
-                            Log in
-                        </Link>
-                    </div>
                 </div>
             </Transition>
         </header>

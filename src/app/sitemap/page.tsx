@@ -40,18 +40,18 @@ const mainPages = [
 const HtmlSitemapPage = () => (
     <>
         <Header />
-        <main className="bg-canvas pt-28">
+        <main className="bg-[#f5f7fb] pt-28">
             <section className="py-14">
                 <Container>
                     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sitemap" }]} />
-                    <div className="rounded-[28px] border border-black/[0.08] bg-white p-6 md:p-10">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
+                    <div className="rounded-[2rem] border border-[#d9e2ef] bg-white p-6 md:p-10">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-extrabold text-[#304fff]">
                             <FiMap />
-                            Sitemap
+                            Site architecture
                         </div>
-                        <h1 className="mt-5 max-w-4xl break-words text-4xl font-semibold leading-tight text-ink sm:text-5xl md:text-6xl">GPT Chart View sitemap</h1>
-                        <p className="mt-5 max-w-3xl text-xl leading-8 text-muted">
-                            Browse the main website pages, AI trading topics, tags, and all {blogArticles.length} blog articles.
+                        <h1 className="mt-5 max-w-4xl break-words text-4xl font-extrabold leading-tight text-[#101828] sm:text-5xl md:text-6xl">GPT Chart View sitemap</h1>
+                        <p className="mt-5 max-w-3xl text-xl leading-8 text-[#667085]">
+                            Browse the main website pages, AI trading topic clusters, tags, and all 20 authority blog articles.
                         </p>
                     </div>
                 </Container>
@@ -64,12 +64,12 @@ const HtmlSitemapPage = () => (
                             {mainPages.map((page) => <SitemapLink key={page.href} href={page.href} label={page.label} />)}
                         </SitemapPanel>
 
-                        <SitemapPanel title="Topics">
+                        <SitemapPanel title="Topic clusters">
                             {blogCategories.map((category) => (
-                                <div key={category.slug} className="rounded-2xl border border-black/[0.08] bg-canvas p-4">
+                                <div key={category.slug} className="rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] p-4">
                                     <SitemapLink href={`/blog/category/${category.slug}`} label={category.name} />
-                                    <p className="mt-2 text-sm text-muted">{category.description}</p>
-                                    <p className="mt-3 text-sm font-semibold text-accent">{getArticlesByCategory(category.slug).length} articles</p>
+                                    <p className="mt-2 text-sm text-[#667085]">{category.description}</p>
+                                    <p className="mt-3 text-sm font-bold text-[#304fff]">{getArticlesByCategory(category.slug).length} articles</p>
                                 </div>
                             ))}
                         </SitemapPanel>
@@ -79,9 +79,9 @@ const HtmlSitemapPage = () => (
                         <SitemapPanel title="All AI trading articles">
                             <div className="grid gap-3 md:grid-cols-2">
                                 {blogArticles.map((article) => (
-                                    <Link key={article.slug} href={`/blog/${article.slug}`} className="rounded-2xl border border-black/[0.08] bg-canvas p-4 hover:border-accent hover:bg-white">
-                                        <span className="block text-sm font-semibold text-accent">{article.category.name}</span>
-                                        <span className="mt-1 block font-semibold text-ink">{article.title}</span>
+                                    <Link key={article.slug} href={`/blog/${article.slug}`} className="rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] p-4 hover:border-[#304fff] hover:bg-white">
+                                        <span className="block text-sm font-bold text-[#304fff]">{article.category.name}</span>
+                                        <span className="mt-1 block font-extrabold text-[#101828]">{article.title}</span>
                                     </Link>
                                 ))}
                             </div>
@@ -90,7 +90,7 @@ const HtmlSitemapPage = () => (
                         <SitemapPanel title="Tags">
                             <div className="flex flex-wrap gap-2">
                                 {blogTags.map((tag) => (
-                                    <Link key={tag} href={`/blog/tag/${slugify(tag)}`} className="rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/15">
+                                    <Link key={tag} href={`/blog/tag/${slugify(tag)}`} className="rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-bold text-[#304fff] hover:bg-[#dfe5ff]">
                                         {tag}
                                     </Link>
                                 ))}
@@ -105,16 +105,16 @@ const HtmlSitemapPage = () => (
 );
 
 const SitemapPanel = ({ title, children }: { title: string; children: ReactNode }) => (
-    <div className="rounded-[28px] border border-black/[0.08] bg-white p-5 shadow-sm md:p-7">
-        <h2 className="text-2xl font-semibold text-ink">{title}</h2>
+    <div className="rounded-[2rem] border border-[#d9e2ef] bg-white p-5 shadow-sm md:p-7">
+        <h2 className="text-2xl font-extrabold text-[#101828]">{title}</h2>
         <div className="mt-5 grid gap-3">{children}</div>
     </div>
 );
 
 const SitemapLink = ({ href, label }: { href: string; label: string }) => (
-    <Link href={href} className="inline-flex items-center gap-2 font-semibold text-ink hover:text-accent">
+    <Link href={href} className="inline-flex items-center gap-2 font-extrabold text-[#101828] hover:text-[#304fff]">
         {label}
-        {href.endsWith(".xml") && <FiExternalLink className="text-accent" />}
+        {href.endsWith(".xml") && <FiExternalLink className="text-[#304fff]" />}
     </Link>
 );
 

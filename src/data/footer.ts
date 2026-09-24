@@ -1,48 +1,49 @@
-import { IMenuItem } from "@/types";
+import { IMenuItem, ISocials } from "@/types";
 
 export const footerDetails: {
-    disclaimers: string[];
-    columns: { title: string; links: IMenuItem[] }[];
+    subheading: string;
+    quickLinks: IMenuItem[];
     email: string;
+    telephone: string;
+    socials: ISocials;
 } = {
-    disclaimers: [
-        "Trading stocks, forex, crypto and other financial instruments involves a high level of risk and may not be suitable for everyone. You can lose some or all of the money you invest.",
-        "GPT Chart View provides AI-generated educational analysis of chart images. It is not investment, financial or trading advice, and it is not a recommendation to buy or sell any asset. Levels are estimated from the image you upload and can differ from live market prices. Example results on this site are for illustration only.",
-    ],
-    columns: [
+    subheading: "AI-powered chart review, trade scoring, risk notes, and private decision history for active traders.",
+    quickLinks: [
         {
-            title: "Product",
-            links: [
-                { text: "How it works", url: "/#how-it-works" },
-                { text: "Features", url: "/#features" },
-                { text: "Pricing", url: "/#pricing" },
-                { text: "FAQ", url: "/#faq" },
-            ],
+            text: "Product",
+            url: "#product"
         },
         {
-            title: "Account",
-            links: [
-                { text: "Create account", url: "/signup" },
-                { text: "Log in", url: "/login" },
-                { text: "Upload a chart", url: "/dashboard/upload" },
-                { text: "Billing", url: "/dashboard/billing" },
-            ],
+            text: "Workflow",
+            url: "#workflow"
         },
         {
-            title: "Resources",
-            links: [
-                { text: "AI Trading Blog", url: "/blog" },
-                { text: "Sitemap", url: "/sitemap" },
-                { text: "RSS feed", url: "/rss.xml" },
-            ],
+            text: "Pricing",
+            url: "/#pricing"
         },
         {
-            title: "Support",
-            links: [
-                { text: "Contact us", url: "/contact" },
-                { text: "Help for members", url: "/dashboard/support" },
-            ],
+            text: "AI Trading Blog",
+            url: "/blog"
+        },
+        {
+            text: "HTML Sitemap",
+            url: "/sitemap"
+        },
+        {
+            text: "Contact",
+            url: "/contact"
         },
     ],
     email: 'support@gptchartview.com',
+    telephone: '+1 (123) 456-7890',
+    socials: {
+        // github: 'https://github.com',
+        // x: 'https://twitter.com/x',
+        twitter: 'https://twitter.com/Twitter',
+        facebook: 'https://facebook.com',
+        // youtube: 'https://youtube.com',
+        linkedin: 'https://www.linkedin.com',
+        // threads: 'https://www.threads.net',
+        instagram: 'https://www.instagram.com',
+    }
 }

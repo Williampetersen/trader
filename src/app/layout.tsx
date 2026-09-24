@@ -90,7 +90,9 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="font-sans antialiased">
+      <body
+        className="font-sans antialiased"
+      >
         <Analytics />
         {[organizationSchema, websiteSchema].map((schema, index) => (
           <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
