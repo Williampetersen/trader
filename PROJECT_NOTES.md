@@ -60,6 +60,15 @@ See `.env.example` for the full list. The important ones:
 - Remaining weakness: levels are still estimated from the image, with no live market data (see next step).
 - Uploaded images are written to `/tmp` on Vercel, so they can disappear between deploys. Move them to durable storage (e.g. Vercel Blob) later.
 
+## Where we left off (2026-09-24)
+
+- Live on Vercel: light dashboards, light login/signup/owner login, 3-upload lifetime trial, Claude Haiku 4.5 analysis (latest commit on `main`).
+- **In progress:** getting `ANTHROPIC_API_KEY` working in production. The first live test failed with a generic Claude error; the site now shows Claude's exact reason in the upload error message and in Vercel Logs (search `Claude chart analysis failed`).
+  - Create the key at platform.claude.com → API Keys ("Continue with an API key", not identity federation; Vercel isn't a supported federation provider).
+  - Make sure the Claude Console account has credits (Settings → Billing). A $0 balance makes every request fail.
+  - After changing the key in Vercel, **Redeploy**; env vars only apply to new deployments.
+- Next after that works: test a few real charts, then consider the real-market-data engine below.
+
 ## Next step: real-time analysis (planned, not started)
 
 Recommended approach: **market data calculates the levels; AI only reads the image and explains.**
