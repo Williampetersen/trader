@@ -17,6 +17,8 @@ export interface UserRecord {
     passwordSalt: string;
     createdAt: string;
     lastSeenAt?: string;
+    /** Lifetime count of free trial uploads; never resets, so the trial cannot be reused. */
+    trialUploadsUsed?: number;
     profile: {
         mobile: string;
         country: string;
@@ -179,11 +181,15 @@ export function createPlan(planName: PlanName, now = new Date(), options?: { aut
     };
 }
 
+export const TRIAL_UPLOAD_LIMIT = planCatalog.Trial.dailyLimit;
+
 export function isPlanExpired(user: UserRecord, now = new Date()) {
+    // The trial has no time limit; it ends once its lifetime uploads are used.
+    if (user.plan.name === "Trial") return user.plan.creditsLeft <= 0;
     return new Date(user.plan.expiresAt).getTime() <= now.getTime();
 }
 
-export function applyPlanRules(user: UserRecord, now = new Date()) {
+export function applyPlanRules(user: UserRecord, analyses: AnalysisRecord[], now = new Date()) {
     normalizeUser(user);
     let changed = false;
 
@@ -200,6 +206,19 @@ export function applyPlanRules(user: UserRecord, now = new Date()) {
     if (user.plan.dailyLimit !== config.dailyLimit) {
         user.plan.dailyLimit = config.dailyLimit;
         changed = true;
+    }
+
+    if (user.plan.name === "Trial") {
+        if (typeof user.trialUploadsUsed !== "number") {
+            user.trialUploadsUsed = analyses.filter((item) => item.userId === user.id).length;
+            changed = true;
+        }
+        const trialCreditsLeft = Math.max(0, TRIAL_UPLOAD_LIMIT - user.trialUploadsUsed);
+        if (user.plan.creditsLeft !== trialCreditsLeft) {
+            user.plan.creditsLeft = trialCreditsLeft;
+            changed = true;
+        }
+        return changed;
     }
 
     if (typeof user.plan.creditsLeft !== "number" || Number.isNaN(user.plan.creditsLeft)) {

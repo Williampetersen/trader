@@ -20,7 +20,7 @@ export const planCatalog: Record<PlanName, PlanConfig> = {
         name: "Trial",
         price: 0,
         durationDays: 1,
-        durationLabel: "1 day",
+        durationLabel: "No time limit",
         dailyLimit: 3,
         creditReset: "none",
         allowanceLabel: "3 total trial analyses",

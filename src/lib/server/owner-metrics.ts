@@ -1,5 +1,5 @@
 import { planCatalog, type PlanName } from "@/data/plans";
-import { AnalysisRecord, applyPlanRules, PaymentRecord, readDb, SupportTicketRecord, UserRecord, writeDb } from "./store";
+import { AnalysisRecord, applyPlanRules, isPlanExpired, PaymentRecord, readDb, SupportTicketRecord, UserRecord, writeDb } from "./store";
 
 const onlineWindowMs = 15 * 60 * 1000;
 const dayMs = 24 * 60 * 60 * 1000;
@@ -9,7 +9,7 @@ export async function getOwnerMetrics() {
     const syncNow = new Date();
     let plansChanged = false;
     for (const user of db.users) {
-        plansChanged = applyPlanRules(user, syncNow) || plansChanged;
+        plansChanged = applyPlanRules(user, db.analyses, syncNow) || plansChanged;
     }
     if (plansChanged) await writeDb(db);
     const now = Date.now();
@@ -114,7 +114,7 @@ function buildUserRow(user: UserRecord, analyses: AnalysisRecord[], payments: Pa
         dailyLimit: user.plan.dailyLimit,
         expiresAt: user.plan.expiresAt,
         autoRenewal: user.plan.autoRenewal,
-        expired: new Date(user.plan.expiresAt).getTime() <= now,
+        expired: isPlanExpired(user, new Date(now)),
         online: Boolean(lastSeenTime && now - lastSeenTime <= onlineWindowMs),
         lastSeenAt: user.lastSeenAt || "",
         createdAt: user.createdAt,

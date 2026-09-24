@@ -15,7 +15,7 @@ export async function getSessionUser(): Promise<UserRecord | null> {
     const user = db.users.find((item) => item.id === session.userId);
     if (!user) return null;
     const now = new Date();
-    const planChanged = applyPlanRules(user, now);
+    const planChanged = applyPlanRules(user, db.analyses, now);
     const lastSeenChanged = !user.lastSeenAt || now.getTime() - new Date(user.lastSeenAt).getTime() > 60 * 1000;
     if (lastSeenChanged) user.lastSeenAt = now.toISOString();
     if (planChanged || lastSeenChanged) await writeDb(db);

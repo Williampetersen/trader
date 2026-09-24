@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { FiArrowRight, FiCheckCircle, FiClock, FiCreditCard } from "react-icons/fi";
 import { requireUser } from "@/lib/server/auth";
-import { readDb } from "@/lib/server/store";
+import { isPlanExpired, readDb } from "@/lib/server/store";
 import { getPlanConfig } from "@/data/plans";
 import { Badge, IconTile, MutedText, Notice, Panel, PanelHeader, outlineButtonClass, tableClass } from "@/components/dashboard/DashboardUi";
 import UpgradePlanButtons from "@/components/dashboard/UpgradePlanButtons";
@@ -12,7 +12,8 @@ const BillingPage = async () => {
     const db = await readDb();
     const payments = db.payments.filter((item) => item.userId === user.id).reverse();
     const planConfig = getPlanConfig(user.plan.name);
-    const expired = new Date(user.plan.expiresAt).getTime() <= Date.now();
+    const expired = isPlanExpired(user);
+    const isTrial = user.plan.name === "Trial";
 
     return (
         <div className="mx-auto max-w-[1215px] space-y-8">
@@ -20,9 +21,9 @@ const BillingPage = async () => {
                 <PanelHeader title="Current Plan" description="Your active subscription details" />
 
                 <Notice tone={expired ? "red" : "blue"} className="mt-6">
-                    <strong>{expired ? "This plan has expired" : user.plan.autoRenewal ? "This plan renews automatically" : "This is a prepaid plan with no auto-renewal"}</strong>
+                    <strong>{isTrial ? (expired ? "Your free trial is finished" : "Free trial, no time limit") : expired ? "This plan has expired" : user.plan.autoRenewal ? "This plan renews automatically" : "This is a prepaid plan with no auto-renewal"}</strong>
                     <p className="mt-1 font-normal">
-                        {expired ? "Upgrade to restore chart uploads." : `Your access is valid until ${new Date(user.plan.expiresAt).toLocaleDateString()}.`}
+                        {isTrial ? (expired ? "You have used all 3 free uploads. Choose a plan below to keep analyzing charts." : `${user.plan.creditsLeft} of ${user.plan.dailyLimit} free uploads left on this account.`) : expired ? "Upgrade to restore chart uploads." : `Your access is valid until ${new Date(user.plan.expiresAt).toLocaleDateString()}.`}
                     </p>
                 </Notice>
 

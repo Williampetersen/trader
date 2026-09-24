@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         const db = await readDb();
         const dbUser = db.users.find((item) => item.id === user.id);
         if (!dbUser) return NextResponse.json({ error: "User not found." }, { status: 404 });
-        const planChanged = applyPlanRules(dbUser);
+        const planChanged = applyPlanRules(dbUser, db.analyses);
         if (isPlanExpired(dbUser)) {
             if (planChanged) await writeDb(db);
             return upgradeRequired(dbUser, "plan_expired");
@@ -85,8 +85,8 @@ export async function POST(request: NextRequest) {
         const now = new Date();
         dbUser.plan.creditsLeft = Math.max(0, dbUser.plan.creditsLeft - 1);
         dbUser.plan.lastCreditResetAt ||= now.toISOString();
-        if (dbUser.plan.name === "Trial" && dbUser.plan.creditsLeft <= 0) {
-            dbUser.plan.expiresAt = now.toISOString();
+        if (dbUser.plan.name === "Trial") {
+            dbUser.trialUploadsUsed = (dbUser.trialUploadsUsed ?? 0) + 1;
         }
         await writeDb(db);
 
