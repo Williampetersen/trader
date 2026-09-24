@@ -63,11 +63,9 @@ See `.env.example` for the full list. The important ones:
 ## Where we left off (2026-09-24)
 
 - Live on Vercel: light dashboards, light login/signup/owner login, 3-upload lifetime trial, Claude Haiku 4.5 analysis (latest commit on `main`).
-- **In progress:** getting `ANTHROPIC_API_KEY` working in production. The first live test failed with a generic Claude error; the site now shows Claude's exact reason in the upload error message and in Vercel Logs (search `Claude chart analysis failed`).
-  - Create the key at platform.claude.com → API Keys ("Continue with an API key", not identity federation; Vercel isn't a supported federation provider).
-  - Make sure the Claude Console account has credits (Settings → Billing). A $0 balance makes every request fail.
-  - After changing the key in Vercel, **Redeploy**; env vars only apply to new deployments.
-- Next after that works: test a few real charts, then consider the real-market-data engine below.
+- **Claude AI chart analysis is working in production** (confirmed by a live upload test on 2026-09-24) with `ANTHROPIC_API_KEY` set in Vercel.
+- If it ever breaks: the upload error message and Vercel Logs (search `Claude chart analysis failed`) show Claude's exact reason. Common causes: no credits left in the Claude Console (Settings → Billing), or a changed key without a Vercel **Redeploy** (env vars only apply to new deployments).
+- Next: test more real charts, then consider the real-market-data engine below.
 
 ## Next step: real-time analysis (planned, not started)
 
