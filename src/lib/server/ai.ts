@@ -13,7 +13,7 @@ const ChartResultSchema = z.object({
     detectedSymbol: z.string(),
     detectedTimeframe: z.string(),
     summary: z.string(),
-    entryType: z.enum(["Buy", "Sell", "Watch"]),
+    entryType: z.string(),
     confidence: z.number(),
     riskReward: z.number(),
     support: z.string(),
@@ -70,11 +70,11 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
     const chartImage = await toChartImage(image);
 
     try {
-        let result = requireChart(await analyze(chartImage, buildPrompt(hints)));
+        let result = normalizeResult(requireChart(await analyze(chartImage, buildPrompt(hints))));
         let problems = levelProblems(result);
 
         if (problems.length) {
-            result = requireChart(await analyze(chartImage, buildPrompt(hints, problems.join(" "))));
+            result = normalizeResult(requireChart(await analyze(chartImage, buildPrompt(hints, problems.join(" ")))));
             problems = levelProblems(result);
         }
 
@@ -91,7 +91,7 @@ export async function enrichAnalysisWithAi(analysis: AnalysisRecord, image: File
             symbol: cleanOptionalText(hints.symbol, "") || cleanOptionalText(result.detectedSymbol, "Chart"),
             timeframe: cleanOptionalText(hints.timeframe, "") || cleanOptionalText(result.detectedTimeframe, "Auto"),
             summary: requireText(result.summary, "summary"),
-            entryType: result.entryType,
+            entryType: normalizeEntryType(result.entryType),
             confidence: clamp(result.confidence, 0, 100, "confidence"),
             riskReward: computeRiskReward(result) ?? clamp(result.riskReward, 0.1, 20, "riskReward"),
             support: requireText(result.support, "support"),
@@ -147,20 +147,28 @@ const analyzeWithClaude: Analyzer = async (image, prompt) => {
         return response.parsed_output;
     } catch (error) {
         if (error instanceof Anthropic.APIError) {
-            console.error("Claude chart analysis failed", error.status, error.message);
-            throw new AiAnalysisError(claudeErrorMessage(error.status), statusForProviderError(error.status));
+            const detail = claudeErrorDetail(error);
+            console.error("Claude chart analysis failed", error.status, detail || error.message);
+            throw new AiAnalysisError(claudeErrorMessage(error.status, detail), statusForProviderError(error.status));
         }
         throw error;
     }
 };
 
-const claudeErrorMessage = (status: number | undefined) => {
+const claudeErrorDetail = (error: InstanceType<typeof Anthropic.APIError>) => {
+    const body = error.error as { error?: { message?: unknown } } | undefined;
+    return typeof body?.error?.message === "string" ? body.error.message.trim() : "";
+};
+
+const claudeErrorMessage = (status: number | undefined, detail: string) => {
+    if (/credit balance/i.test(detail)) return "The Claude API account has no credits left. Add credits in the Claude Console (platform.claude.com) under Billing.";
+    if (status === 404) return `The Claude model "${CLAUDE_MODEL}" is not available for this API key.${detail ? ` Claude said: ${detail}` : ""}`;
     if (status === 401) return "Claude rejected the API key. Check ANTHROPIC_API_KEY in Vercel and redeploy.";
     if (status === 402) return "The Claude API account needs credits. Add credits in the Claude Console billing page.";
     if (status === 403) return "The Claude API key is not allowed to use this model. Check the key's workspace permissions.";
     if (status === 429) return "Chart analysis is busy right now (rate limit). Please try again in a minute.";
     if (status === 529 || (status && status >= 500)) return "The Claude AI service is temporarily unavailable. Please try again in a few minutes.";
-    return "The Claude AI service could not analyze the chart. Please try again.";
+    return `The Claude AI service could not analyze the chart.${detail ? ` Claude said: ${detail}` : " Please try again."}`;
 };
 
 const analyzeWithOpenRouter: Analyzer = async (image, prompt) => {
@@ -221,6 +229,15 @@ const toChartImage = async (image: File): Promise<ChartImage> => {
     const buffer = Buffer.from(await image.arrayBuffer());
     return { mediaType: type, base64: buffer.toString("base64") };
 };
+
+const normalizeEntryType = (value: string): AnalysisRecord["entryType"] => {
+    const lower = value.trim().toLowerCase();
+    if (lower === "buy") return "Buy";
+    if (lower === "sell") return "Sell";
+    return "Watch";
+};
+
+const normalizeResult = (result: AiChartResult): AiChartResult => ({ ...result, entryType: normalizeEntryType(result.entryType) });
 
 const requireChart = (result: AiChartResult) => {
     if (result.isCandlestickChart !== true) {
