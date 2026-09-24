@@ -106,7 +106,7 @@ export const AnalysisPreview = () => (
             </div>
             <span className="font-bold text-slate-700">78%</span>
             <span className="text-slate-300">|</span>
-            <span className="text-slate-500">R:R <strong className="text-slate-700">1 : 2.4</strong></span>
+            <span className="text-slate-500">R:R <strong className="text-slate-700">1 : 1.6</strong></span>
         </div>
         <p className="mt-3 text-[11px] text-slate-400">Example output for illustration only.</p>
     </div>

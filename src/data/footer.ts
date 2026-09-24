@@ -11,15 +11,23 @@ export const footerDetails: {
     quickLinks: [
         {
             text: "Product",
-            url: "#product"
+            url: "/#product"
+        },
+        {
+            text: "How it works",
+            url: "/#how-it-works"
         },
         {
             text: "Workflow",
-            url: "#workflow"
+            url: "/#workflow"
         },
         {
             text: "Pricing",
             url: "/#pricing"
+        },
+        {
+            text: "FAQ",
+            url: "/#faq"
         },
         {
             text: "AI Trading Blog",

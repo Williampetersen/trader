@@ -20,7 +20,7 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#05070f]/82 text-white backdrop-blur-xl">
+        <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#05070f]/90 text-white backdrop-blur-xl">
             <Container className="!px-0">
                 <nav className="mx-auto grid min-h-[76px] grid-cols-[1fr_auto] items-center gap-4 px-5 lg:grid-cols-[1fr_auto_1fr]">
                     <Link href="/" className="flex items-center">
@@ -30,7 +30,7 @@ const Header: React.FC = () => {
                     <ul className="hidden items-center rounded-lg border border-white/10 bg-white/[0.07] p-1 lg:flex">
                         {menuItems.map((item) => (
                             <li key={item.text}>
-                                <Link href={item.url} className="block rounded-lg px-5 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
+                                <Link href={item.url} className="block rounded-lg px-5 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">
                                     {item.text}
                                 </Link>
                             </li>
@@ -38,21 +38,21 @@ const Header: React.FC = () => {
                     </ul>
 
                     <div className="hidden items-center justify-end gap-3 lg:flex">
-                        <a href="https://x.com" aria-label="X profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                        <a href="https://x.com" aria-label="X profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/80 transition-colors hover:bg-white/15 hover:text-white">
                             <FaXTwitter />
                         </a>
-                        <a href="https://t.me" aria-label="Telegram channel" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                        <a href="https://t.me" aria-label="Telegram channel" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/80 transition-colors hover:bg-white/15 hover:text-white">
                             <FiSend />
                         </a>
-                        <a href="https://www.linkedin.com" aria-label="LinkedIn profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/82 transition-colors hover:bg-white/12 hover:text-white">
+                        <a href="https://www.linkedin.com" aria-label="LinkedIn profile" className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white/80 transition-colors hover:bg-white/15 hover:text-white">
                             <FaLinkedinIn />
                         </a>
                         <div className="h-8 w-px bg-white/10" />
-                        <Link href="/login" className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-white/10 px-4 py-3 text-sm font-extrabold text-white/82 transition-colors hover:bg-white/10 hover:text-white">
+                        <Link href="/login" className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-white/10 px-4 py-3 text-sm font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white">
                             <FiLogIn />
                             Login
                         </Link>
-                        <Link href="/signup" className="whitespace-nowrap rounded-lg bg-[#16c7ff] px-6 py-3 text-sm font-extrabold text-[#03111a] transition-colors hover:bg-white">
+                        <Link href="/signup" className="whitespace-nowrap rounded-lg bg-[#16c7ff] px-6 py-3 text-sm font-semibold text-[#03111a] transition-colors hover:bg-white">
                             Start Now
                         </Link>
                     </div>
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
                         <button
                             onClick={toggleMenu}
                             type="button"
-                            className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#fed835] text-black focus:outline-none"
+                            className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.07] text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16c7ff]"
                             aria-controls="mobile-menu"
                             aria-expanded={isOpen}
                         >
@@ -85,18 +85,18 @@ const Header: React.FC = () => {
                     <ul className="grid gap-2">
                         {menuItems.map((item) => (
                             <li key={item.text}>
-                                <Link href={item.url} className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
+                                <Link href={item.url} className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85" onClick={toggleMenu}>
                                     {item.text}
                                 </Link>
                             </li>
                         ))}
                         <li>
-                            <Link href="/login" className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-extrabold text-white/85" onClick={toggleMenu}>
+                            <Link href="/login" className="block rounded-lg bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85" onClick={toggleMenu}>
                                 Login
                             </Link>
                         </li>
                         <li>
-                            <Link href="/signup" className="block rounded-lg bg-[#16c7ff] px-4 py-3 text-sm font-extrabold text-[#03111a]" onClick={toggleMenu}>
+                            <Link href="/signup" className="block rounded-lg bg-[#16c7ff] px-4 py-3 text-sm font-semibold text-[#03111a]" onClick={toggleMenu}>
                                 Start Now
                             </Link>
                         </li>

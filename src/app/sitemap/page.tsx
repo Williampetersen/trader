@@ -45,13 +45,13 @@ const HtmlSitemapPage = () => (
                 <Container>
                     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sitemap" }]} />
                     <div className="rounded-[2rem] border border-[#d9e2ef] bg-white p-6 md:p-10">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-extrabold text-[#304fff]">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-semibold text-[#304fff]">
                             <FiMap />
-                            Site architecture
+                            Sitemap
                         </div>
-                        <h1 className="mt-5 max-w-4xl break-words text-4xl font-extrabold leading-tight text-[#101828] sm:text-5xl md:text-6xl">GPT Chart View sitemap</h1>
+                        <h1 className="mt-5 max-w-4xl break-words text-4xl font-semibold leading-tight text-[#101828] sm:text-5xl md:text-6xl">GPT Chart View sitemap</h1>
                         <p className="mt-5 max-w-3xl text-xl leading-8 text-[#667085]">
-                            Browse the main website pages, AI trading topic clusters, tags, and all 20 authority blog articles.
+                            Browse the main website pages, AI trading topic clusters, tags, and all {blogArticles.length} blog articles.
                         </p>
                     </div>
                 </Container>
@@ -81,7 +81,7 @@ const HtmlSitemapPage = () => (
                                 {blogArticles.map((article) => (
                                     <Link key={article.slug} href={`/blog/${article.slug}`} className="rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] p-4 hover:border-[#304fff] hover:bg-white">
                                         <span className="block text-sm font-bold text-[#304fff]">{article.category.name}</span>
-                                        <span className="mt-1 block font-extrabold text-[#101828]">{article.title}</span>
+                                        <span className="mt-1 block font-semibold text-[#101828]">{article.title}</span>
                                     </Link>
                                 ))}
                             </div>
@@ -106,13 +106,13 @@ const HtmlSitemapPage = () => (
 
 const SitemapPanel = ({ title, children }: { title: string; children: ReactNode }) => (
     <div className="rounded-[2rem] border border-[#d9e2ef] bg-white p-5 shadow-sm md:p-7">
-        <h2 className="text-2xl font-extrabold text-[#101828]">{title}</h2>
+        <h2 className="text-2xl font-semibold text-[#101828]">{title}</h2>
         <div className="mt-5 grid gap-3">{children}</div>
     </div>
 );
 
 const SitemapLink = ({ href, label }: { href: string; label: string }) => (
-    <Link href={href} className="inline-flex items-center gap-2 font-extrabold text-[#101828] hover:text-[#304fff]">
+    <Link href={href} className="inline-flex items-center gap-2 font-semibold text-[#101828] hover:text-[#304fff]">
         {label}
         {href.endsWith(".xml") && <FiExternalLink className="text-[#304fff]" />}
     </Link>

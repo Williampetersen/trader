@@ -46,12 +46,12 @@ const ContactForm = () => {
             </div>
 
             <label className="mt-4 block">
-                <span className="text-sm font-extrabold text-[#101828]">Subject</span>
+                <span className="text-sm font-semibold text-[#101828]">Subject</span>
                 <input name="subject" required maxLength={160} placeholder="Billing, account, upload, or partnership" className="mt-2 w-full rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] px-4 py-3 text-[#101828] outline-none transition-colors placeholder:text-[#98a2b3] focus:border-[#304fff] focus:bg-white" />
             </label>
 
             <label className="mt-4 block">
-                <span className="text-sm font-extrabold text-[#101828]">Message</span>
+                <span className="text-sm font-semibold text-[#101828]">Message</span>
                 <textarea name="message" required maxLength={4000} rows={7} placeholder="Tell us what you need help with." className="mt-2 w-full resize-none rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] px-4 py-3 text-[#101828] outline-none transition-colors placeholder:text-[#98a2b3] focus:border-[#304fff] focus:bg-white" />
             </label>
 
@@ -63,7 +63,7 @@ const ContactForm = () => {
                 </div>
             )}
 
-            <button disabled={status === "sending"} className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#304fff] px-5 py-4 font-extrabold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#243cc7] disabled:opacity-60">
+            <button disabled={status === "sending"} className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#304fff] px-5 py-4 font-semibold text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-[#243cc7] disabled:opacity-60">
                 {status === "sending" ? "Sending..." : "Send message"}
                 {status === "sent" ? <FiCheckCircle /> : <FiArrowRight />}
             </button>
@@ -78,7 +78,7 @@ const ContactForm = () => {
 
 const Field = ({ label, name, placeholder, icon, type = "text", autoComplete }: { label: string; name: string; placeholder: string; icon: React.ReactNode; type?: string; autoComplete?: string }) => (
     <label className="block">
-        <span className="text-sm font-extrabold text-[#101828]">{label}</span>
+        <span className="text-sm font-semibold text-[#101828]">{label}</span>
         <div className="mt-2 flex items-center rounded-2xl border border-[#d9e2ef] bg-[#f8fafc] px-4 transition-colors focus-within:border-[#304fff] focus-within:bg-white">
             <span className="text-[#667085]">{icon}</span>
             <input name={name} type={type} required maxLength={name === "email" ? 160 : 100} placeholder={placeholder} autoComplete={autoComplete} className="w-full bg-transparent px-3 py-3 text-[#101828] outline-none placeholder:text-[#98a2b3]" />

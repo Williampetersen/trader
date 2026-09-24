@@ -83,11 +83,11 @@ const BlogTagPage = ({ params }: { params: { slug: string } }) => {
                     <Container>
                         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Blog", href: "/blog" }, { label: tag }]} />
                         <div className="rounded-[2rem] border border-[#d9e2ef] bg-white p-6 md:p-10">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-extrabold text-[#304fff]">
+                            <div className="inline-flex items-center gap-2 rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-semibold text-[#304fff]">
                                 <FiTag />
                                 Topic tag
                             </div>
-                            <h1 className="mt-5 max-w-4xl break-words text-4xl font-extrabold leading-tight text-[#101828] sm:text-5xl md:text-6xl">{tag}</h1>
+                            <h1 className="mt-5 max-w-4xl break-words text-4xl font-semibold leading-tight text-[#101828] sm:text-5xl md:text-6xl">{tag}</h1>
                             <p className="mt-5 max-w-3xl text-xl leading-8 text-[#667085]">
                                 Articles, examples, FAQs, and practical AI trading workflows related to {tag}.
                             </p>
@@ -103,9 +103,9 @@ const BlogTagPage = ({ params }: { params: { slug: string } }) => {
                         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_360px]">
                             <NewsletterSignup source={`tag:${params.slug}`} />
                             <div className="rounded-[2rem] bg-[#101828] p-6 text-white">
-                                <h2 className="text-2xl font-extrabold">Analyze a real chart</h2>
+                                <h2 className="text-2xl font-semibold">Analyze a real chart</h2>
                                 <p className="mt-3 text-[#d0d5dd]">Use the member dashboard to upload chart screenshots, save AI notes, and track outcomes.</p>
-                                <Link href="/signup" className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 font-extrabold text-black">
+                                <Link href="/signup" className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 font-semibold text-black">
                                     Create account
                                     <FiArrowRight />
                                 </Link>

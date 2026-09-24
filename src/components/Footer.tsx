@@ -15,18 +15,18 @@ const Footer: React.FC = () => {
                     <Link href="/" className="flex items-center">
                         <Image src="/logo.png" alt={`${siteDetails.siteName} logo`} width={180} height={52} className="h-12 w-auto object-contain" />
                     </Link>
-                    <p className="mt-5 max-w-sm leading-7 text-white/58">
+                    <p className="mt-5 max-w-sm leading-7 text-white/55">
                         {footerDetails.subheading}
                     </p>
-                    <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/72">
+                    <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/70">
                         <FiShield className="text-[#21e7a4]" />
                         Educational chart analysis only
                     </div>
                 </div>
 
                 <div>
-                    <h4 className="text-sm font-extrabold uppercase text-white/48">Explore</h4>
-                    <ul className="mt-5 grid gap-3 text-white/68">
+                    <h4 className="text-sm font-semibold uppercase text-white/50">Explore</h4>
+                    <ul className="mt-5 grid gap-3 text-white/70">
                         {footerDetails.quickLinks.map((link) => (
                             <li key={link.text}>
                                 <Link href={link.url} className="inline-flex items-center gap-2 hover:text-white">
@@ -39,8 +39,8 @@ const Footer: React.FC = () => {
                 </div>
 
                 <div>
-                    <h4 className="text-sm font-extrabold uppercase text-white/48">Member app</h4>
-                    <ul className="mt-5 grid gap-3 text-white/68">
+                    <h4 className="text-sm font-semibold uppercase text-white/50">Member app</h4>
+                    <ul className="mt-5 grid gap-3 text-white/70">
                         <li><Link href="/signup" className="hover:text-white">Create account</Link></li>
                         <li><Link href="/login" className="hover:text-white">Login</Link></li>
                         <li><Link href="/dashboard/upload" className="hover:text-white">Upload chart</Link></li>
@@ -49,8 +49,8 @@ const Footer: React.FC = () => {
                 </div>
 
                 <div>
-                    <h4 className="text-sm font-extrabold uppercase text-white/48">Contact</h4>
-                    <a href={`mailto:${footerDetails.email}`} className="mt-5 inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 font-bold text-white/82 hover:text-white">
+                    <h4 className="text-sm font-semibold uppercase text-white/50">Contact</h4>
+                    <a href={`mailto:${footerDetails.email}`} className="mt-5 inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 font-bold text-white/80 hover:text-white">
                         <FiMail className="text-[#16c7ff]" />
                         {footerDetails.email}
                     </a>
@@ -62,7 +62,11 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="mx-auto mt-12 flex w-full max-w-7xl flex-col gap-3 border-t border-white/10 px-6 pt-6 text-sm text-white/45 md:flex-row md:items-center md:justify-between">
+            <div className="mx-auto mt-12 w-full max-w-7xl space-y-2 border-t border-white/10 px-6 pt-6 text-xs leading-relaxed text-white/40">
+                <p>Trading crypto, forex, stocks and other financial instruments involves a high level of risk and may not be suitable for everyone. You can lose some or all of the money you invest.</p>
+                <p>{siteDetails.siteName} provides AI-generated educational analysis of chart images. It is not investment, financial or trading advice. Levels are estimated from the image you upload and can differ from live market prices. Example results on this site are for illustration only.</p>
+            </div>
+            <div className="mx-auto mt-6 flex w-full max-w-7xl flex-col gap-3 border-t border-white/10 px-6 pt-6 text-sm text-white/45 md:flex-row md:items-center md:justify-between">
                 <p>Copyright &copy; {new Date().getFullYear()} {siteDetails.siteName}. All rights reserved.</p>
                 <p>AI analysis does not guarantee trading outcomes.</p>
             </div>
